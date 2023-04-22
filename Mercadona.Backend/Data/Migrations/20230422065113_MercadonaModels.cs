@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -13,7 +12,7 @@ namespace Mercadona.Backend.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Offer",
+                name: "Offers",
                 columns: table => new
                 {
                     StartDate = table.Column<DateOnly>(type: "date", nullable: false),
@@ -22,15 +21,14 @@ namespace Mercadona.Backend.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Offer", x => new { x.StartDate, x.EndDate, x.Percentage });
+                    table.PrimaryKey("PK_Offers", x => new { x.StartDate, x.EndDate, x.Percentage });
                 });
 
             migrationBuilder.CreateTable(
-                name: "Product",
+                name: "Products",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Label = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
                     Price = table.Column<decimal>(type: "numeric", nullable: false),
@@ -39,14 +37,14 @@ namespace Mercadona.Backend.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Product", x => x.Id);
+                    table.PrimaryKey("PK_Products", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "OfferProduct",
                 columns: table => new
                 {
-                    ProductsId = table.Column<int>(type: "integer", nullable: false),
+                    ProductsId = table.Column<Guid>(type: "uuid", nullable: false),
                     OffersStartDate = table.Column<DateOnly>(type: "date", nullable: false),
                     OffersEndDate = table.Column<DateOnly>(type: "date", nullable: false),
                     OffersPercentage = table.Column<decimal>(type: "numeric", nullable: false)
@@ -55,15 +53,15 @@ namespace Mercadona.Backend.Data.Migrations
                 {
                     table.PrimaryKey("PK_OfferProduct", x => new { x.ProductsId, x.OffersStartDate, x.OffersEndDate, x.OffersPercentage });
                     table.ForeignKey(
-                        name: "FK_OfferProduct_Offer_OffersStartDate_OffersEndDate_OffersPerc~",
+                        name: "FK_OfferProduct_Offers_OffersStartDate_OffersEndDate_OffersPer~",
                         columns: x => new { x.OffersStartDate, x.OffersEndDate, x.OffersPercentage },
-                        principalTable: "Offer",
+                        principalTable: "Offers",
                         principalColumns: new[] { "StartDate", "EndDate", "Percentage" },
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_OfferProduct_Product_ProductsId",
+                        name: "FK_OfferProduct_Products_ProductsId",
                         column: x => x.ProductsId,
-                        principalTable: "Product",
+                        principalTable: "Products",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -81,10 +79,10 @@ namespace Mercadona.Backend.Data.Migrations
                 name: "OfferProduct");
 
             migrationBuilder.DropTable(
-                name: "Offer");
+                name: "Offers");
 
             migrationBuilder.DropTable(
-                name: "Product");
+                name: "Products");
         }
     }
 }

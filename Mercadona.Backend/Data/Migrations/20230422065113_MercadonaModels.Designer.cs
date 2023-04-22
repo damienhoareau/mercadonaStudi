@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Mercadona.Backend.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230421033053_MercadonaModels")]
+    [Migration("20230422065113_MercadonaModels")]
     partial class MercadonaModels
     {
         /// <inheritdoc />
@@ -38,16 +38,14 @@ namespace Mercadona.Backend.Data.Migrations
 
                     b.HasKey("StartDate", "EndDate", "Percentage");
 
-                    b.ToTable("Offer");
+                    b.ToTable("Offers");
                 });
 
             modelBuilder.Entity("Mercadona.Backend.Data.Product", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Category")
                         .IsRequired()
@@ -70,7 +68,7 @@ namespace Mercadona.Backend.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Product");
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -275,8 +273,8 @@ namespace Mercadona.Backend.Data.Migrations
 
             modelBuilder.Entity("OfferProduct", b =>
                 {
-                    b.Property<int>("ProductsId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("ProductsId")
+                        .HasColumnType("uuid");
 
                     b.Property<DateOnly>("OffersStartDate")
                         .HasColumnType("date");

@@ -6,10 +6,8 @@ namespace Mercadona.Backend.Data
 {
     public class ApplicationDbContext : IdentityDbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options)
-        {
-        }
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        { }
 
         public DbSet<Offer> Offers { get; set; }
         public DbSet<Product> Products { get; set; }
@@ -31,6 +29,7 @@ namespace Mercadona.Backend.Data
             productBuilder.Property(_ => _.Description).IsRequired();
             productBuilder.Property(_ => _.Price).IsRequired();
             productBuilder.Property(_ => _.Image).IsRequired();
+            productBuilder.Ignore(_ => _.ImageStream);
             productBuilder.Property(_ => _.Category).IsRequired();
             productBuilder.HasMany(_ => _.Offers).WithMany(_ => _.Products);
         }
