@@ -28,6 +28,7 @@ builder.Services.AddScoped<
 // Validators
 builder.Services.AddScoped<ProductValidator>();
 builder.Services.AddScoped<OfferValidator>();
+builder.Services.AddScoped<ProductAddOfferValidator>();
 
 // Services
 builder.Services.AddScoped<IProductService, ProductService>();
