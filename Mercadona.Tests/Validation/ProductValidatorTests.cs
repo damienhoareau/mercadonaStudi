@@ -1,7 +1,7 @@
+using FluentAssertions;
 using FluentValidation.Results;
 using Mercadona.Backend.Data;
 using Mercadona.Backend.Validation;
-using Shouldly;
 
 namespace Mercadona.Tests.Validation
 {
@@ -16,7 +16,7 @@ namespace Mercadona.Tests.Validation
 
         [Fact]
         // Ce produit a bien un nom !
-        public void ProductValidator_InvalidLabel_Empty()
+        public async Task ProductValidator_InvalidLabel_Empty_ShouldNotValidate()
         {
             // Arrange
             Product product =
@@ -37,18 +37,17 @@ namespace Mercadona.Tests.Validation
                 };
 
             // Act
-            ValidationResult result = _productValidator.Validate(product);
+            ValidationResult result = await _productValidator.ValidateAsync(product);
 
             // Assert
-            result.IsValid.ShouldBeFalse();
-            result.Errors
-                .ShouldHaveSingleItem()
-                .ErrorMessage.ShouldBe(ProductValidator.LABEL_NOT_EMPTY);
+            result.IsValid.Should().BeFalse();
+            result.Errors.Should().ContainSingle();
+            result.Errors.First().ErrorMessage.Should().Be(ProductValidator.LABEL_NOT_EMPTY);
         }
 
         [Fact]
         // Ce produit a bien un nom !
-        public void ProductValidator_InvalidLabel_WhiteSpaces()
+        public async Task ProductValidator_InvalidLabel_WhiteSpaces_ShouldNotValidate()
         {
             // Arrange
             Product product =
@@ -69,18 +68,17 @@ namespace Mercadona.Tests.Validation
                 };
 
             // Act
-            ValidationResult result = _productValidator.Validate(product);
+            ValidationResult result = await _productValidator.ValidateAsync(product);
 
             // Assert
-            result.IsValid.ShouldBeFalse();
-            result.Errors
-                .ShouldHaveSingleItem()
-                .ErrorMessage.ShouldBe(ProductValidator.LABEL_NOT_EMPTY);
+            result.IsValid.Should().BeFalse();
+            result.Errors.Should().ContainSingle();
+            result.Errors.First().ErrorMessage.Should().Be(ProductValidator.LABEL_NOT_EMPTY);
         }
 
         [Fact]
         // Ce produit a bien une description !
-        public void ProductValidator_InvalidDescription_Empty()
+        public async Task ProductValidator_InvalidDescription_Empty_ShouldNotValidate()
         {
             // Arrange
             Product product =
@@ -101,18 +99,17 @@ namespace Mercadona.Tests.Validation
                 };
 
             // Act
-            ValidationResult result = _productValidator.Validate(product);
+            ValidationResult result = await _productValidator.ValidateAsync(product);
 
             // Assert
-            result.IsValid.ShouldBeFalse();
-            result.Errors
-                .ShouldHaveSingleItem()
-                .ErrorMessage.ShouldBe(ProductValidator.DESCRIPTION_NOT_EMPTY);
+            result.IsValid.Should().BeFalse();
+            result.Errors.Should().ContainSingle();
+            result.Errors.First().ErrorMessage.Should().Be(ProductValidator.DESCRIPTION_NOT_EMPTY);
         }
 
         [Fact]
         // Ce produit a bien une description !
-        public void ProductValidator_InvalidDescription_WhiteSpaces()
+        public async Task ProductValidator_InvalidDescription_WhiteSpaces_ShouldNotValidate()
         {
             // Arrange
             Product product =
@@ -133,18 +130,17 @@ namespace Mercadona.Tests.Validation
                 };
 
             // Act
-            ValidationResult result = _productValidator.Validate(product);
+            ValidationResult result = await _productValidator.ValidateAsync(product);
 
             // Assert
-            result.IsValid.ShouldBeFalse();
-            result.Errors
-                .ShouldHaveSingleItem()
-                .ErrorMessage.ShouldBe(ProductValidator.DESCRIPTION_NOT_EMPTY);
+            result.IsValid.Should().BeFalse();
+            result.Errors.Should().ContainSingle();
+            result.Errors.First().ErrorMessage.Should().Be(ProductValidator.DESCRIPTION_NOT_EMPTY);
         }
 
         [Fact]
         // On ne fait pas de dons.
-        public void ProductValidator_InvalidPrice()
+        public async Task ProductValidator_InvalidPrice_ShouldNotValidate()
         {
             // Arrange
             Product product =
@@ -165,18 +161,17 @@ namespace Mercadona.Tests.Validation
                 };
 
             // Act
-            ValidationResult result = _productValidator.Validate(product);
+            ValidationResult result = await _productValidator.ValidateAsync(product);
 
             // Assert
-            result.IsValid.ShouldBeFalse();
-            result.Errors
-                .ShouldHaveSingleItem()
-                .ErrorMessage.ShouldBe(ProductValidator.PRICE_GREATER_THAN_0);
+            result.IsValid.Should().BeFalse();
+            result.Errors.Should().ContainSingle();
+            result.Errors.First().ErrorMessage.Should().Be(ProductValidator.PRICE_GREATER_THAN_0);
         }
 
         [Fact]
         // Il ne faut pas se laisser duper par une extension.
-        public void ProductValidator_InvalidImage()
+        public async Task ProductValidator_InvalidImage_ShouldNotValidate()
         {
             // Arrange
             Product product =
@@ -197,18 +192,17 @@ namespace Mercadona.Tests.Validation
                 };
 
             // Act
-            ValidationResult result = _productValidator.Validate(product);
+            ValidationResult result = await _productValidator.ValidateAsync(product);
 
             // Assert
-            result.IsValid.ShouldBeFalse();
-            result.Errors
-                .ShouldHaveSingleItem()
-                .ErrorMessage.ShouldBe(ProductValidator.IMAGE_IS_VALID);
+            result.IsValid.Should().BeFalse();
+            result.Errors.Should().ContainSingle();
+            result.Errors.First().ErrorMessage.Should().Be(ProductValidator.IMAGE_IS_VALID);
         }
 
         [Fact]
         // Ce produit a bien une catégorie !
-        public void ProductValidator_InvalidCategory_Empty()
+        public async Task ProductValidator_InvalidCategory_Empty_ShouldNotValidate()
         {
             // Arrange
             Product product =
@@ -229,18 +223,17 @@ namespace Mercadona.Tests.Validation
                 };
 
             // Act
-            ValidationResult result = _productValidator.Validate(product);
+            ValidationResult result = await _productValidator.ValidateAsync(product);
 
             // Assert
-            result.IsValid.ShouldBeFalse();
-            result.Errors
-                .ShouldHaveSingleItem()
-                .ErrorMessage.ShouldBe(ProductValidator.CATEGORY_NOT_EMPTY);
+            result.IsValid.Should().BeFalse();
+            result.Errors.Should().ContainSingle();
+            result.Errors.First().ErrorMessage.Should().Be(ProductValidator.CATEGORY_NOT_EMPTY);
         }
 
         [Fact]
         // Ce produit a bien une catégorie !
-        public void ProductValidator_InvalidCategory_WhiteSpaces()
+        public async Task ProductValidator_InvalidCategory_WhiteSpaces_ShouldNotValidate()
         {
             // Arrange
             Product product =
@@ -261,17 +254,16 @@ namespace Mercadona.Tests.Validation
                 };
 
             // Act
-            ValidationResult result = _productValidator.Validate(product);
+            ValidationResult result = await _productValidator.ValidateAsync(product);
 
             // Assert
-            result.IsValid.ShouldBeFalse();
-            result.Errors
-                .ShouldHaveSingleItem()
-                .ErrorMessage.ShouldBe(ProductValidator.CATEGORY_NOT_EMPTY);
+            result.IsValid.Should().BeFalse();
+            result.Errors.Should().ContainSingle();
+            result.Errors.First().ErrorMessage.Should().Be(ProductValidator.CATEGORY_NOT_EMPTY);
         }
 
         [Fact]
-        public void ProductValidator_Valid()
+        public async Task ProductValidator_Valid_ShouldValidate()
         {
             // Arrange
             Product product =
@@ -292,11 +284,11 @@ namespace Mercadona.Tests.Validation
                 };
 
             // Act
-            ValidationResult result = _productValidator.Validate(product);
+            ValidationResult result = await _productValidator.ValidateAsync(product);
 
             // Assert
-            result.IsValid.ShouldBeTrue();
-            result.Errors.ShouldBeEmpty();
+            result.IsValid.Should().BeTrue();
+            result.Errors.Should().BeEmpty();
         }
     }
 }

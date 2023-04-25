@@ -21,6 +21,11 @@ namespace Mercadona.Backend.Data
             ImageStream = _newStreamConstructor();
         }
 
+        ~Product()
+        {
+            ImageStream.Dispose();
+        }
+
         public Guid Id { get; set; }
         public string Label { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;

@@ -28,7 +28,9 @@ namespace Mercadona.Backend.Data
             productBuilder.Property(_ => _.Label).IsRequired();
             productBuilder.Property(_ => _.Description).IsRequired();
             productBuilder.Property(_ => _.Price).IsRequired();
-            productBuilder.Property(_ => _.Image).IsRequired();
+            productBuilder
+                .Property(_ => _.Image)
+                .UsePropertyAccessMode(PropertyAccessMode.Property);
             productBuilder.Ignore(_ => _.ImageStream);
             productBuilder.Property(_ => _.Category).IsRequired();
             productBuilder.HasMany(_ => _.Offers).WithMany(_ => _.Products);
