@@ -22,11 +22,7 @@ namespace Mercadona.Backend.Services.Interfaces
         /// Ajoute un produit
         /// </summary>
         /// <param name="product"><seealso cref="Product"/> à ajouter</param>
-        /// <param name="cancellationToken">Token d'annulation</param>
         /// <returns><seealso cref="Product"/> ajouté</returns>
-        Task<Product> AddProductAsync(
-            Product product,
-            CancellationToken cancellationToken = default
-        );
+        Task<Product> AddProductAsync(Product product);
     }
 }

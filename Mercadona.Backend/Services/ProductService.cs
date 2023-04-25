@@ -28,19 +28,13 @@ namespace Mercadona.Backend.Services
                 .ToListAsync(cancellationToken);
         }
 
-        public async Task<Product> AddProductAsync(
-            Product product,
-            CancellationToken cancellationToken = default
-        )
+        public async Task<Product> AddProductAsync(Product product)
         {
-            await _productValidator.ValidateAndThrowAsync(product, cancellationToken);
+            await _productValidator.ValidateAndThrowAsync(product);
 
-            EntityEntry<Product> result = await _dbContext.Products.AddAsync(
-                product,
-                cancellationToken
-            );
+            EntityEntry<Product> result = await _dbContext.Products.AddAsync(product);
 
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            await _dbContext.SaveChangesAsync();
 
             return result.Entity;
         }

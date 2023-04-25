@@ -82,24 +82,22 @@ namespace Mercadona.Backend.Services
         public async Task<DiscountedProduct> ApplyOfferAsync(
             Guid productId,
             Offer offer,
-            bool forceReplace = false,
-            CancellationToken cancellationToken = default
+            bool forceReplace = false
         )
         {
             DateOnly today = DateOnly.FromDateTime(DateTime.Today);
 
             // On vérifie que l'offre est valide
-            await _offerValidator.ValidateAndThrowAsync(offer, cancellationToken);
+            await _offerValidator.ValidateAndThrowAsync(offer);
 
             Product product = await _dbContext.Products
                 .Include(p => p.Offers.Where(o => o.EndDate >= today)) // Inclure uniquement les offres en cours ou futures
-                .SingleAsync(_ => _.Id == productId, cancellationToken);
+                .SingleAsync(_ => _.Id == productId);
 
             // On vérifie qu'une promotion n'est pas en cours durant la promotion 'offer'
             // et que la période de la promotion n'a pas été dépassée.
             ValidationResult validationResult = await _productAddOfferValidator.ValidateAsync(
-                (product, offer),
-                cancellationToken
+                (product, offer)
             );
             if (
                 validationResult.Errors.Count == 1
@@ -114,11 +112,10 @@ namespace Mercadona.Backend.Services
                 _ =>
                     _.StartDate == offer.StartDate
                     && _.EndDate == offer.EndDate
-                    && _.Percentage == offer.Percentage,
-                cancellationToken
+                    && _.Percentage == offer.Percentage
             );
             if (existingOffer == null)
-                offer = await _offerService.AddOfferAsync(offer, cancellationToken);
+                offer = await _offerService.AddOfferAsync(offer);
             else
                 offer = existingOffer;
 
@@ -139,7 +136,7 @@ namespace Mercadona.Backend.Services
 
             // On applique la promotion 'offer' au produit 'product'.
             product.Offers.Add(offer);
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            await _dbContext.SaveChangesAsync();
 
             return new DiscountedProduct(product, offer);
         }

@@ -15,8 +15,7 @@ namespace Mercadona.Backend.Services.Interfaces
         /// Ajoute une promotion
         /// </summary>
         /// <param name="offer"><seealso cref="Offer"/> à ajouter</param>
-        /// <param name="cancellationToken">Token d'annulation</param>
         /// <returns><seealso cref="Product"/> ajouté</returns>
-        Task<Offer> AddOfferAsync(Offer offer, CancellationToken cancellationToken = default);
+        Task<Offer> AddOfferAsync(Offer offer);
     }
 }

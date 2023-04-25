@@ -27,13 +27,11 @@ namespace Mercadona.Backend.Services.Interfaces
         /// <param name="productId">Identifiant du <seealso cref="Product"/> à remiser</param>
         /// <param name="offer"><seealso cref="Offer"/> à appliquer</param>
         /// <param name="forceReplace">Force à remplacer la promotion en cours si elle existe</param>
-        /// <param name="cancellationToken">Token d'annulation</param>
         /// <returns><seealso cref="DiscountedProduct"/> correspondant au <seealso cref="Product"/> remisé</returns>
         Task<DiscountedProduct> ApplyOfferAsync(
             Guid productId,
             Offer offer,
-            bool forceReplace = false,
-            CancellationToken cancellationToken = default
+            bool forceReplace = false
         );
     }
 }
