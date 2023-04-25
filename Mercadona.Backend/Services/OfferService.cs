@@ -22,8 +22,11 @@ namespace Mercadona.Backend.Services
             CancellationToken cancellationToken = default
         )
         {
+            DateOnly today = DateOnly.FromDateTime(DateTime.Today);
+
             return await _dbContext.Offers
-                .Where(_ => _.EndDate >= DateOnly.FromDateTime(DateTime.Today))
+                .AsNoTracking()
+                .Where(_ => _.EndDate >= today)
                 .OrderBy(_ => _.StartDate)
                 .ThenBy(_ => _.Percentage)
                 .ToListAsync(cancellationToken);
@@ -36,7 +39,7 @@ namespace Mercadona.Backend.Services
         {
             await _offerValidator.ValidateAndThrowAsync(offer, cancellationToken);
 
-            EntityEntry<Offer> result = await _dbContext.Offers.AddAsync(offer, cancellationToken);
+            EntityEntry<Offer> result = await _dbContext.AddAsync(offer, cancellationToken);
 
             await _dbContext.SaveChangesAsync(cancellationToken);
 

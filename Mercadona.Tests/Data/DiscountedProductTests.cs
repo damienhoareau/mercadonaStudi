@@ -1,4 +1,5 @@
-﻿using Mercadona.Backend.Data;
+﻿using FluentAssertions;
+using Mercadona.Backend.Data;
 using Mercadona.Backend.Models;
 using Shouldly;
 
@@ -7,7 +8,7 @@ namespace Mercadona.Tests.Data
     public class DiscountedProductTests
     {
         [Fact]
-        public void CreateDiscountedProductWithoutOffer()
+        public void CreateDiscountedProductWithoutOffer_ShouldKeepPriceAsDiscountedPrice()
         {
             // Arrange
             Product product =
@@ -32,17 +33,17 @@ namespace Mercadona.Tests.Data
 
             // Assert
             discountedProduct.ShouldSatisfyAllConditions(
-                p => p.Id.ShouldBe(product.Id),
-                p => p.Label.ShouldBe(product.Label),
-                p => p.Description.ShouldBe(product.Description),
-                p => p.Price.ShouldBe(product.Price),
-                p => p.Category.ShouldBe(product.Category),
-                p => p.DiscountedPrice.ShouldBe(product.Price)
+                p => p.Id.Should().Be(product.Id),
+                p => p.Label.Should().Be(product.Label),
+                p => p.Description.Should().Be(product.Description),
+                p => p.Price.Should().Be(product.Price),
+                p => p.Category.Should().Be(product.Category),
+                p => p.DiscountedPrice.Should().Be(product.Price)
             );
         }
 
         [Fact]
-        public void CreateDiscountedProductWithOffer()
+        public void CreateDiscountedProductWithOffer_ShouldApplyPercentageToComputeDiscountedPrice()
         {
             // Arrange
             // Produit de 100€
@@ -77,12 +78,12 @@ namespace Mercadona.Tests.Data
 
             // Assert
             discountedProduct.ShouldSatisfyAllConditions(
-                p => p.Id.ShouldBe(product.Id),
-                p => p.Label.ShouldBe(product.Label),
-                p => p.Description.ShouldBe(product.Description),
-                p => p.Price.ShouldBe(product.Price),
-                p => p.Category.ShouldBe(product.Category),
-                p => p.DiscountedPrice.ShouldBe(80M)
+                p => p.Id.Should().Be(product.Id),
+                p => p.Label.Should().Be(product.Label),
+                p => p.Description.Should().Be(product.Description),
+                p => p.Price.Should().Be(product.Price),
+                p => p.Category.Should().Be(product.Category),
+                p => p.DiscountedPrice.Should().Be(80M)
             );
         }
     }

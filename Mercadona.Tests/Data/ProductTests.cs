@@ -1,12 +1,12 @@
-﻿using Mercadona.Backend.Data;
-using Shouldly;
+﻿using FluentAssertions;
+using Mercadona.Backend.Data;
 
 namespace Mercadona.Tests.Data
 {
     public class ProductTests
     {
         [Fact]
-        public void Product_ContructWithGuid()
+        public void Product_ContructWithGuid_ShouldKeepGivenGuid()
         {
             // Arrange
             Guid expectedId = Guid.NewGuid();
@@ -22,11 +22,11 @@ namespace Mercadona.Tests.Data
                 };
 
             // Assert
-            product.Id.ShouldBe(expectedId);
+            product.Id.Should().Be(expectedId);
         }
 
         [Fact]
-        public void Product_ContructWithoutGuid()
+        public void Product_ContructWithoutGuid_ShouldGenerateNewGuid()
         {
             // Arrange
             Guid anId = Guid.NewGuid();
@@ -42,11 +42,11 @@ namespace Mercadona.Tests.Data
                 };
 
             // Assert
-            product.Id.ShouldNotBe(anId);
+            product.Id.Should().NotBe(anId);
         }
 
         [Fact]
-        public void Product_SetImageStream()
+        public void Product_SetImageStream_ShouldSyncImageField()
         {
             // Arrange
             string filePath = "./Resources/validImage.jpeg";
@@ -63,11 +63,11 @@ namespace Mercadona.Tests.Data
                 };
 
             // Assert
-            product.Image.LongLength.ShouldBe(expectedFileSize);
+            product.Image.LongLength.Should().Be(expectedFileSize);
         }
 
         [Fact]
-        public void Product_SetImage()
+        public void Product_SetImage_ShouldSyncImageStreamField()
         {
             // Arrange
             string filePath = "./Resources/validImage.jpeg";
@@ -89,12 +89,12 @@ namespace Mercadona.Tests.Data
                     Label = "Mon produit",
                     Description = "Un produit",
                     Price = 1M,
-                    Category = "Surgelé"
+                    Category = "Surgelé",
+                    Image = expectedStream.ToArray()
                 };
-            product.Image = expectedStream.ToArray();
 
             // Assert
-            product.ImageStream.Length.ShouldBe(expectedFileSize);
+            product.ImageStream.Length.Should().Be(expectedFileSize);
         }
     }
 }

@@ -22,7 +22,10 @@ namespace Mercadona.Backend.Services
             CancellationToken cancellationToken = default
         )
         {
-            return await _dbContext.Products.OrderBy(_ => _.Label).ToListAsync(cancellationToken);
+            return await _dbContext.Products
+                .AsNoTracking()
+                .OrderBy(_ => _.Label)
+                .ToListAsync(cancellationToken);
         }
 
         public async Task<Product> AddProductAsync(
@@ -47,10 +50,9 @@ namespace Mercadona.Backend.Services
             CancellationToken cancellationToken = default
         )
         {
-            Product? product = await _dbContext.Products.SingleOrDefaultAsync(
-                _ => _.Id == productId,
-                cancellationToken
-            );
+            Product? product = await _dbContext.Products
+                .AsNoTracking()
+                .SingleOrDefaultAsync(_ => _.Id == productId, cancellationToken);
 
             return product?.ImageStream;
         }

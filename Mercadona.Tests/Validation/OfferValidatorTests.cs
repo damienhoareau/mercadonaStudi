@@ -1,3 +1,4 @@
+using FluentAssertions;
 using FluentValidation.Results;
 using Mercadona.Backend.Data;
 using Mercadona.Backend.Validation;
@@ -16,7 +17,7 @@ namespace Mercadona.Tests.Validation
 
         [Fact]
         // On ne vit pas dans le passé.
-        public void OfferValidator_InvalidStartDate()
+        public async Task OfferValidator_InvalidStartDate_ShouldNotValidate()
         {
             // Arrange
             Offer offer =
@@ -28,18 +29,20 @@ namespace Mercadona.Tests.Validation
                 };
 
             // Act
-            ValidationResult result = _offerValidator.Validate(offer);
+            ValidationResult result = await _offerValidator.ValidateAsync(offer);
 
             // Assert
-            result.IsValid.ShouldBeFalse();
+            result.IsValid.Should().BeFalse();
+            result.Errors.Should().ContainSingle();
             result.Errors
-                .ShouldHaveSingleItem()
-                .ErrorMessage.ShouldBe(OfferValidator.START_DATE_GREATER_THAN_OR_EQUALS_TO_TODAY);
+                .First()
+                .ErrorMessage.Should()
+                .Be(OfferValidator.START_DATE_GREATER_THAN_OR_EQUALS_TO_TODAY);
         }
 
         [Fact]
         // Pas de voyage dans le temps.
-        public void OfferValidator_InvalidEndDate()
+        public async Task OfferValidator_InvalidEndDate_ShouldNotValidate()
         {
             // Arrange
             Offer offer =
@@ -51,18 +54,20 @@ namespace Mercadona.Tests.Validation
                 };
 
             // Act
-            ValidationResult result = _offerValidator.Validate(offer);
+            ValidationResult result = await _offerValidator.ValidateAsync(offer);
 
             // Assert
-            result.IsValid.ShouldBeFalse();
+            result.IsValid.Should().BeFalse();
+            result.Errors.Should().ContainSingle();
             result.Errors
-                .ShouldHaveSingleItem()
-                .ErrorMessage.ShouldBe(OfferValidator.END_DATE_GREATER_THAN_OR_EQUALS_TO_TODAY);
+                .First()
+                .ErrorMessage.Should()
+                .Be(OfferValidator.END_DATE_GREATER_THAN_OR_EQUALS_TO_START_DATE);
         }
 
         [Fact]
         // Ce n'est pas vraiment une promotion
-        public void OfferValidator_InvalidPercentageMin()
+        public async Task OfferValidator_InvalidPercentageMin_ShouldNotValidate()
         {
             // Arrange
             Offer offer =
@@ -74,18 +79,20 @@ namespace Mercadona.Tests.Validation
                 };
 
             // Act
-            ValidationResult result = _offerValidator.Validate(offer);
+            ValidationResult result = await _offerValidator.ValidateAsync(offer);
 
             // Assert
-            result.IsValid.ShouldBeFalse();
+            result.IsValid.Should().BeFalse();
+            result.Errors.Should().ContainSingle();
             result.Errors
-                .ShouldHaveSingleItem()
-                .ErrorMessage.ShouldBe(OfferValidator.PERCENTAGE_BETWEEN_0_AND_1);
+                .First()
+                .ErrorMessage.Should()
+                .Be(OfferValidator.PERCENTAGE_BETWEEN_0_AND_1);
         }
 
         [Fact]
         // Dans ce monde, rien n'est gratuit
-        public void OfferValidator_InvalidPercentageMax()
+        public async Task OfferValidator_InvalidPercentageMax_ShouldNotValidate()
         {
             // Arrange
             Offer offer =
@@ -97,17 +104,19 @@ namespace Mercadona.Tests.Validation
                 };
 
             // Act
-            ValidationResult result = _offerValidator.Validate(offer);
+            ValidationResult result = await _offerValidator.ValidateAsync(offer);
 
             // Assert
-            result.IsValid.ShouldBeFalse();
+            result.IsValid.Should().BeFalse();
+            result.Errors.Should().ContainSingle();
             result.Errors
-                .ShouldHaveSingleItem()
-                .ErrorMessage.ShouldBe(OfferValidator.PERCENTAGE_BETWEEN_0_AND_1);
+                .First()
+                .ErrorMessage.Should()
+                .Be(OfferValidator.PERCENTAGE_BETWEEN_0_AND_1);
         }
 
         [Fact]
-        public void OfferValidator_ManyInvalidFields()
+        public async Task OfferValidator_ManyInvalidFields_ShouldHasAllErrors()
         {
             // Arrange
             Offer offer =
@@ -119,27 +128,29 @@ namespace Mercadona.Tests.Validation
                 };
 
             // Act
-            ValidationResult result = _offerValidator.Validate(offer);
+            ValidationResult result = await _offerValidator.ValidateAsync(offer);
 
             // Assert
-            result.IsValid.ShouldBeFalse();
+            result.IsValid.Should().BeFalse();
             result.Errors.ShouldSatisfyAllConditions(
-                errors => errors.Count.ShouldBe(2),
+                errors => errors.Count.Should().Be(2),
                 errors =>
-                    errors.ShouldContain(
-                        _ =>
-                            _.ErrorMessage
-                            == OfferValidator.END_DATE_GREATER_THAN_OR_EQUALS_TO_TODAY
-                    ),
+                    errors
+                        .Should()
+                        .Contain(
+                            _ =>
+                                _.ErrorMessage
+                                == OfferValidator.END_DATE_GREATER_THAN_OR_EQUALS_TO_START_DATE
+                        ),
                 errors =>
-                    errors.ShouldContain(
-                        _ => _.ErrorMessage == OfferValidator.PERCENTAGE_BETWEEN_0_AND_1
-                    )
+                    errors
+                        .Should()
+                        .Contain(_ => _.ErrorMessage == OfferValidator.PERCENTAGE_BETWEEN_0_AND_1)
             );
         }
 
         [Fact]
-        public void OfferValidator_Valid()
+        public async Task OfferValidator_Valid_ShouldValidate()
         {
             // Arrange
             Offer offer =
@@ -151,11 +162,11 @@ namespace Mercadona.Tests.Validation
                 };
 
             // Act
-            ValidationResult result = _offerValidator.Validate(offer);
+            ValidationResult result = await _offerValidator.ValidateAsync(offer);
 
             // Assert
-            result.IsValid.ShouldBeTrue();
-            result.Errors.ShouldBeEmpty();
+            result.IsValid.Should().BeTrue();
+            result.Errors.Should().BeEmpty();
         }
     }
 }
