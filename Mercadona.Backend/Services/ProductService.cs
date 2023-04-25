@@ -25,6 +25,17 @@ namespace Mercadona.Backend.Services
             return await _dbContext.Products
                 .AsNoTracking()
                 .OrderBy(_ => _.Label)
+                .Select(
+                    _ =>
+                        new Product
+                        {
+                            Id = _.Id,
+                            Label = _.Label,
+                            Description = _.Description,
+                            Price = _.Price,
+                            Category = _.Category
+                        }
+                )
                 .ToListAsync(cancellationToken);
         }
 
@@ -44,11 +55,12 @@ namespace Mercadona.Backend.Services
             CancellationToken cancellationToken = default
         )
         {
-            Product? product = await _dbContext.Products
-                .AsNoTracking()
-                .SingleOrDefaultAsync(_ => _.Id == productId, cancellationToken);
+            byte[]? data = await _dbContext.Products
+                .Where(_ => _.Id == productId)
+                .Select(_ => _.Image)
+                .SingleOrDefaultAsync(cancellationToken);
 
-            return product?.ImageStream;
+            return data == null ? null : new MemoryStream(data);
         }
     }
 }

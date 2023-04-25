@@ -630,9 +630,23 @@ namespace Mercadona.Tests.Services
             (await _dbContext.Offers.CountAsync())
                 .Should()
                 .Be(1);
-            (await _dbContext.Products.Include(_ => _.Offers).FirstAsync()).Offers.Count
-                .Should()
-                .Be(1);
+            (
+                await _dbContext.Products
+                    .Include(_ => _.Offers)
+                    .Select(
+                        _ =>
+                            new Product
+                            {
+                                Id = _.Id,
+                                Label = _.Label,
+                                Description = _.Description,
+                                Price = _.Price,
+                                Category = _.Category,
+                                Offers = _.Offers
+                            }
+                    )
+                    .FirstAsync()
+            ).Offers.Count.Should().Be(1);
         }
 
         [Fact]
@@ -682,6 +696,18 @@ namespace Mercadona.Tests.Services
             // Assert
             Product discountedProduct = await _dbContext.Products
                 .Include(p => p.Offers.Where(o => o.StartDate <= today && o.EndDate >= today))
+                .Select(
+                    _ =>
+                        new Product
+                        {
+                            Id = _.Id,
+                            Label = _.Label,
+                            Description = _.Description,
+                            Price = _.Price,
+                            Category = _.Category,
+                            Offers = _.Offers
+                        }
+                )
                 .FirstAsync();
             discountedProduct.Offers.Should().ContainSingle();
             discountedProduct.Offers.First().Percentage.Should().Be(newOffer.Percentage);

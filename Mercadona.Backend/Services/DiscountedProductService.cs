@@ -38,6 +38,18 @@ namespace Mercadona.Backend.Services
                 .AsNoTracking()
                 .Include(p => p.Offers.Where(o => o.StartDate <= today && o.EndDate >= today))
                 .OrderBy(_ => _.Label)
+                .Select(
+                    _ =>
+                        new Product
+                        {
+                            Id = _.Id,
+                            Label = _.Label,
+                            Description = _.Description,
+                            Price = _.Price,
+                            Category = _.Category,
+                            Offers = _.Offers
+                        }
+                )
                 .ToListAsync(cancellationToken);
 
             return products
@@ -64,6 +76,18 @@ namespace Mercadona.Backend.Services
                 .Include(p => p.Offers.Where(o => o.StartDate <= today && o.EndDate >= today))
                 .Where(p => p.Offers.Any(o => o.StartDate <= today && o.EndDate >= today))
                 .OrderBy(_ => _.Label)
+                .Select(
+                    _ =>
+                        new Product
+                        {
+                            Id = _.Id,
+                            Label = _.Label,
+                            Description = _.Description,
+                            Price = _.Price,
+                            Category = _.Category,
+                            Offers = _.Offers
+                        }
+                )
                 .ToListAsync(cancellationToken);
 
             return products
@@ -92,7 +116,20 @@ namespace Mercadona.Backend.Services
 
             Product product = await _dbContext.Products
                 .Include(p => p.Offers.Where(o => o.EndDate >= today)) // Inclure uniquement les offres en cours ou futures
+                .Select(
+                    _ =>
+                        new Product
+                        {
+                            Id = _.Id,
+                            Label = _.Label,
+                            Description = _.Description,
+                            Price = _.Price,
+                            Category = _.Category,
+                            Offers = _.Offers
+                        }
+                )
                 .SingleAsync(_ => _.Id == productId);
+            _dbContext.Attach(product);
 
             // On vérifie qu'une promotion n'est pas en cours durant la promotion 'offer'
             // et que la période de la promotion n'a pas été dépassée.

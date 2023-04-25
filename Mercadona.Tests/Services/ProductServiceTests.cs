@@ -45,6 +45,79 @@ namespace Mercadona.Tests.Services
         }
 
         [Fact]
+        public async Task EFQueriesCanSetImage()
+        {
+            // Arrange
+            Product product =
+                new(
+                    () =>
+                        File.Open(
+                            "./Resources/validImage.jpeg",
+                            FileMode.Open,
+                            FileAccess.Read,
+                            FileShare.ReadWrite
+                        )
+                )
+                {
+                    Label = "Mon produit",
+                    Description = "Un produit",
+                    Price = 1M,
+                    Category = "Surgelé"
+                };
+            long imageStreamLength = product.ImageStream.Length;
+            await _dbContext.AddAsync(product);
+            await _dbContext.SaveChangesAsync();
+            _dbContext.ChangeTracker.Clear();
+
+            // Act
+            // Assert
+            byte[] data = await _dbContext.Products.Select(_ => _.Image).FirstAsync();
+            data.LongLength.Should().Be(imageStreamLength);
+        }
+
+        [Fact]
+        public async Task EFQueriesDoNotGetImage()
+        {
+            // Arrange
+            Product product =
+                new(
+                    () =>
+                        File.Open(
+                            "./Resources/validImage.jpeg",
+                            FileMode.Open,
+                            FileAccess.Read,
+                            FileShare.ReadWrite
+                        )
+                )
+                {
+                    Label = "Mon produit",
+                    Description = "Un produit",
+                    Price = 1M,
+                    Category = "Surgelé"
+                };
+            await _dbContext.AddAsync(product);
+            await _dbContext.SaveChangesAsync();
+            _dbContext.ChangeTracker.Clear();
+
+            // Act
+            // Assert
+            Product dbProduct = await _dbContext.Products
+                .Select(
+                    _ =>
+                        new Product
+                        {
+                            Id = _.Id,
+                            Label = _.Label,
+                            Description = _.Description,
+                            Price = _.Price,
+                            Category = _.Category
+                        }
+                )
+                .FirstAsync();
+            dbProduct.Image.LongLength.Should().Be(0);
+        }
+
+        [Fact]
         public async Task GetAllAsync_GetAllSorted()
         {
             // Arrange
@@ -109,13 +182,22 @@ namespace Mercadona.Tests.Services
             result.Count.Should().Be(3);
             result[0]
                 .Should()
-                .BeEquivalentTo(product1, option => option.Excluding(_ => _.ImageStream));
+                .BeEquivalentTo(
+                    product1,
+                    option => option.Excluding(_ => _.Image).Excluding(_ => _.ImageStream)
+                );
             result[1]
                 .Should()
-                .BeEquivalentTo(product2, option => option.Excluding(_ => _.ImageStream));
+                .BeEquivalentTo(
+                    product2,
+                    option => option.Excluding(_ => _.Image).Excluding(_ => _.ImageStream)
+                );
             result[2]
                 .Should()
-                .BeEquivalentTo(product3, option => option.Excluding(_ => _.ImageStream));
+                .BeEquivalentTo(
+                    product3,
+                    option => option.Excluding(_ => _.Image).Excluding(_ => _.ImageStream)
+                );
         }
 
         [Fact]
@@ -173,12 +255,27 @@ namespace Mercadona.Tests.Services
 
             // Assert
             resultProduct.Should().BeEquivalentTo(product);
-            List<Product> products = await _dbContext.Products.ToListAsync();
+            List<Product> products = await _dbContext.Products
+                .Select(
+                    _ =>
+                        new Product
+                        {
+                            Id = _.Id,
+                            Label = _.Label,
+                            Description = _.Description,
+                            Price = _.Price,
+                            Category = _.Category
+                        }
+                )
+                .ToListAsync();
             products.Count.Should().Be(1);
             products
                 .First()
                 .Should()
-                .BeEquivalentTo(resultProduct, option => option.Excluding(_ => _.ImageStream));
+                .BeEquivalentTo(
+                    resultProduct,
+                    option => option.Excluding(_ => _.Image).Excluding(_ => _.ImageStream)
+                );
         }
 
         [Fact]
