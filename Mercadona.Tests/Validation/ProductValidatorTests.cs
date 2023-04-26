@@ -2,6 +2,7 @@ using FluentAssertions;
 using FluentValidation.Results;
 using Mercadona.Backend.Data;
 using Mercadona.Backend.Validation;
+using MimeDetective;
 
 namespace Mercadona.Tests.Validation
 {
@@ -11,7 +12,12 @@ namespace Mercadona.Tests.Validation
 
         public ProductValidatorTests()
         {
-            _productValidator = new ProductValidator();
+            _productValidator = new ProductValidator(
+                new ContentInspectorBuilder()
+                {
+                    Definitions = MimeDetective.Definitions.Default.FileTypes.Images.All()
+                }.Build()
+            );
         }
 
         [Fact]

@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
 using Mercadona.Backend.Data;
 using Mercadona.Backend.Services.Interfaces;
-using Mercadona.Backend.Validation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
@@ -10,9 +9,9 @@ namespace Mercadona.Backend.Services
     public class OfferService : IOfferService
     {
         private readonly ApplicationDbContext _dbContext;
-        private readonly OfferValidator _offerValidator;
+        private readonly IValidator<Offer> _offerValidator;
 
-        public OfferService(ApplicationDbContext dbContext, OfferValidator offerValidator)
+        public OfferService(ApplicationDbContext dbContext, IValidator<Offer> offerValidator)
         {
             _dbContext = dbContext;
             _offerValidator = offerValidator;

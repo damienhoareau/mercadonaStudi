@@ -1,3 +1,4 @@
+using FluentValidation;
 using Mercadona.Backend.Areas.Identity;
 using Mercadona.Backend.Data;
 using Mercadona.Backend.Services;
@@ -6,6 +7,7 @@ using Mercadona.Backend.Validation;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MimeDetective;
 using MudBlazor.Services;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -26,14 +28,28 @@ builder.Services.AddScoped<
 >();
 
 // Validators
-builder.Services.AddScoped<ProductValidator>();
-builder.Services.AddScoped<OfferValidator>();
-builder.Services.AddScoped<ProductAddOfferValidator>();
+builder.Services.AddValidatorsFromAssemblyContaining<ProductValidator>();
 
 // Services
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IOfferService, OfferService>();
 builder.Services.AddScoped<IDiscountedProductService, DiscountedProductService>();
+
+// MIME inspector
+builder.Services.AddSingleton(
+    new ContentInspectorBuilder()
+    {
+        Definitions = MimeDetective.Definitions.Default.FileTypes.Images.All()
+    }.Build()
+);
+
+// Controllers
+builder.Services
+    .AddControllers()
+    .ConfigureApiBehaviorOptions(options =>
+    {
+        options.SuppressModelStateInvalidFilter = true;
+    });
 
 WebApplication app = builder.Build();
 
@@ -58,7 +74,7 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-//app.MapControllers();
+app.MapControllers();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 

@@ -11,14 +11,14 @@ namespace Mercadona.Backend.Services
     public class DiscountedProductService : IDiscountedProductService
     {
         private readonly ApplicationDbContext _dbContext;
-        private readonly OfferValidator _offerValidator;
-        private readonly ProductAddOfferValidator _productAddOfferValidator;
+        private readonly IValidator<Offer> _offerValidator;
+        private readonly IValidator<(Product product, Offer offer)> _productAddOfferValidator;
         private readonly IOfferService _offerService;
 
         public DiscountedProductService(
             ApplicationDbContext dbContext,
-            OfferValidator offerValidator,
-            ProductAddOfferValidator productAddOfferValidator,
+            IValidator<Offer> offerValidator,
+            IValidator<(Product product, Offer offer)> productAddOfferValidator,
             IOfferService offerService
         )
         {

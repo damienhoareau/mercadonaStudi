@@ -16,12 +16,9 @@ namespace Mercadona.Backend.Validation
 
         private readonly ContentInspector _inspector;
 
-        public ProductValidator()
+        public ProductValidator(ContentInspector inspector)
         {
-            _inspector = new ContentInspectorBuilder()
-            {
-                Definitions = MimeDetective.Definitions.Default.FileTypes.Images.All()
-            }.Build();
+            _inspector = inspector;
 
             RuleFor(_ => _.Label).NotEmpty().WithMessage(LABEL_NOT_EMPTY);
             RuleFor(_ => _.Description).NotEmpty().WithMessage(DESCRIPTION_NOT_EMPTY);
