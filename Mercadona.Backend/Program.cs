@@ -1,6 +1,7 @@
 using FluentValidation;
 using Mercadona.Backend.Areas.Identity;
 using Mercadona.Backend.Data;
+using Mercadona.Backend.Events;
 using Mercadona.Backend.Services;
 using Mercadona.Backend.Services.Interfaces;
 using Mercadona.Backend.Validation;
@@ -21,6 +22,10 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services
     .AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services.ConfigureApplicationCookie(o =>
+{
+    o.Events = new CustomCookieAuthenticationEvents();
+});
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddMudServices();
