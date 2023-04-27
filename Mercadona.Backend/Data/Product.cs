@@ -25,18 +25,18 @@ namespace Mercadona.Backend.Data
 
         /// <summary>
         /// Contruit un <seealso cref="Product"/> en générant un nouvel identifiant<br/>
-        /// Si newStreamConstructor est null, la donnée de l'image sera sous forme d'un <seealso cref="MemoryStream"/> vide
+        /// Si newStreamConstructor est <c>null</c>, la donnée de l'image sera sous forme d'un <seealso cref="MemoryStream"/> vide
         /// </summary>
-        /// <param name="newStreamConstructor">Fonction permettant de construire la donnée de l'image sous forme de <seealso cref="Stream"/><br/>Si null, la donnée de l'image sera sous forme d'un <seealso cref="MemoryStream"/> vide</param>
+        /// <param name="newStreamConstructor">Fonction permettant de construire la donnée de l'image sous forme de <seealso cref="Stream"/><br/>Si <c>null</c>, la donnée de l'image sera sous forme d'un <seealso cref="MemoryStream"/> vide</param>
         public Product(Func<Stream> newStreamConstructor) : this(null, newStreamConstructor) { }
 
         /// <summary>
         /// Contruit un <seealso cref="Product"/><br/>
-        /// Si id est null, un nouvel identifiant sera généré<br/>
-        /// Si newStreamConstructor est null, la donnée de l'image sera sous forme d'un <seealso cref="MemoryStream"/> vide
+        /// Si id est <c>null</c>, un nouvel identifiant sera généré<br/>
+        /// Si newStreamConstructor est <c>null</c>, la donnée de l'image sera sous forme d'un <seealso cref="MemoryStream"/> vide
         /// </summary>
-        /// <param name="id">Identifiant du produit<br/>Si null, un nouveau sera généré</param>
-        /// <param name="newStreamConstructor">Fonction permettant de construire la donnée de l'image sous forme de <seealso cref="Stream"/><br/>Si null, la donnée de l'image sera sous forme d'un <seealso cref="MemoryStream"/> vide</param>
+        /// <param name="id">Identifiant du produit<br/>Si <c>null</c>, un nouveau sera généré</param>
+        /// <param name="newStreamConstructor">Fonction permettant de construire la donnée de l'image sous forme de <seealso cref="Stream"/><br/>Si <c>null</c>, la donnée de l'image sera sous forme d'un <seealso cref="MemoryStream"/> vide</param>
         public Product(Guid? id, Func<Stream>? newStreamConstructor = null)
         {
             Id = id ?? Guid.NewGuid();

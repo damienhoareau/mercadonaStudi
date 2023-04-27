@@ -22,7 +22,7 @@ namespace Mercadona.Tests.Services
             _fixture = fixture;
             _fixture.Reconfigure(services =>
             {
-                services.AddSingleton<OfferValidator>();
+                services.AddSingleton<IValidator<Offer>, OfferValidator>();
                 services.AddSingleton<IOfferService, OfferService>();
 
                 return services;
@@ -47,33 +47,33 @@ namespace Mercadona.Tests.Services
         public async Task GetAllAsync_GetOnlyCurrentOrFuture()
         {
             // Arrange
-            DateTime today = DateTime.Today;
+            DateOnly today = DateOnly.FromDateTime(DateTime.Today);
             Offer oudatedOffer =
                 new()
                 {
-                    StartDate = DateOnly.FromDateTime(today.AddDays(-1)),
-                    EndDate = DateOnly.FromDateTime(today.AddDays(-1)),
+                    StartDate = today.AddDays(-1),
+                    EndDate = today.AddDays(-1),
                     Percentage = 0.5M
                 };
             Offer currentOffer =
                 new()
                 {
-                    StartDate = DateOnly.FromDateTime(today),
-                    EndDate = DateOnly.FromDateTime(today),
+                    StartDate = today,
+                    EndDate = today,
                     Percentage = 0.5M
                 };
             Offer futureOffer10Percent =
                 new()
                 {
-                    StartDate = DateOnly.FromDateTime(today.AddDays(1)),
-                    EndDate = DateOnly.FromDateTime(today.AddDays(1)),
+                    StartDate = today.AddDays(1),
+                    EndDate = today.AddDays(1),
                     Percentage = 0.1M
                 };
             Offer futureOffer20Percent =
                 new()
                 {
-                    StartDate = DateOnly.FromDateTime(today.AddDays(1)),
-                    EndDate = DateOnly.FromDateTime(today.AddDays(1)),
+                    StartDate = today.AddDays(1),
+                    EndDate = today.AddDays(1),
                     Percentage = 0.2M
                 };
             await _dbContext.AddAsync(oudatedOffer);

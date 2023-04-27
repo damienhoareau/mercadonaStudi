@@ -14,6 +14,10 @@ namespace Mercadona.Backend.Controllers
     {
         private readonly IDiscountedProductService _service;
 
+        /// <summary>
+        /// Controlleur gérant des <seealso cref="DiscountedProduct"/>
+        /// </summary>
+        /// <param name="service">Service gérant des <seealso cref="DiscountedProduct"/></param>
         public DiscountedProductController(IDiscountedProductService service)
         {
             _service = service;

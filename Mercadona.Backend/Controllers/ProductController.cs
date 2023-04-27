@@ -14,6 +14,11 @@ namespace Mercadona.Backend.Controllers
         private readonly IProductService _service;
         private readonly ContentInspector _inspector;
 
+        /// <summary>
+        /// Controlleur gérant des <seealso cref="Product"/>
+        /// </summary>
+        /// <param name="service">Service gérant des <seealso cref="Product"/></param>
+        /// <param name="inspector">Service de récupération des types MIME</param>
         public ProductController(IProductService service, ContentInspector inspector)
         {
             _service = service;

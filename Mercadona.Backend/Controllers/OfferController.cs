@@ -12,6 +12,10 @@ namespace Mercadona.Backend.Controllers
     {
         private readonly IOfferService _service;
 
+        /// <summary>
+        /// Controlleur gérant des <seealso cref="Offer"/>
+        /// </summary>
+        /// <param name="service">Service gérant des <seealso cref="Offer"/></param>
         public OfferController(IOfferService service)
         {
             _service = service;
