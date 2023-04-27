@@ -29,7 +29,7 @@ namespace Mercadona.Backend.Data
 
         /// <summary>
         /// Poucentage de remise<br/>
-        /// Compris entre <see cref="PercentageMin"/> : 0 et <see cref="PercentageMax"/> : 1 exclus
+        /// Compris entre 0 et 1 exclus
         /// </summary>
         public decimal Percentage { get; set; }
 

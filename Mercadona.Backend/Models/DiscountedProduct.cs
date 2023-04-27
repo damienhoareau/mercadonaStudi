@@ -10,8 +10,8 @@ namespace Mercadona.Backend.Models
         /// <summary>
         /// Construit un <seealso cref="DiscountedProduct"/> à partir d'un <seealso cref="Product"/> et d'une <seealso cref="Mercadona.Backend.Data.Offer"/>
         /// </summary>
-        /// <param name="product"></param>
-        /// <param name="offer"></param>
+        /// <param name="product">Produit de base</param>
+        /// <param name="offer">Promotion appliquée</param>
         public DiscountedProduct(Product product, Offer? offer = null)
         {
             Id = product.Id;
@@ -49,8 +49,8 @@ namespace Mercadona.Backend.Models
         public string Category { get; private set; } = string.Empty;
 
         /// <summary>
-        /// <seealso cref="Offer"/> appliquée au produit<br/>
-        /// Peut être null
+        /// Promotion appliquée au produit<br/>
+        /// Peut être <c>null</c>
         /// </summary>
         public Offer? Offer { get; private set; }
 

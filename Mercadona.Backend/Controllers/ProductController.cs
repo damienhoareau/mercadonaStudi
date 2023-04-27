@@ -7,6 +7,9 @@ using MimeDetective;
 
 namespace Mercadona.Backend.Controllers
 {
+    /// <summary>
+    /// Controlleur gérant des <seealso cref="Product"/>
+    /// </summary>
     [Authorize]
     [ApiController]
     public class ProductController : ControllerBase
@@ -29,6 +32,9 @@ namespace Mercadona.Backend.Controllers
         /// Recupère la liste des produits
         /// </summary>
         /// <returns></returns>
+        /// <response code="200">Si il existe au moins un produit.</response>
+        /// <response code="204">Si il n'existe aucun produit.</response>
+        /// <response code="500">Si une erreur survient au niveau du code.</response>
         [HttpGet]
         [Route("api/products")]
         [ProducesResponseType(typeof(IEnumerable<Product>), StatusCodes.Status200OK)]
@@ -50,10 +56,13 @@ namespace Mercadona.Backend.Controllers
         }
 
         /// <summary>
-        /// Récupère le flux des données de l'image d'un produit
+        /// Récupère le flux de donnée de l'image d'un produit
         /// </summary>
-        /// <param name="productId">Identifiant du <seealso cref="Product"/></param>
+        /// <param name="productId">Identifiant du produit</param>
         /// <returns>Flux du produit</returns>
+        /// <response code="200">Si le produit existe.</response>
+        /// <response code="404">Si le produit n'existe pas.</response>
+        /// <response code="500">Si une erreur survient au niveau du code.</response>
         [AllowAnonymous]
         [HttpGet]
         [Route("api/products/{productId}/image")]
@@ -85,8 +94,11 @@ namespace Mercadona.Backend.Controllers
         /// <summary>
         /// Ajoute un produit
         /// </summary>
-        /// <param name="product"><seealso cref="Product"/> à ajouter</param>
-        /// <returns><seealso cref="Product"/> ajouté</returns>
+        /// <param name="product">Produit à ajouter</param>
+        /// <returns>Produit ajouté</returns>
+        /// <response code="201">Si le produit a été ajouté.</response>
+        /// <response code="400">Si les données ne sont pas valides.</response>
+        /// <response code="500">Si une erreur survient au niveau du code.</response>
         [HttpPost]
         [Route("api/products")]
         [ProducesResponseType(typeof(Product), StatusCodes.Status201Created)]

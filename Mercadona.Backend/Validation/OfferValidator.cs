@@ -3,6 +3,9 @@ using Mercadona.Backend.Data;
 
 namespace Mercadona.Backend.Validation
 {
+    /// <summary>
+    /// Validateur de promotion
+    /// </summary>
     public class OfferValidator : AbstractValidator<Offer>
     {
         public const string START_DATE_GREATER_THAN_OR_EQUALS_TO_TODAY =
@@ -12,6 +15,9 @@ namespace Mercadona.Backend.Validation
         public const string PERCENTAGE_BETWEEN_0_AND_1 =
             "Le pourcentage de remise doit être compris entre 0 et 1 exclus.";
 
+        /// <summary>
+        /// Initialise une nouvelle instance de la classe <see cref="OfferValidator"/>.
+        /// </summary>
         public OfferValidator()
         {
             RuleFor(_ => _.StartDate)

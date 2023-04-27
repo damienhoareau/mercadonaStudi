@@ -102,7 +102,7 @@ namespace Mercadona.Backend.Data
         public string Category { get; set; } = string.Empty;
 
         /// <summary>
-        /// Liste de <seealso cref="Offer"/> appliquées au produit
+        /// Liste des promotions appliquées au produit
         /// </summary>
         public ICollection<Offer> Offers { get; set; } = new List<Offer>();
 

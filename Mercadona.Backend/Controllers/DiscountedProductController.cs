@@ -8,6 +8,9 @@ using System.Runtime.InteropServices;
 
 namespace Mercadona.Backend.Controllers
 {
+    /// <summary>
+    /// Controlleur gérant des <seealso cref="DiscountedProduct"/>
+    /// </summary>
     [Authorize]
     [ApiController]
     public class DiscountedProductController : ControllerBase
@@ -37,6 +40,9 @@ namespace Mercadona.Backend.Controllers
         /// <item><seealso cref="StatusCodes.Status500InternalServerError"/> : Si une erreur survient au niveau du code</item>
         /// </list>
         /// </returns>
+        /// <response code="200">Si il existe au moins un produit.</response>
+        /// <response code="204">Si il n'existe aucun produit.</response>
+        /// <response code="500">Si une erreur survient au niveau du code.</response>
         [AllowAnonymous]
         [HttpGet]
         [Route("api/discountedProducts")]
@@ -72,6 +78,9 @@ namespace Mercadona.Backend.Controllers
         /// <item><seealso cref="StatusCodes.Status500InternalServerError"/> : Si une erreur survient au niveau du code</item>
         /// </list>
         /// </returns>
+        /// <response code="200">Si il existe au moins un produit.</response>
+        /// <response code="204">Si il n'existe aucun produit.</response>
+        /// <response code="500">Si une erreur survient au niveau du code.</response>
         [HttpGet]
         [Route("api/discountedProducts/onlyDiscounted")]
         [ProducesResponseType(typeof(IEnumerable<DiscountedProduct>), StatusCodes.Status200OK)]
@@ -94,9 +103,9 @@ namespace Mercadona.Backend.Controllers
         /// <summary>
         /// Applique une promotion à un produit
         /// </summary>
-        /// <param name="productId">Identifiant du <seealso cref="Product"/> à remiser</param>
-        /// <param name="offer"><seealso cref="Offer"/> à appliquer</param>
-        /// <param name="forceReplace">Force à remplacer la promotion en cours si elle existe</param>
+        /// <param name="productId">Identifiant du produit à remiser</param>
+        /// <param name="offer">Promotion à appliquer</param>
+        /// <param name="forceReplace">Force à remplacer les promotions à cheval avec la nouvelle</param>
         /// <returns>
         /// <seealso cref="CreatedResult"/> :
         /// <list type="bullet">
@@ -109,6 +118,9 @@ namespace Mercadona.Backend.Controllers
         /// <item>Si une erreur survient au niveau du code</item>
         /// </list>
         /// </returns>
+        /// <response code="201">Si la promotion a été appliquée au produit.</response>
+        /// <response code="400">Si les données ne sont pas valides.</response>
+        /// <response code="500">Si une erreur survient au niveau du code.</response>
         [HttpPost]
         [Route("api/discountedProducts/{productId}/applyOffer")]
         [ProducesResponseType(typeof(DiscountedProduct), StatusCodes.Status201Created)]

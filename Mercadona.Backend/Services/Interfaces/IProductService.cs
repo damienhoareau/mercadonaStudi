@@ -15,7 +15,7 @@ namespace Mercadona.Backend.Services.Interfaces
         Task<IEnumerable<Product>> GetAllAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
-        /// Récupère le flux des données de l'image d'un produit
+        /// Récupère le flux de donnée de l'image d'un produit
         /// </summary>
         /// <param name="productId">Identifiant du <seealso cref="Product"/></param>
         /// <param name="cancellationToken">Token d'annulation</param>
