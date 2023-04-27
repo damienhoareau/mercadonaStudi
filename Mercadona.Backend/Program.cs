@@ -51,6 +51,10 @@ builder.Services
         options.SuppressModelStateInvalidFilter = true;
     });
 
+// API Documentation
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -70,6 +74,10 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+// API Documentation (avant le pipeline de sécurité afin de permettre les requêtes publiques)
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseAuthentication();
 app.UseAuthorization();

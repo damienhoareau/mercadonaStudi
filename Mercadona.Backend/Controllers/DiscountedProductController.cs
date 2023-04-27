@@ -73,7 +73,7 @@ namespace Mercadona.Backend.Controllers
         /// </list>
         /// </returns>
         [HttpGet]
-        [Route("api/discountedProducts?onlyDiscounted=1")]
+        [Route("api/discountedProducts/onlyDiscounted")]
         [ProducesResponseType(typeof(IEnumerable<DiscountedProduct>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -110,12 +110,12 @@ namespace Mercadona.Backend.Controllers
         /// </list>
         /// </returns>
         [HttpPost]
-        [Route("api/discountedProducts/{productId}/applyOffer{forceReplace?}")]
+        [Route("api/discountedProducts/{productId}/applyOffer")]
         [ProducesResponseType(typeof(DiscountedProduct), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> ApplyOfferAsync(
-            [FromQuery] Guid productId,
+            [FromRoute] Guid productId,
             [FromBody] Offer offer,
             [FromQuery, Optional] bool forceReplace
         )

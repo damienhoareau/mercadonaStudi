@@ -60,7 +60,7 @@ namespace Mercadona.Backend.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetImageAsync([FromQuery] Guid productId)
+        public async Task<IActionResult> GetImageAsync([FromRoute] Guid productId)
         {
             try
             {
