@@ -47,7 +47,7 @@ namespace Mercadona.Backend.Swagger
                                 Reference = new OpenApiReference
                                 {
                                     Type = ReferenceType.SecurityScheme,
-                                    Id = "IdentityServer"
+                                    Id = "Bearer"
                                 }
                             },
                             new string[] { }

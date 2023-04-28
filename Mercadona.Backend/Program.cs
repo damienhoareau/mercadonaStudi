@@ -1,18 +1,21 @@
 using FluentValidation;
 using Mercadona.Backend.Areas.Identity;
 using Mercadona.Backend.Data;
-using Mercadona.Backend.Events;
+using Mercadona.Backend.Options;
 using Mercadona.Backend.Services;
 using Mercadona.Backend.Services.Interfaces;
 using Mercadona.Backend.Swagger;
 using Mercadona.Backend.Validation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MimeDetective;
 using MudBlazor.Services;
 using System.Reflection;
+using System.Text;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
@@ -20,13 +23,42 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+// For Identity
 builder.Services
-    .AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ApplicationDbContext>();
-builder.Services.ConfigureApplicationCookie(o =>
-{
-    o.Events = new CustomCookieAuthenticationEvents();
-});
+    .AddIdentityCore<IdentityUser>(o =>
+    {
+        o.Stores.MaxLengthForKeys = 128;
+    })
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultTokenProviders();
+
+// Adding Authentication
+builder.Services.Configure<JWTOptions>(builder.Configuration.GetSection("JWT"));
+builder.Services
+    .AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    // Adding Jwt Bearer
+    .AddJwtBearer(options =>
+    {
+        options.SaveToken = true;
+        options.RequireHttpsMetadata = true;
+        options.TokenValidationParameters = new TokenValidationParameters()
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidAudience = builder.Configuration["JWT:ValidAudience"],
+            ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"])
+            )
+        };
+    });
+
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddMudServices();
@@ -83,24 +115,12 @@ builder.Services.AddSwaggerGen(options =>
 
     // Définir le schéma de sécurité
     options.AddSecurityDefinition(
-        "IdentityServer",
+        "Bearer",
         new OpenApiSecurityScheme
         {
-            Type = SecuritySchemeType.OAuth2,
-            Flows = new OpenApiOAuthFlows
-            {
-                AuthorizationCode = new OpenApiOAuthFlow
-                {
-                    AuthorizationUrl = new Uri("https://localhost:44387/Identity/Account/Login"),
-                    TokenUrl = new Uri("https://localhost:44387/connect/token"),
-                    Scopes = new Dictionary<string, string>
-                    {
-                        { "openid", "OpenID" },
-                        { "profile", "Profile" },
-                        { "email", "Email" }
-                    }
-                }
-            }
+            Type = SecuritySchemeType.Http,
+            Scheme = "Bearer",
+            BearerFormat = "JWT"
         }
     );
     options.OperationFilter<AuthOperationFilter>();
