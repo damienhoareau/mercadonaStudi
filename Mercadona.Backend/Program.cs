@@ -4,6 +4,7 @@ using Mercadona.Backend.Data;
 using Mercadona.Backend.Events;
 using Mercadona.Backend.Services;
 using Mercadona.Backend.Services.Interfaces;
+using Mercadona.Backend.Swagger;
 using Mercadona.Backend.Validation;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -79,6 +80,30 @@ builder.Services.AddSwaggerGen(options =>
     );
     string xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
+
+    // Définir le schéma de sécurité
+    options.AddSecurityDefinition(
+        "IdentityServer",
+        new OpenApiSecurityScheme
+        {
+            Type = SecuritySchemeType.OAuth2,
+            Flows = new OpenApiOAuthFlows
+            {
+                AuthorizationCode = new OpenApiOAuthFlow
+                {
+                    AuthorizationUrl = new Uri("https://localhost:44387/Identity/Account/Login"),
+                    TokenUrl = new Uri("https://localhost:44387/connect/token"),
+                    Scopes = new Dictionary<string, string>
+                    {
+                        { "openid", "OpenID" },
+                        { "profile", "Profile" },
+                        { "email", "Email" }
+                    }
+                }
+            }
+        }
+    );
+    options.OperationFilter<AuthOperationFilter>();
 });
 
 WebApplication app = builder.Build();
