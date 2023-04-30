@@ -18,11 +18,12 @@ namespace Mercadona.Tests
                 Definitions = MimeDetective.Definitions.Default.FileTypes.Images.All()
             }.Build();
 
-        public static Mock<TService> GetServiceMock<TService>(Action<Mock<TService>> setup)
+        public static Mock<TService> GetServiceMock<TService>(Action<Mock<TService>>? setup = null)
             where TService : class
         {
             Mock<TService> mock = new();
-            setup(mock);
+            if (setup != null)
+                setup(mock);
             return mock;
         }
 

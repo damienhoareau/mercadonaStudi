@@ -1,4 +1,6 @@
-﻿using Mercadona.Backend.Models;
+﻿using FluentValidation;
+using FluentValidation.Results;
+using Mercadona.Backend.Models;
 using Mercadona.Backend.Options;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -19,19 +21,23 @@ namespace Mercadona.Backend.Controllers
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly JWTOptions _jwtOptions;
+        private readonly IValidator<UserModel> _userModelValidator;
 
         /// <summary>
         /// Controlleur gérant les connexions à l'application
         /// </summary>
         /// <param name="userManager">Manager des utilisateurs</param>
         /// <param name="jwtOptions">Configuration JWT</param>
+        /// <param name="userModelValidator">Validateur d'UserModel</param>
         public AuthenticateController(
             UserManager<IdentityUser> userManager,
-            IOptions<JWTOptions> jwtOptions
+            IOptions<JWTOptions> jwtOptions,
+            IValidator<UserModel> userModelValidator
         )
         {
             _userManager = userManager;
             _jwtOptions = jwtOptions.Value;
+            _userModelValidator = userModelValidator;
         }
 
         /// <summary>
@@ -76,13 +82,24 @@ namespace Mercadona.Backend.Controllers
         /// <param name="model">Modèle représentant l'utilisateur</param>
         /// <returns></returns>
         /// <response code="200">Si l'enregistrement a réussi.</response>
+        /// <response code="400">Si l'UserModel model n'est pas valide.</response>
         /// <response code="500">Si l'utilisateur existe déjà ou que la création de l'utilisateur a échoué.</response>
         [HttpPost]
         [Route("account/register")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> RegisterAsync([FromBody] UserModel model)
         {
+            ValidationResult userModelValidationResult = await _userModelValidator.ValidateAsync(
+                model,
+                HttpContext.RequestAborted
+            );
+            if (!userModelValidationResult.IsValid)
+                return Problem(
+                    string.Join("\n", userModelValidationResult.Errors.Select(_ => _.ErrorMessage)),
+                    statusCode: StatusCodes.Status400BadRequest
+                );
             IdentityUser? userExists = await _userManager.FindByNameAsync(model.Username);
             if (userExists != null)
                 return Problem(
