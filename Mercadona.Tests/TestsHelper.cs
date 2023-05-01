@@ -1,4 +1,6 @@
 ﻿using HttpContextMoq;
+using HttpContextMoq.Extensions;
+using Mercadona.Tests.Extensions;
 using Mercadona.Tests.Moq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -22,8 +24,7 @@ namespace Mercadona.Tests
             where TService : class
         {
             Mock<TService> mock = new();
-            if (setup != null)
-                setup(mock);
+            setup?.Invoke(mock);
             return mock;
         }
 
@@ -32,10 +33,22 @@ namespace Mercadona.Tests
         {
             TController controller = (TController)
                 Activator.CreateInstance(type: typeof(TController), args: constructorArgs)!;
-            controller.ControllerContext.HttpContext = new HttpContextMock
-            {
-                RequestAborted = CancellationToken.None
-            };
+            HttpContextMock httpContextMock = new() { RequestAborted = CancellationToken.None };
+            httpContextMock.SetupSessionMoq();
+            controller.ControllerContext.HttpContext = httpContextMock;
+            controller.ProblemDetailsFactory = ProblemDetailsFactory;
+            return controller;
+        }
+
+        public static TController CreateControllerWithSessionFailure<TController>(
+            params object?[]? constructorArgs
+        ) where TController : ControllerBase
+        {
+            TController controller = (TController)
+                Activator.CreateInstance(type: typeof(TController), args: constructorArgs)!;
+            HttpContextMock httpContextMock = new() { RequestAborted = CancellationToken.None };
+            httpContextMock.SetupSessionMoq(true);
+            controller.ControllerContext.HttpContext = httpContextMock;
             controller.ProblemDetailsFactory = ProblemDetailsFactory;
             return controller;
         }

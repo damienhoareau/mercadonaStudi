@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Mercadona.Backend.Swagger
 {
@@ -8,6 +9,7 @@ namespace Mercadona.Backend.Swagger
     /// Permet de modifier les autorisations de route dans SwaggerUI
     /// </summary>
     /// <seealso cref="Swashbuckle.AspNetCore.SwaggerGen.IOperationFilter" />
+    [ExcludeFromCodeCoverage]
     public class AuthOperationFilter : IOperationFilter
     {
         /// <summary>

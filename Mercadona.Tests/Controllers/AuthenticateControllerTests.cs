@@ -110,12 +110,14 @@ namespace Mercadona.Tests.Controllers
             );
 
             // Assert
+            string? generatedToken = null;
             result
                 .Should()
                 .BeActionResult<OkObjectResult>(response =>
                 {
                     response.Value.Should().BeOfType<LoginResult>();
-                    LoginResult loginResult = (LoginResult)response.Value;
+                    LoginResult loginResult = (LoginResult)response.Value!;
+                    generatedToken = loginResult.Token;
                     JwtSecurityTokenHandler tokenHandler = new();
                     tokenHandler.ValidateToken(
                         loginResult.Token,
@@ -134,6 +136,10 @@ namespace Mercadona.Tests.Controllers
                     );
                     loginResult.Expiration.Should().Be(token.ValidTo);
                 });
+            string? sessionToken = controller.ControllerContext.HttpContext.Session.GetString(
+                "mercadonaToken"
+            );
+            sessionToken.Should().Be(generatedToken);
         }
 
         [Fact]
@@ -293,6 +299,132 @@ namespace Mercadona.Tests.Controllers
 
             // Assert
             result.Should().BeActionResult<OkResult>();
+        }
+
+        [Fact]
+        public async Task LogoutAsync_NotConnected_ShouldReturnProblem_InternalServerError()
+        {
+            // Arrange
+            Mock<IOptions<JWTOptions>> mockJWTOptions = TestsHelper.GetServiceMock<
+                IOptions<JWTOptions>
+            >();
+            mockJWTOptions
+                .SetupGet(_ => _.Value)
+                .Returns(
+                    new JWTOptions
+                    {
+                        ValidAudience = "https://localhost:44387",
+                        ValidIssuer = "https://localhost:44387",
+                        Secret = "JWTAuthenticationHIGHsecuredPasswordVVVp1OH7XzyrForTest"
+                    }
+                );
+            Mock<IValidator<UserModel>> mockUserModelValidator = TestsHelper.GetServiceMock<
+                IValidator<UserModel>
+            >();
+            AuthenticateController controller =
+                TestsHelper.CreateController<AuthenticateController>(
+                    new UserManagerMock(
+                        false,
+                        new UserModel { Username = "toto@toto.fr", Password = "V@lidPassw0rd" }
+                    ),
+                    mockJWTOptions.Object,
+                    mockUserModelValidator.Object
+                );
+
+            // Act
+            IActionResult result = await controller.LogoutAsync();
+
+            // Assert
+            result
+                .Should()
+                .BeProblemResult(
+                    StatusCodes.Status500InternalServerError,
+                    AuthenticateController.TOKEN_NOT_FOUND
+                );
+        }
+
+        [Fact]
+        public async Task LogoutAsync_RemoveFailed_ShouldReturnProblem_InternalServerError()
+        {
+            // Arrange
+            Mock<IOptions<JWTOptions>> mockJWTOptions = TestsHelper.GetServiceMock<
+                IOptions<JWTOptions>
+            >();
+            mockJWTOptions
+                .SetupGet(_ => _.Value)
+                .Returns(
+                    new JWTOptions
+                    {
+                        ValidAudience = "https://localhost:44387",
+                        ValidIssuer = "https://localhost:44387",
+                        Secret = "JWTAuthenticationHIGHsecuredPasswordVVVp1OH7XzyrForTest"
+                    }
+                );
+            Mock<IValidator<UserModel>> mockUserModelValidator = TestsHelper.GetServiceMock<
+                IValidator<UserModel>
+            >();
+            AuthenticateController controller =
+                TestsHelper.CreateControllerWithSessionFailure<AuthenticateController>(
+                    new UserManagerMock(
+                        false,
+                        new UserModel { Username = "toto@toto.fr", Password = "V@lidPassw0rd" }
+                    ),
+                    mockJWTOptions.Object,
+                    mockUserModelValidator.Object
+                );
+
+            // Act
+            await controller.LoginAsync(
+                new UserModel { Username = "toto@toto.fr", Password = "V@lidPassw0rd" }
+            );
+            IActionResult result = await controller.LogoutAsync();
+
+            // Assert
+            result.Should().BeProblemResult(StatusCodes.Status500InternalServerError, "Test");
+        }
+
+        [Fact]
+        public async Task LogoutAsync_Success_ShouldReturnOK()
+        {
+            // Arrange
+            Mock<IOptions<JWTOptions>> mockJWTOptions = TestsHelper.GetServiceMock<
+                IOptions<JWTOptions>
+            >();
+            mockJWTOptions
+                .SetupGet(_ => _.Value)
+                .Returns(
+                    new JWTOptions
+                    {
+                        ValidAudience = "https://localhost:44387",
+                        ValidIssuer = "https://localhost:44387",
+                        Secret = "JWTAuthenticationHIGHsecuredPasswordVVVp1OH7XzyrForTest"
+                    }
+                );
+            Mock<IValidator<UserModel>> mockUserModelValidator = TestsHelper.GetServiceMock<
+                IValidator<UserModel>
+            >();
+            AuthenticateController controller =
+                TestsHelper.CreateController<AuthenticateController>(
+                    new UserManagerMock(
+                        false,
+                        new UserModel { Username = "toto@toto.fr", Password = "V@lidPassw0rd" }
+                    ),
+                    mockJWTOptions.Object,
+                    mockUserModelValidator.Object
+                );
+
+            // Act
+            await controller.LoginAsync(
+                new UserModel { Username = "toto@toto.fr", Password = "V@lidPassw0rd" }
+            );
+            IActionResult result = await controller.LogoutAsync();
+
+            // Assert
+            result.Should().BeActionResult<OkResult>();
+            controller.ControllerContext.HttpContext.Session
+                .TryGetValue("mercadonaToken", out _)
+                .Should()
+                .BeFalse();
         }
     }
 }

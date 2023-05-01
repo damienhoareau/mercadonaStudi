@@ -3,6 +3,7 @@ using FluentValidation.Results;
 using Mercadona.Backend.Models;
 using Mercadona.Backend.Options;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -24,6 +25,8 @@ namespace Mercadona.Backend.Controllers
 
         public const string USER_CREATION_FAILED =
             "La création de l'utilisateur a échoué! Veuillez réessayer.";
+
+        public const string TOKEN_NOT_FOUND = "Le token n'a pas été trouvé dans la session.";
 
         private readonly UserManager<IdentityUser> _userManager;
         private readonly JWTOptions _jwtOptions;
@@ -70,14 +73,16 @@ namespace Mercadona.Backend.Controllers
                     };
 
                 JwtSecurityToken token = GetToken(authClaims);
-
-                return Ok(
-                    new LoginResult
+                LoginResult loginResult =
+                    new()
                     {
                         Token = new JwtSecurityTokenHandler().WriteToken(token),
                         Expiration = token.ValidTo
-                    }
-                );
+                    };
+
+                HttpContext.Session.SetString("mercadonaToken", loginResult.Token);
+
+                return Ok(loginResult);
             }
             return Unauthorized();
         }
@@ -135,17 +140,36 @@ namespace Mercadona.Backend.Controllers
         /// </summary>
         /// <returns></returns>
         /// <response code="200">Si la déconnexion a réussi.</response>
-        /// <response code="401">Si l'identifiant ou le mot de passe n'est pas correct.</response>
+        /// <response code="500">Si la déconnexion de l'utilisateur a échoué.</response>
         [Authorize]
         [HttpPost]
         [Route("account/logout")]
-        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> LogoutAsync()
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public Task<IActionResult> LogoutAsync()
         {
-            // TODO : Il faut stocker les tokens dans un dictionnaire (userId, token)
-            // Gérer les autorisations lorsque le token a été supprimé
-            throw new NotImplementedException();
+            return Task.Run<IActionResult>(() =>
+            {
+                try
+                {
+                    // TODO : Il faut stocker les tokens dans un dictionnaire (userId, token)
+                    // Gérer les autorisations lorsque le token a été supprimé, il faut aussi le supprimé de la session si le temps est expiré
+                    if (!HttpContext.Session.TryGetValue("mercadonaToken", out _))
+                        return Problem(
+                            TOKEN_NOT_FOUND,
+                            statusCode: StatusCodes.Status500InternalServerError
+                        );
+                    HttpContext.Session.Remove("mercadonaToken");
+                    return Ok();
+                }
+                catch (Exception ex)
+                {
+                    return Problem(
+                        ex.Message,
+                        statusCode: StatusCodes.Status500InternalServerError
+                    );
+                }
+            });
         }
 
         /// <summary>
