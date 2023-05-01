@@ -19,6 +19,12 @@ namespace Mercadona.Backend.Controllers
     [ApiController]
     public class AuthenticateController : ControllerBase
     {
+        public static string USER_ALREADY_EXISTS(string username) =>
+            $"L'utilisateur {username} existe déjà!";
+
+        public const string USER_CREATION_FAILED =
+            "La création de l'utilisateur a échoué! Veuillez réessayer.";
+
         private readonly UserManager<IdentityUser> _userManager;
         private readonly JWTOptions _jwtOptions;
         private readonly IValidator<UserModel> _userModelValidator;
@@ -49,7 +55,7 @@ namespace Mercadona.Backend.Controllers
         /// <response code="401">Si l'identifiant ou le mot de passe n'est pas correct.</response>
         [HttpPost]
         [Route("account/login")]
-        [ProducesResponseType(typeof(object), StatusCodes.Status200OK)] // TODO : A changer le type de retour
+        [ProducesResponseType(typeof(LoginResult), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> LoginAsync([FromBody] UserModel model)
         {
@@ -66,10 +72,10 @@ namespace Mercadona.Backend.Controllers
                 JwtSecurityToken token = GetToken(authClaims);
 
                 return Ok(
-                    new
+                    new LoginResult
                     {
-                        token = new JwtSecurityTokenHandler().WriteToken(token),
-                        expiration = token.ValidTo
+                        Token = new JwtSecurityTokenHandler().WriteToken(token),
+                        Expiration = token.ValidTo
                     }
                 );
             }
@@ -103,7 +109,7 @@ namespace Mercadona.Backend.Controllers
             IdentityUser? userExists = await _userManager.FindByNameAsync(model.Username);
             if (userExists != null)
                 return Problem(
-                    $"L'utilisateur {model.Username} existe déjà!",
+                    USER_ALREADY_EXISTS(model.Username),
                     statusCode: StatusCodes.Status500InternalServerError
                 );
 
@@ -117,7 +123,7 @@ namespace Mercadona.Backend.Controllers
             IdentityResult result = await _userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
                 return Problem(
-                    $"La création de l'utilisateur a échoué! Veuillez réessayer.",
+                    USER_CREATION_FAILED,
                     statusCode: StatusCodes.Status500InternalServerError
                 );
 

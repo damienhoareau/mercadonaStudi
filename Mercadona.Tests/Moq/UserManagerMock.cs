@@ -1,40 +1,85 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Mercadona.Backend.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 
 namespace Mercadona.Tests.Moq
 {
-    public static class UserManagerMock
+    public class UserManagerMock : UserManager<IdentityUser>
     {
-        public static UserManager<TUser> GetUserManager<TUser>(IUserStore<TUser>? store = null)
-            where TUser : class
+        private static IOptions<IdentityOptions> PrivateIdentityOptions
         {
-            store ??= new Mock<IUserStore<TUser>>().Object;
-            Mock<IOptions<IdentityOptions>> options = new();
-            IdentityOptions idOptions = new();
-            idOptions.Lockout.AllowedForNewUsers = false;
-            options.Setup(o => o.Value).Returns(idOptions);
-            List<IUserValidator<TUser>> userValidators = new();
-            Mock<IUserValidator<TUser>> validator = new();
-            userValidators.Add(validator.Object);
-            List<PasswordValidator<TUser>> pwdValidators = new() { new PasswordValidator<TUser>() };
-            UserManager<TUser> userManager = new UserManager<TUser>(
-                store,
-                options.Object,
-                new PasswordHasher<TUser>(),
-                userValidators,
-                pwdValidators,
+            get
+            {
+                Mock<IOptions<IdentityOptions>> options = new();
+                IdentityOptions idOptions = new();
+                idOptions.Lockout.AllowedForNewUsers = false;
+                options.Setup(o => o.Value).Returns(idOptions);
+                return options.Object;
+            }
+        }
+        private static readonly Mock<IUserValidator<IdentityUser>> PrivateUserValidatorMock = new();
+        private static List<IUserValidator<IdentityUser>> PrivateUserValidators
+        {
+            get
+            {
+                List<IUserValidator<IdentityUser>> userValidators =
+                    new() { PrivateUserValidatorMock.Object };
+                return userValidators;
+            }
+        }
+
+        public UserManagerMock(
+            bool creatingUserShouldFail = false,
+            params UserModel[] existingUsers
+        )
+            : base(
+                new UserStoreMock(creatingUserShouldFail),
+                PrivateIdentityOptions,
+                new PasswordHasher<IdentityUser>(),
+                PrivateUserValidators,
+                new List<PasswordValidator<IdentityUser>>()
+                {
+                    new PasswordValidator<IdentityUser>()
+                },
                 new UpperInvariantLookupNormalizer(),
                 new IdentityErrorDescriber(),
                 null,
-                new Mock<ILogger<UserManager<TUser>>>().Object
-            );
-            validator
-                .Setup(v => v.ValidateAsync(userManager, It.IsAny<TUser>()))
+                new Mock<ILogger<UserManager<IdentityUser>>>().Object
+            )
+        {
+            PrivateUserValidatorMock
+                .Setup(v => v.ValidateAsync(this, It.IsAny<IdentityUser>()))
                 .Returns(Task.FromResult(IdentityResult.Success))
                 .Verifiable();
-            return userManager;
+
+            // Add existing users
+            foreach (UserModel userModel in existingUsers)
+            {
+                IdentityUser user =
+                    new()
+                    {
+                        Email = userModel.Username,
+                        SecurityStamp = Guid.NewGuid().ToString(),
+                        UserName = userModel.Username
+                    };
+                user.PasswordHash = PasswordHasher.HashPassword(user, userModel.Password);
+                Store.CreateAsync(user, CancellationToken.None).GetAwaiter().GetResult();
+            }
+        }
+
+        public override Task<bool> CheckPasswordAsync(IdentityUser user, string password)
+        {
+            PasswordVerificationResult result = PasswordHasher.VerifyHashedPassword(
+                user,
+                user.PasswordHash,
+                password
+            );
+            return Task.FromResult(
+                result == PasswordVerificationResult.Success
+                    || result == PasswordVerificationResult.SuccessRehashNeeded
+            );
         }
     }
 }
