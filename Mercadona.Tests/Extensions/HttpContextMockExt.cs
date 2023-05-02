@@ -7,12 +7,9 @@ namespace Mercadona.Tests.Extensions
 {
     public static class HttpContextMockExt
     {
-        public static HttpContextMock SetupSessionMoq(
-            this HttpContextMock httpContextMock,
-            bool sessionShouldFail = false
-        )
+        public static HttpContextMock SetupSessionMoq(this HttpContextMock httpContextMock)
         {
-            ISession session = httpContextMock.Session = new SessionMoq(sessionShouldFail);
+            ISession session = httpContextMock.Session = new SessionMoq();
             httpContextMock.FeaturesMock.Mock
                 .Setup((IFeatureCollection x) => x.Get<ISessionFeature>())
                 .Returns(new SessionFeatureFake { Session = session });

@@ -7,13 +7,11 @@ namespace Mercadona.Tests.Moq
     public class SessionMoq : ISession
     {
         private readonly string _id;
-        private readonly bool _sessionShouldFail;
         private readonly ConcurrentDictionary<string, byte[]> _sessionData = new();
 
-        public SessionMoq(bool sessionShouldFail = false)
+        public SessionMoq()
         {
             _id = Guid.NewGuid().ToString();
-            _sessionShouldFail = sessionShouldFail;
         }
 
         public bool IsAvailable => true;
@@ -39,8 +37,6 @@ namespace Mercadona.Tests.Moq
 
         public void Remove(string key)
         {
-            if (_sessionShouldFail)
-                throw new Exception("Test");
             _sessionData.Remove(key, out _);
         }
 

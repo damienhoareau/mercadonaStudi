@@ -2,6 +2,7 @@ using FluentValidation;
 using Mercadona.Backend.Areas.Identity;
 using Mercadona.Backend.Data;
 using Mercadona.Backend.Options;
+using Mercadona.Backend.Security;
 using Mercadona.Backend.Services;
 using Mercadona.Backend.Services.Interfaces;
 using Mercadona.Backend.Swagger;
@@ -58,11 +59,7 @@ builder.Services
             )
         };
     });
-builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromSeconds(10);
-    options.Cookie.HttpOnly = true;
-});
+builder.Services.AddJwtInSession();
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
@@ -76,6 +73,7 @@ builder.Services.AddScoped<
 builder.Services.AddValidatorsFromAssemblyContaining<ProductValidator>();
 
 // Services
+builder.Services.AddSingleton<ITokenService, TokenService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IOfferService, OfferService>();
 builder.Services.AddScoped<IDiscountedProductService, DiscountedProductService>();
@@ -155,7 +153,7 @@ app.UseRouting();
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.UseSession();
+app.UseJwtInSession();
 app.UseAuthentication();
 app.UseAuthorization();
 

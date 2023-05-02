@@ -3,14 +3,15 @@ using FluentValidation;
 using FluentValidation.Results;
 using Mercadona.Backend.Controllers;
 using Mercadona.Backend.Models;
-using Mercadona.Backend.Options;
+using Mercadona.Backend.Services;
+using Mercadona.Backend.Services.Interfaces;
 using Mercadona.Tests.Extensions;
 using Mercadona.Tests.Moq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using Moq;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 
 namespace Mercadona.Tests.Controllers
@@ -23,16 +24,14 @@ namespace Mercadona.Tests.Controllers
         public async Task LoginAsync_UserDoesNotExist_ShouldReturnUnauthorized()
         {
             // Arrange
-            Mock<IOptions<JWTOptions>> mockJWTOptions = TestsHelper.GetServiceMock<
-                IOptions<JWTOptions>
-            >();
+            Mock<ITokenService> mockTokenService = TestsHelper.GetServiceMock<ITokenService>();
             Mock<IValidator<UserModel>> mockUserModelValidator = TestsHelper.GetServiceMock<
                 IValidator<UserModel>
             >();
             AuthenticateController controller =
                 TestsHelper.CreateController<AuthenticateController>(
                     new UserManagerMock(),
-                    mockJWTOptions.Object,
+                    mockTokenService.Object,
                     mockUserModelValidator.Object
                 );
 
@@ -49,9 +48,7 @@ namespace Mercadona.Tests.Controllers
         public async Task LoginAsync_WrongPassword_ShouldReturnUnauthorized()
         {
             // Arrange
-            Mock<IOptions<JWTOptions>> mockJWTOptions = TestsHelper.GetServiceMock<
-                IOptions<JWTOptions>
-            >();
+            Mock<ITokenService> mockTokenService = TestsHelper.GetServiceMock<ITokenService>();
             Mock<IValidator<UserModel>> mockUserModelValidator = TestsHelper.GetServiceMock<
                 IValidator<UserModel>
             >();
@@ -61,7 +58,7 @@ namespace Mercadona.Tests.Controllers
                         false,
                         new UserModel { Username = "toto@toto.fr", Password = "V@lidPassw0rd" }
                     ),
-                    mockJWTOptions.Object,
+                    mockTokenService.Object,
                     mockUserModelValidator.Object
                 );
 
@@ -75,22 +72,16 @@ namespace Mercadona.Tests.Controllers
         }
 
         [Fact]
-        public async Task LoginAsync_ValidPassword_ShouldReturnCorrectLoginResult()
+        public async Task LoginAsync_ValidPassword_ShouldReturnCorrectAccessToken()
         {
             // Arrange
-            Mock<IOptions<JWTOptions>> mockJWTOptions = TestsHelper.GetServiceMock<
-                IOptions<JWTOptions>
-            >();
-            mockJWTOptions
-                .SetupGet(_ => _.Value)
-                .Returns(
-                    new JWTOptions
-                    {
-                        ValidAudience = "https://localhost:44387",
-                        ValidIssuer = "https://localhost:44387",
-                        Secret = "JWTAuthenticationHIGHsecuredPasswordVVVp1OH7XzyrForTest"
-                    }
-                );
+            Mock<ITokenService> mockTokenService = TestsHelper.GetServiceMock<ITokenService>();
+            mockTokenService.Setup(_ => _.GenerateRefreshToken()).Returns("RefreshToken");
+            mockTokenService
+                .Setup(
+                    _ => _.GenerateAccessToken(It.IsAny<string>(), It.IsAny<IEnumerable<Claim>>())
+                )
+                .Returns("RefreshToken");
             Mock<IValidator<UserModel>> mockUserModelValidator = TestsHelper.GetServiceMock<
                 IValidator<UserModel>
             >();
@@ -100,7 +91,7 @@ namespace Mercadona.Tests.Controllers
                         false,
                         new UserModel { Username = "toto@toto.fr", Password = "V@lidPassw0rd" }
                     ),
-                    mockJWTOptions.Object,
+                    mockTokenService.Object,
                     mockUserModelValidator.Object
                 );
 
@@ -110,45 +101,19 @@ namespace Mercadona.Tests.Controllers
             );
 
             // Assert
-            string? generatedToken = null;
             result
                 .Should()
                 .BeActionResult<OkObjectResult>(response =>
                 {
-                    response.Value.Should().BeOfType<LoginResult>();
-                    LoginResult loginResult = (LoginResult)response.Value!;
-                    generatedToken = loginResult.Token;
-                    JwtSecurityTokenHandler tokenHandler = new();
-                    tokenHandler.ValidateToken(
-                        loginResult.Token,
-                        new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
-                        {
-                            ValidateIssuer = true,
-                            ValidateAudience = true,
-                            ValidAudience = mockJWTOptions.Object.Value.ValidAudience,
-                            ValidIssuer = mockJWTOptions.Object.Value.ValidIssuer,
-                            IssuerSigningKey =
-                                new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(
-                                    Encoding.UTF8.GetBytes(mockJWTOptions.Object.Value.Secret)
-                                )
-                        },
-                        out Microsoft.IdentityModel.Tokens.SecurityToken token
-                    );
-                    loginResult.Expiration.Should().Be(token.ValidTo);
+                    response.Value.Should().BeOfType<string>();
                 });
-            string? sessionToken = controller.ControllerContext.HttpContext.Session.GetString(
-                "mercadonaToken"
-            );
-            sessionToken.Should().Be(generatedToken);
         }
 
         [Fact]
         public async Task RegisterAsync_ValidationException_ShouldReturnProblem_BadRequest()
         {
             // Arrange
-            Mock<IOptions<JWTOptions>> mockJWTOptions = TestsHelper.GetServiceMock<
-                IOptions<JWTOptions>
-            >();
+            Mock<ITokenService> mockTokenService = TestsHelper.GetServiceMock<ITokenService>();
             Mock<IValidator<UserModel>> mockUserModelValidator = TestsHelper.GetServiceMock<
                 IValidator<UserModel>
             >(
@@ -169,7 +134,7 @@ namespace Mercadona.Tests.Controllers
             AuthenticateController controller =
                 TestsHelper.CreateController<AuthenticateController>(
                     new UserManagerMock(),
-                    mockJWTOptions.Object,
+                    mockTokenService.Object,
                     mockUserModelValidator.Object
                 );
 
@@ -184,9 +149,7 @@ namespace Mercadona.Tests.Controllers
         public async Task RegisterAsync_UserAlreadyExists_ShouldReturnProblem_InternalServerError()
         {
             // Arrange
-            Mock<IOptions<JWTOptions>> mockJWTOptions = TestsHelper.GetServiceMock<
-                IOptions<JWTOptions>
-            >();
+            Mock<ITokenService> mockTokenService = TestsHelper.GetServiceMock<ITokenService>();
             Mock<IValidator<UserModel>> mockUserModelValidator = TestsHelper.GetServiceMock<
                 IValidator<UserModel>
             >(
@@ -206,7 +169,7 @@ namespace Mercadona.Tests.Controllers
                         false,
                         new UserModel() { Username = "toto@toto.fr", Password = "V@lidPassw0rd" }
                     ),
-                    mockJWTOptions.Object,
+                    mockTokenService.Object,
                     mockUserModelValidator.Object
                 );
 
@@ -228,9 +191,7 @@ namespace Mercadona.Tests.Controllers
         public async Task RegisterAsync_CreateFailed_ShouldReturnProblem_InternalServerError()
         {
             // Arrange
-            Mock<IOptions<JWTOptions>> mockJWTOptions = TestsHelper.GetServiceMock<
-                IOptions<JWTOptions>
-            >();
+            Mock<ITokenService> mockTokenService = TestsHelper.GetServiceMock<ITokenService>();
             Mock<IValidator<UserModel>> mockUserModelValidator = TestsHelper.GetServiceMock<
                 IValidator<UserModel>
             >(
@@ -247,7 +208,7 @@ namespace Mercadona.Tests.Controllers
             AuthenticateController controller =
                 TestsHelper.CreateController<AuthenticateController>(
                     new UserManagerMock(true),
-                    mockJWTOptions.Object,
+                    mockTokenService.Object,
                     mockUserModelValidator.Object
                 );
 
@@ -269,9 +230,7 @@ namespace Mercadona.Tests.Controllers
         public async Task RegisterAsync_ValidUser_ShouldReturnOK()
         {
             // Arrange
-            Mock<IOptions<JWTOptions>> mockJWTOptions = TestsHelper.GetServiceMock<
-                IOptions<JWTOptions>
-            >();
+            Mock<ITokenService> mockTokenService = TestsHelper.GetServiceMock<ITokenService>();
             Mock<IValidator<UserModel>> mockUserModelValidator = TestsHelper.GetServiceMock<
                 IValidator<UserModel>
             >(
@@ -288,7 +247,7 @@ namespace Mercadona.Tests.Controllers
             AuthenticateController controller =
                 TestsHelper.CreateController<AuthenticateController>(
                     new UserManagerMock(),
-                    mockJWTOptions.Object,
+                    mockTokenService.Object,
                     mockUserModelValidator.Object
                 );
 
@@ -305,19 +264,7 @@ namespace Mercadona.Tests.Controllers
         public async Task LogoutAsync_NotConnected_ShouldReturnProblem_InternalServerError()
         {
             // Arrange
-            Mock<IOptions<JWTOptions>> mockJWTOptions = TestsHelper.GetServiceMock<
-                IOptions<JWTOptions>
-            >();
-            mockJWTOptions
-                .SetupGet(_ => _.Value)
-                .Returns(
-                    new JWTOptions
-                    {
-                        ValidAudience = "https://localhost:44387",
-                        ValidIssuer = "https://localhost:44387",
-                        Secret = "JWTAuthenticationHIGHsecuredPasswordVVVp1OH7XzyrForTest"
-                    }
-                );
+            Mock<ITokenService> mockTokenService = TestsHelper.GetServiceMock<ITokenService>();
             Mock<IValidator<UserModel>> mockUserModelValidator = TestsHelper.GetServiceMock<
                 IValidator<UserModel>
             >();
@@ -327,7 +274,7 @@ namespace Mercadona.Tests.Controllers
                         false,
                         new UserModel { Username = "toto@toto.fr", Password = "V@lidPassw0rd" }
                     ),
-                    mockJWTOptions.Object,
+                    mockTokenService.Object,
                     mockUserModelValidator.Object
                 );
 
@@ -344,32 +291,29 @@ namespace Mercadona.Tests.Controllers
         }
 
         [Fact]
-        public async Task LogoutAsync_RemoveFailed_ShouldReturnProblem_InternalServerError()
+        public async Task LogoutAsync_Exception_ShouldReturnProblem_InternalServerError()
         {
             // Arrange
-            Mock<IOptions<JWTOptions>> mockJWTOptions = TestsHelper.GetServiceMock<
-                IOptions<JWTOptions>
-            >();
-            mockJWTOptions
-                .SetupGet(_ => _.Value)
-                .Returns(
-                    new JWTOptions
-                    {
-                        ValidAudience = "https://localhost:44387",
-                        ValidIssuer = "https://localhost:44387",
-                        Secret = "JWTAuthenticationHIGHsecuredPasswordVVVp1OH7XzyrForTest"
-                    }
-                );
+            Mock<ITokenService> mockTokenService = TestsHelper.GetServiceMock<ITokenService>();
+            mockTokenService.Setup(_ => _.GenerateRefreshToken()).Returns("RefreshToken");
+            mockTokenService
+                .Setup(
+                    _ => _.GenerateAccessToken(It.IsAny<string>(), It.IsAny<IEnumerable<Claim>>())
+                )
+                .Returns("RefreshToken");
+            mockTokenService
+                .Setup(_ => _.RevokeRefreshToken(It.IsAny<string>()))
+                .Throws(new Exception("Test"));
             Mock<IValidator<UserModel>> mockUserModelValidator = TestsHelper.GetServiceMock<
                 IValidator<UserModel>
             >();
             AuthenticateController controller =
-                TestsHelper.CreateControllerWithSessionFailure<AuthenticateController>(
+                TestsHelper.CreateController<AuthenticateController>(
                     new UserManagerMock(
                         false,
                         new UserModel { Username = "toto@toto.fr", Password = "V@lidPassw0rd" }
                     ),
-                    mockJWTOptions.Object,
+                    mockTokenService.Object,
                     mockUserModelValidator.Object
                 );
 
@@ -387,19 +331,13 @@ namespace Mercadona.Tests.Controllers
         public async Task LogoutAsync_Success_ShouldReturnOK()
         {
             // Arrange
-            Mock<IOptions<JWTOptions>> mockJWTOptions = TestsHelper.GetServiceMock<
-                IOptions<JWTOptions>
-            >();
-            mockJWTOptions
-                .SetupGet(_ => _.Value)
-                .Returns(
-                    new JWTOptions
-                    {
-                        ValidAudience = "https://localhost:44387",
-                        ValidIssuer = "https://localhost:44387",
-                        Secret = "JWTAuthenticationHIGHsecuredPasswordVVVp1OH7XzyrForTest"
-                    }
-                );
+            Mock<ITokenService> mockTokenService = TestsHelper.GetServiceMock<ITokenService>();
+            mockTokenService.Setup(_ => _.GenerateRefreshToken()).Returns("RefreshToken");
+            mockTokenService
+                .Setup(
+                    _ => _.GenerateAccessToken(It.IsAny<string>(), It.IsAny<IEnumerable<Claim>>())
+                )
+                .Returns("RefreshToken");
             Mock<IValidator<UserModel>> mockUserModelValidator = TestsHelper.GetServiceMock<
                 IValidator<UserModel>
             >();
@@ -409,7 +347,7 @@ namespace Mercadona.Tests.Controllers
                         false,
                         new UserModel { Username = "toto@toto.fr", Password = "V@lidPassw0rd" }
                     ),
-                    mockJWTOptions.Object,
+                    mockTokenService.Object,
                     mockUserModelValidator.Object
                 );
 
@@ -422,7 +360,7 @@ namespace Mercadona.Tests.Controllers
             // Assert
             result.Should().BeActionResult<OkResult>();
             controller.ControllerContext.HttpContext.Session
-                .TryGetValue("mercadonaToken", out _)
+                .TryGetValue(TokenService.REFRESH_TOKEN_NAME, out _)
                 .Should()
                 .BeFalse();
         }

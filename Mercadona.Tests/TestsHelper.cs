@@ -39,18 +39,5 @@ namespace Mercadona.Tests
             controller.ProblemDetailsFactory = ProblemDetailsFactory;
             return controller;
         }
-
-        public static TController CreateControllerWithSessionFailure<TController>(
-            params object?[]? constructorArgs
-        ) where TController : ControllerBase
-        {
-            TController controller = (TController)
-                Activator.CreateInstance(type: typeof(TController), args: constructorArgs)!;
-            HttpContextMock httpContextMock = new() { RequestAborted = CancellationToken.None };
-            httpContextMock.SetupSessionMoq(true);
-            controller.ControllerContext.HttpContext = httpContextMock;
-            controller.ProblemDetailsFactory = ProblemDetailsFactory;
-            return controller;
-        }
     }
 }
