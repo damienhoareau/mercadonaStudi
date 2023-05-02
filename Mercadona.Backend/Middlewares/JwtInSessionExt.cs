@@ -1,4 +1,8 @@
-﻿using Mercadona.Backend.Services.Interfaces;
+﻿using Mercadona.Backend.Services;
+using Mercadona.Backend.Services.Interfaces;
+using Microsoft.Extensions.Caching.Memory;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace Mercadona.Backend.Security
 {
@@ -33,7 +37,6 @@ namespace Mercadona.Backend.Security
         {
             services.Configure<SessionOptions>(options =>
             {
-                options.IdleTimeout = TimeSpan.FromSeconds(10);
                 options.Cookie.HttpOnly = true;
             });
             services.AddSession();
@@ -54,13 +57,46 @@ namespace Mercadona.Backend.Security
             app.Use(
                 async (context, next) =>
                 {
-                    // On récupère le token de la session
-                    // Si il est présent, on le met dans l'entête Authorization Bearer
                     // On récupère le token de l'entête Authorization Bearer
-                    // On vérifie qu'il n'a pas expiré
-                    // Si le token a expiré, on le supprime des validTokens et on renvoie Unauthorized
+                    string? authorization = context.Request.Headers.Authorization;
+                    if (authorization != null && authorization.StartsWith("Bearer "))
+                    {
+                        string accessToken = authorization.Substring("Bearer ".Length);
+                        // On récupère le refresh token
+                        string? refreshToken = context.Session.GetString(
+                            TokenService.REFRESH_TOKEN_NAME
+                        );
+                        if (refreshToken == null)
+                        {
+                            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                            return;
+                        }
+                        // On vérifie que le refresh token est bien autorisé
+                        IMemoryCache whiteList =
+                            context.RequestServices.GetRequiredService<IMemoryCache>();
+                        if (!whiteList.TryGetValue(refreshToken, out _))
+                        {
+                            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                            return;
+                        }
+                        // On vérifie que le refresh token correspond bien à l'access token
+                        ITokenService tokenService =
+                            context.RequestServices.GetRequiredService<ITokenService>();
+                        ClaimsPrincipal principal = tokenService.GetPrincipalFromExpiredToken(
+                            accessToken
+                        );
+                        if (
+                            principal.Claims
+                                .FirstOrDefault(_ => _.Type == JwtRegisteredClaimNames.Jti)
+                                ?.Value != refreshToken
+                        )
+                        {
+                            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                            return;
+                        }
+                    }
 
-                    await next.Invoke();
+                    await next(context);
                 }
             );
 

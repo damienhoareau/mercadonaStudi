@@ -1,6 +1,7 @@
 ﻿using Mercadona.Backend.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -15,7 +16,16 @@ namespace Mercadona.Backend.Services
     {
         public const string REFRESH_TOKEN_NAME = "mercadonaRefreshToken";
         public const string INVALID_TOKEN = "Invalid token";
-        public const int TOKEN_EXPIRE_MINUTES = 30;
+
+        /// <summary>
+        /// La durée de vie du jeton d'accès en minutes
+        /// </summary>
+        public const int ACCESS_TOKEN_DURATION = 30;
+
+        /// <summary>
+        /// La durée de vie du jeton de renouvellement en heures
+        /// </summary>
+        public const int REFRESH_TOKEN_DURATION = 8;
 
         private readonly IMemoryCache _whiteList;
         private readonly JwtBearerOptions _jwtOptions;
@@ -24,11 +34,14 @@ namespace Mercadona.Backend.Services
         /// Initialise une nouvelle instance de la classe <see cref="OfferService"/>.
         /// </summary>
         /// <param name="whiteList">Cache mémoire pour les jetons de renouvellement.</param>
-        /// <param name="jwtOptions">Options des jetons JWT.</param>
-        public TokenService(IMemoryCache whiteList, JwtBearerOptions jwtOptions)
+        /// <param name="jwtOptionsMonitor">Options des jetons JWT.</param>
+        public TokenService(
+            IMemoryCache whiteList,
+            IOptionsMonitor<JwtBearerOptions> jwtOptionsMonitor
+        )
         {
             _whiteList = whiteList;
-            _jwtOptions = jwtOptions;
+            _jwtOptions = jwtOptionsMonitor.Get(JwtBearerDefaults.AuthenticationScheme);
         }
 
         /// <inheritdoc/>
@@ -41,7 +54,7 @@ namespace Mercadona.Backend.Services
                 new(
                     issuer: _jwtOptions.TokenValidationParameters.ValidIssuer,
                     audience: _jwtOptions.TokenValidationParameters.ValidAudience,
-                    expires: DateTime.Now.AddMinutes(TOKEN_EXPIRE_MINUTES),
+                    expires: DateTime.Now.AddMinutes(ACCESS_TOKEN_DURATION),
                     claims: claims,
                     signingCredentials: new SigningCredentials(
                         authSigningKey,
@@ -50,10 +63,17 @@ namespace Mercadona.Backend.Services
                 );
 
             // Stocker les jetons dans la whiteList
+            // Le jeton de renouvellement est supprimé au bout de 30 minutes d'inactivité
+            // (ce qui correspond à la durée de vie du jeton d'accès).
+            // Dans tous les cas, une reconnexion est obligatoire au bout de 8 heures.
             _whiteList.Set(
                 refreshToken,
                 token,
-                new MemoryCacheEntryOptions { AbsoluteExpiration = token.ValidTo }
+                new MemoryCacheEntryOptions
+                {
+                    AbsoluteExpiration = DateTime.Now.AddHours(REFRESH_TOKEN_DURATION),
+                    SlidingExpiration = token.ValidTo.Subtract(token.ValidFrom)
+                }
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);

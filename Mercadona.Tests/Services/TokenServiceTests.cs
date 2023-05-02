@@ -1,11 +1,11 @@
 ﻿using FluentAssertions;
-using Mercadona.Backend.Options;
 using Mercadona.Backend.Services;
 using Mercadona.Backend.Services.Interfaces;
 using Mercadona.Tests.Fixtures;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -24,12 +24,19 @@ namespace Mercadona.Tests.Services
             _fixture.Reconfigure(services =>
             {
                 services.AddMemoryCache();
-                services.AddSingleton(
-                    new JwtBearerOptions()
+                services
+                    .AddAuthentication(options =>
                     {
-                        SaveToken = true,
-                        RequireHttpsMetadata = true,
-                        TokenValidationParameters = new TokenValidationParameters()
+                        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                    })
+                    // Adding Jwt Bearer
+                    .AddJwtBearer(options =>
+                    {
+                        options.SaveToken = true;
+                        options.RequireHttpsMetadata = true;
+                        options.TokenValidationParameters = new TokenValidationParameters()
                         {
                             ValidateIssuer = true,
                             ValidateAudience = true,
@@ -40,9 +47,8 @@ namespace Mercadona.Tests.Services
                                     "JWTAuthenticationHIGHsecuredPasswordVVVp1OH7XzyrForTest"
                                 )
                             )
-                        }
-                    }
-                );
+                        };
+                    });
                 services.AddSingleton<ITokenService, TokenService>();
 
                 return services;
@@ -69,7 +75,10 @@ namespace Mercadona.Tests.Services
             // Assert
             new JwtSecurityTokenHandler().ValidateToken(
                 result,
-                _fixture.GetRequiredService<JwtBearerOptions>().TokenValidationParameters,
+                _fixture
+                    .GetRequiredService<IOptionsMonitor<JwtBearerOptions>>()
+                    .Get(JwtBearerDefaults.AuthenticationScheme)
+                    .TokenValidationParameters,
                 out SecurityToken validatedToken
             );
             validatedToken.Should().BeOfType<JwtSecurityToken>();
@@ -105,7 +114,9 @@ namespace Mercadona.Tests.Services
                     new Claim(ClaimTypes.Name, "toto@toto.fr"),
                     new Claim(JwtRegisteredClaimNames.Jti, refreshToken),
                 };
-            JwtBearerOptions jwtBearerOptions = _fixture.GetRequiredService<JwtBearerOptions>();
+            JwtBearerOptions jwtBearerOptions = _fixture
+                .GetRequiredService<IOptionsMonitor<JwtBearerOptions>>()
+                .Get(JwtBearerDefaults.AuthenticationScheme);
             SymmetricSecurityKey authSigningKey = (SymmetricSecurityKey)
                 jwtBearerOptions.TokenValidationParameters.IssuerSigningKey;
             JwtSecurityToken token =
