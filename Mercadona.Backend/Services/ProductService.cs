@@ -1,23 +1,32 @@
 ﻿using FluentValidation;
 using Mercadona.Backend.Data;
 using Mercadona.Backend.Services.Interfaces;
-using Mercadona.Backend.Validation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Mercadona.Backend.Services
 {
+    /// <summary>
+    /// Service permettant d'inter-agir avec des <seealso cref="Product"/>
+    /// </summary>
+    /// <seealso cref="Mercadona.Backend.Services.Interfaces.IProductService" />
     public class ProductService : IProductService
     {
         private readonly ApplicationDbContext _dbContext;
-        private readonly ProductValidator _productValidator;
+        private readonly IValidator<Product> _productValidator;
 
-        public ProductService(ApplicationDbContext dbContext, ProductValidator productValidator)
+        /// <summary>
+        /// Initialise une nouvelle instance de la classe <see cref="ProductService"/>.
+        /// </summary>
+        /// <param name="dbContext">Le contexte de la base de donnée.</param>
+        /// <param name="productValidator">Le validateur de produit.</param>
+        public ProductService(ApplicationDbContext dbContext, IValidator<Product> productValidator)
         {
             _dbContext = dbContext;
             _productValidator = productValidator;
         }
 
+        /// <inheritdoc/>
         public async Task<IEnumerable<Product>> GetAllAsync(
             CancellationToken cancellationToken = default
         )
@@ -39,17 +48,7 @@ namespace Mercadona.Backend.Services
                 .ToListAsync(cancellationToken);
         }
 
-        public async Task<Product> AddProductAsync(Product product)
-        {
-            await _productValidator.ValidateAndThrowAsync(product);
-
-            EntityEntry<Product> result = await _dbContext.Products.AddAsync(product);
-
-            await _dbContext.SaveChangesAsync();
-
-            return result.Entity;
-        }
-
+        /// <inheritdoc/>
         public async Task<Stream?> GetImageAsync(
             Guid productId,
             CancellationToken cancellationToken = default
@@ -61,6 +60,18 @@ namespace Mercadona.Backend.Services
                 .SingleOrDefaultAsync(cancellationToken);
 
             return data == null ? null : new MemoryStream(data);
+        }
+
+        /// <inheritdoc/>
+        public async Task<Product> AddProductAsync(Product product)
+        {
+            await _productValidator.ValidateAndThrowAsync(product);
+
+            EntityEntry<Product> result = await _dbContext.Products.AddAsync(product);
+
+            await _dbContext.SaveChangesAsync();
+
+            return result.Entity;
         }
     }
 }

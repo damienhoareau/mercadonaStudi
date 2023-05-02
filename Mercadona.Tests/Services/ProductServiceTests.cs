@@ -8,6 +8,7 @@ using Mercadona.Tests.Fixtures;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.Extensions.DependencyInjection;
+using MimeDetective;
 using Shouldly;
 
 namespace Mercadona.Tests.Services
@@ -23,7 +24,13 @@ namespace Mercadona.Tests.Services
             _fixture = fixture;
             _fixture.Reconfigure(services =>
             {
-                services.AddSingleton<ProductValidator>();
+                services.AddSingleton<IValidator<Product>, ProductValidator>();
+                services.AddSingleton(
+                    new ContentInspectorBuilder()
+                    {
+                        Definitions = MimeDetective.Definitions.Default.FileTypes.Images.All()
+                    }.Build()
+                );
                 services.AddSingleton<IProductService, ProductService>();
 
                 return services;

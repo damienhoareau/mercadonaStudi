@@ -26,8 +26,11 @@ namespace Mercadona.Tests.Services
             _fixture = fixture;
             _fixture.Reconfigure(services =>
             {
-                services.AddSingleton<OfferValidator>();
-                services.AddSingleton<ProductAddOfferValidator>();
+                services.AddSingleton<IValidator<Offer>, OfferValidator>();
+                services.AddSingleton<
+                    IValidator<(Product product, Offer offer)>,
+                    ProductAddOfferValidator
+                >();
                 services.AddSingleton<IOfferService, OfferService>();
                 services.AddSingleton<IDiscountedProductService, DiscountedProductService>();
 

@@ -6,6 +6,9 @@ using System.Collections.Immutable;
 
 namespace Mercadona.Backend.Validation
 {
+    /// <summary>
+    /// Validateur de produit
+    /// </summary>
     public class ProductValidator : AbstractValidator<Product>
     {
         public const string LABEL_NOT_EMPTY = "Le libellé ne peut pas être vide.";
@@ -16,12 +19,13 @@ namespace Mercadona.Backend.Validation
 
         private readonly ContentInspector _inspector;
 
-        public ProductValidator()
+        /// <summary>
+        /// Initialises une nouvelle instance de la classe <see cref="ProductValidator"/>.
+        /// </summary>
+        /// <param name="inspector">Inspecteur de type MIME.</param>
+        public ProductValidator(ContentInspector inspector)
         {
-            _inspector = new ContentInspectorBuilder()
-            {
-                Definitions = MimeDetective.Definitions.Default.FileTypes.Images.All()
-            }.Build();
+            _inspector = inspector;
 
             RuleFor(_ => _.Label).NotEmpty().WithMessage(LABEL_NOT_EMPTY);
             RuleFor(_ => _.Description).NotEmpty().WithMessage(DESCRIPTION_NOT_EMPTY);
@@ -30,6 +34,14 @@ namespace Mercadona.Backend.Validation
             RuleFor(_ => _.Category).NotEmpty().WithMessage(CATEGORY_NOT_EMPTY);
         }
 
+        /// <summary>
+        /// Teste si le flux de donnée correspond à celui d'une image.
+        /// </summary>
+        /// <param name="streamData">Le flux de donnée.</param>
+        /// <returns>
+        /// <c>true</c> si le flux de donnée correspond à celui d'une image<br/>
+        /// <c>false</c> si le flux de donnée ne correspond pas à celui d'une image
+        /// </returns>
         private bool BeAImage(Stream streamData)
         {
             ImmutableArray<DefinitionMatch> result = _inspector.Inspect(streamData);

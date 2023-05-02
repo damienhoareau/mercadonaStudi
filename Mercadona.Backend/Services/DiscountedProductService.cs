@@ -8,17 +8,28 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Mercadona.Backend.Services
 {
+    /// <summary>
+    /// Service permettant d'inter-agir avec des <seealso cref="DiscountedProduct"/>
+    /// </summary>
+    /// <seealso cref="Mercadona.Backend.Services.Interfaces.IDiscountedProductService" />
     public class DiscountedProductService : IDiscountedProductService
     {
         private readonly ApplicationDbContext _dbContext;
-        private readonly OfferValidator _offerValidator;
-        private readonly ProductAddOfferValidator _productAddOfferValidator;
+        private readonly IValidator<Offer> _offerValidator;
+        private readonly IValidator<(Product product, Offer offer)> _productAddOfferValidator;
         private readonly IOfferService _offerService;
 
+        /// <summary>
+        /// Initialise une nouvelle instance de la classe <see cref="DiscountedProductService"/>.
+        /// </summary>
+        /// <param name="dbContext">Le contexte de la base de donnée.</param>
+        /// <param name="offerValidator">Le validateur de promotion.</param>
+        /// <param name="productAddOfferValidator">Le validateur d'application de promotion à un produit.</param>
+        /// <param name="offerService">Le service gérant les promotions.</param>
         public DiscountedProductService(
             ApplicationDbContext dbContext,
-            OfferValidator offerValidator,
-            ProductAddOfferValidator productAddOfferValidator,
+            IValidator<Offer> offerValidator,
+            IValidator<(Product product, Offer offer)> productAddOfferValidator,
             IOfferService offerService
         )
         {
@@ -28,6 +39,7 @@ namespace Mercadona.Backend.Services
             _offerService = offerService;
         }
 
+        /// <inheritdoc/>
         public async Task<IEnumerable<DiscountedProduct>> GetAllAsync(
             CancellationToken cancellationToken = default
         )
@@ -65,6 +77,7 @@ namespace Mercadona.Backend.Services
                 .ToList();
         }
 
+        /// <inheritdoc/>
         public async Task<IEnumerable<DiscountedProduct>> GetAllDiscountedAsync(
             CancellationToken cancellationToken = default
         )
@@ -103,6 +116,7 @@ namespace Mercadona.Backend.Services
                 .ToList();
         }
 
+        /// <inheritdoc/>
         public async Task<DiscountedProduct> ApplyOfferAsync(
             Guid productId,
             Offer offer,
