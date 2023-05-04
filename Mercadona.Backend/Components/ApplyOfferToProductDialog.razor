@@ -7,19 +7,19 @@
     <DialogContent>
         <MudForm Model="@model" @ref="@applyOfferToProductForm" Validation="@(ValidatorExt.ValidateValue(_offerValidator))">
             <MudText>@Product.Label</MudText>
-            <MudSelect T="Offer" Label="Promotions existantes" @bind-Value="SelectedOffer" AdornmentIcon="@Icons.Material.Filled.LocalOffer">
+            <MudSelect T="Offer" Label="Promotions existantes" @bind-Value="SelectedOffer" AdornmentIcon="@Icons.Material.Filled.LocalOffer" AdornmentColor="Color.Primary">
                 @foreach (Offer existingOffer in existingOffers)
                 {
                     <MudSelectItem T="Offer" Value="@existingOffer">@existingOffer.StartDate - @existingOffer.EndDate : @existingOffer.Percentage</MudSelectItem>
                 }
             </MudSelect>
-            <MudDateRangePicker Label="Période de la promotion" @bind-DateRange="OfferDateRange" IsDateDisabledFunc="IsDateDisabled" />
+            <MudDateRangePicker Label="Période de la promotion" @bind-DateRange="OfferDateRange" IsDateDisabledFunc="IsDateDisabled" AdornmentColor="Color.Primary" />
             <MudNumericField @bind-Value="model.Percentage" For="@(() => model.Percentage)" Min=@Offer.PercentageMin Max=@Offer.PercentageMax Immediate="true" Label="Pourcentage" />
         </MudForm>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel">Annuler</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+        <MudButton Variant="Variant.Outlined" OnClick="Cancel">Annuler</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit">Ok</MudButton>
     </DialogActions>
 </MudDialog>
 

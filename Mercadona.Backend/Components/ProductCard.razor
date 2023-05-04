@@ -1,0 +1,49 @@
+﻿@inject IDialogService DialogService
+@using Mercadona.Backend.Data;
+@using Mercadona.Backend.Models;
+
+<MudCard Style="height: 100%;display: flex; flex-direction: column">
+    <MudCardMedia Image=@(GetImageURL(DiscountedProduct.Id)) Style="background-size:contain" />
+    <MudCardHeader>
+        <CardHeaderContent>
+            <MudText>@DiscountedProduct.Label</MudText>
+        </CardHeaderContent>
+    </MudCardHeader>
+    <MudCardContent>
+        <MudText>@DiscountedProduct.Description</MudText>
+        <MudText>@DiscountedProduct.Category</MudText>
+        <MudText>@DiscountedProduct.Price</MudText>
+        <MudText>@DiscountedProduct.Offer?.Percentage</MudText>
+        <MudText>@DiscountedProduct.DiscountedPrice</MudText>
+    </MudCardContent>
+    @if (CanEdit)
+    {
+        <MudCardActions Style="flex: 1; align-items: flex-end">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="@((e) => OpenAddOfferDialog(DiscountedProduct))">Ajouter promotion</MudButton>
+        </MudCardActions>
+    }
+</MudCard>
+
+@code {
+    [Parameter] public bool CanEdit { get; set; } = false;
+    [Parameter] public DiscountedProduct DiscountedProduct { get; set; }
+
+    // TODO : Remove
+    [Parameter] public List<Product> products { get; set; }
+
+    string? GetImageURL(Guid productId)
+    {
+        if (products.FirstOrDefault(_ => _.Id == productId)?.ImageStream is FileStream fileStream)
+            return $"assets/{Path.GetFileName(fileStream.Name)}";
+        else
+            return null;
+    }
+
+    void OpenAddOfferDialog(DiscountedProduct discountedProduct)
+    {
+        DialogOptions options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = true };
+        DialogParameters parameters = new DialogParameters();
+        parameters.Add("Product", products.Single(_ => _.Id == discountedProduct.Id));
+        DialogService.Show<ApplyOfferToProductDialog>("Appliquer une promotion à un produit", parameters, options);
+    }
+}

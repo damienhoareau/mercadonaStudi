@@ -18,15 +18,15 @@
                         {
                             <MudChip Color="Color.Dark" Text="@file"/>
                         }
-                        <MudButton>Parcourir</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary">Parcourir</MudButton>
                     </MudPaper>
                 </ButtonTemplate>
             </MudFileUpload>
         </MudForm>
     </DialogContent>
     <DialogActions>
-        <MudButton OnClick="Cancel">Annuler</MudButton>
-        <MudButton Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+        <MudButton Variant="Variant.Outlined" OnClick="Cancel">Annuler</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit">Ok</MudButton>
     </DialogActions>
 </MudDialog>
 

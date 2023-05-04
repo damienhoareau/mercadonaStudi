@@ -1,32 +1,24 @@
-﻿@inherits LayoutComponentBase
+﻿@using Mercadona.Backend.Components
+@using MudBlazor.Utilities;
+@inherits LayoutComponentBase
 
 <PageTitle>Mercadona.Backend</PageTitle>
 
-<MudThemeProvider />
+<MudThemeProvider Theme="CustomTheme" />
 <MudDialogProvider />
 <MudSnackbarProvider />
 
 <MudLayout>
-    <MudAppBar>
+    <MudThemeManagerButton OnClick="@((e) => OpenThemeManager(true))" />
+    <MudThemeManager Open="_themeManagerOpen" OpenChanged="OpenThemeManager" Theme="_themeManager" ThemeChanged="UpdateTheme" />
+    <MudAppBar Elevation="1">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())"/>
-        <MudText>Mercadona</MudText>
-        <MudSpacer/>
+        <div class="logoContainer"><div class="o-logo"></div></div>
         <MudButton Color="Color.Inherit">Se connecter</MudButton>
-        <MudMenu AnchorOrigin="Origin.BottomRight" Dense="true">
-            <ActivatorContent>
-                <MudAvatar>A</MudAvatar>
-            </ActivatorContent>
-            <ChildContent>
-                <MudText>toto@toto.fr</MudText>
-                <MudMenuItem>Se déconnecter</MudMenuItem>
-            </ChildContent>
-        </MudMenu>
+        <UserInfo/>
     </MudAppBar>
     <MudDrawer @bind-Open="@_drawerOpen">
-        <MudNavMenu>
-            <MudNavLink Href="/" Match="NavLinkMatch.All">Catalogue</MudNavLink>
-            <MudNavLink Href="/products" Match="NavLinkMatch.Prefix">Produits</MudNavLink>
-        </MudNavMenu>
+        <NavMenu/>
     </MudDrawer>
     <MudMainContent>
         @Body
@@ -34,10 +26,58 @@
 </MudLayout>
 
 @code{
-    bool _drawerOpen = true;
+    #region Drawer
+
+    private bool _drawerOpen = false;
 
     void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
     }
+
+    #endregion
+
+    #region ThemeManager
+
+    private MudTheme CustomTheme
+    {
+        get
+        {
+            MudTheme theme = _themeManager.Theme;
+            MudColor cucumber = new MudColor("#00ab61ff");
+            MudColor white = new MudColor("#fff");
+            theme.Palette.Primary = cucumber;
+            theme.Palette.AppbarBackground = white;
+            theme.Palette.AppbarText = cucumber;
+            theme.Palette.DrawerBackground = cucumber;
+            theme.Palette.DrawerText = white;
+            if (!theme.Typography.Default.FontFamily.Contains("Muli"))
+            {
+                string[] selectedFontFamily = new[] { "Muli" };
+                theme.Typography.Default.FontFamily = selectedFontFamily.Concat(theme.Typography.Default.FontFamily).ToArray();
+            }
+            return theme;
+        }
+    }
+
+    private ThemeManagerTheme _themeManager = new ThemeManagerTheme();
+    public bool _themeManagerOpen = false;
+
+    void OpenThemeManager(bool value)
+    {
+        _themeManagerOpen = value;
+    }
+
+    void UpdateTheme(ThemeManagerTheme value)
+    {
+        _themeManager = value;
+        StateHasChanged();
+    }
+
+    protected override void OnInitialized()
+    {
+        StateHasChanged();
+    }
+
+    #endregion
 }
