@@ -1,11 +1,12 @@
-﻿@page "/"
+﻿@page "/products"
+@inject IDialogService DialogService
 @using Mercadona.Backend.Data;
 @using Mercadona.Backend.Models;
 
-<PageTitle>Catalogue</PageTitle>
+<PageTitle>Produits</PageTitle>
 
 <MudSelect T="string" Style="margin:0px 12px" Label="Catégories" AnchorOrigin="Origin.BottomCenter" MultiSelection="true" @bind-SelectedValues="SelectedCategories" SelectAll="true" SelectAllText="Toutes les catégories" AdornmentIcon="@Icons.Material.Filled.Search">
-    @foreach(string category in categories)
+    @foreach (string category in categories)
     {
         <MudSelectItem T="string" Value="@category">@category</MudSelectItem>
     }
@@ -28,10 +29,14 @@
                     <MudText>@discountedProduct.Offer?.Percentage</MudText>
                     <MudText>@discountedProduct.DiscountedPrice</MudText>
                 </MudCardContent>
+                <MudCardActions>
+                    <MudButton OnClick="@((e) => OpenAddOfferDialog(discountedProduct))">Ajouter promotion</MudButton>
+                </MudCardActions>
             </MudCard>
         </MudItem>
     }
 </MudGrid>
+<MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" Style="position: fixed;bottom: 10px; right: 10px" Title="Ajouter un produit" OnClick="OpenAddProductDialog" />
 
 @code {
     List<Product> products = new List<Product>();
@@ -68,5 +73,21 @@
             return $"assets/{Path.GetFileName(fileStream.Name)}";
         else
             return null;
+    }
+
+    void OpenAddProductDialog()
+    {
+        DialogOptions options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = true };
+        DialogParameters parameters = new DialogParameters();
+        parameters.Add("DiscountedProducts", discountedProducts);
+        DialogService.Show<AddProductDialog>("Ajouter un produit", parameters, options);
+    }
+
+    void OpenAddOfferDialog(DiscountedProduct discountedProduct)
+    {
+        DialogOptions options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = true };
+        DialogParameters parameters = new DialogParameters();
+        parameters.Add("Product", products.Single(_ => _.Id == discountedProduct.Id));
+        DialogService.Show<ApplyOfferToProductDialog>("Appliquer une promotion à un produit", parameters, options);
     }
 }

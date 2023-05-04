@@ -2,19 +2,42 @@
 
 <PageTitle>Mercadona.Backend</PageTitle>
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+<MudThemeProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
 
-    <main>
-        <div class="top-row px-4 auth">
-            <LoginDisplay />
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        </div>
+<MudLayout>
+    <MudAppBar>
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())"/>
+        <MudText>Mercadona</MudText>
+        <MudSpacer/>
+        <MudButton Color="Color.Inherit">Se connecter</MudButton>
+        <MudMenu AnchorOrigin="Origin.BottomRight" Dense="true">
+            <ActivatorContent>
+                <MudAvatar>A</MudAvatar>
+            </ActivatorContent>
+            <ChildContent>
+                <MudText>toto@toto.fr</MudText>
+                <MudMenuItem>Se déconnecter</MudMenuItem>
+            </ChildContent>
+        </MudMenu>
+    </MudAppBar>
+    <MudDrawer @bind-Open="@_drawerOpen">
+        <MudNavMenu>
+            <MudNavLink Href="/" Match="NavLinkMatch.All">Catalogue</MudNavLink>
+            <MudNavLink Href="/products" Match="NavLinkMatch.Prefix">Produits</MudNavLink>
+        </MudNavMenu>
+    </MudDrawer>
+    <MudMainContent>
+        @Body
+    </MudMainContent>
+</MudLayout>
 
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>
+@code{
+    bool _drawerOpen = true;
+
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+}
