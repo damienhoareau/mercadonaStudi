@@ -1,6 +1,8 @@
 .logoContainer {
-    display: flex;
+    display: grid;
     flex-grow: 1;
+    justify-content: flex-start;
+    padding: unset;
 }
 
 .o-logo {
@@ -10,12 +12,37 @@
     background-repeat: no-repeat;
 }
 
-@media (max-width: 960px) {
+.o-drawer-logo {
+    background-image: url(/assets/mercadona-logo-white.svg);
+    width: 230px;
+    height: 40px;
+    background-repeat: no-repeat;
+}
+
+/*@media (max-width: 960px) {
     .logoContainer {
         justify-content: center;
     }
-    .o-logo {
+    .logoContainer .o-logo {
         transform: translateX(72px);
+    }
+}*/
+
+@media (min-width: 960px) {
+    .productCardMedia {
+        height: calc(100vh / 4) !important;
+    }
+}
+
+@media (min-width: 600px) {
+    .productCardMedia {
+        height: calc(100vh / 3) !important;
+    }
+}
+
+@media (max-width: 600px) {
+    .productCardMedia {
+        height: calc(100vh / 2) !important;
     }
 }
 
@@ -29,4 +56,52 @@
 
 .mud-input-control > .mud-input-control-input-container > .mud-input-label-inputcontrol {
     font-weight: bold !important;
+}
+
+.productCard {
+    display: grid;
+    height: 100%;
+    grid-template-rows: repeat(2, auto) 1fr auto;
+}
+
+.productCardMedia {
+    background-size: contain;
+}
+
+.productPrice {
+    font-size: 1.5rem;
+    text-align: center;
+    font-weight: lighter;
+}
+
+.productPrice.discount {
+    color: red;
+    font-weight: bold;
+}
+
+.productCard .mud-card-content {
+    display: grid;
+}
+
+.productCard .mud-card-content .mud-chip {
+    justify-self: flex-start;
+}
+
+.productCard .mud-card-content .productPrice {
+    align-self: flex-end;
+}
+
+.mud-dialog .mud-dialog-title {
+    background: var(--mud-palette-primary);
+    color: var(--mud-palette-primary-text);
+}
+
+.mud-picker-calendar .mud-day.mud-range.mud-range-between {
+    background-color: var(--mud-palette-primary);
+    color: var(--mud-palette-primary-text);
+}
+
+.customDialog {
+    min-width: 60vh;
+    max-width: 90vh;
 }

@@ -9,16 +9,19 @@
 <MudSnackbarProvider />
 
 <MudLayout>
-    <MudThemeManagerButton OnClick="@((e) => OpenThemeManager(true))" />
-    <MudThemeManager Open="_themeManagerOpen" OpenChanged="OpenThemeManager" Theme="_themeManager" ThemeChanged="UpdateTheme" />
     <MudAppBar Elevation="1">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())"/>
-        <div class="logoContainer"><div class="o-logo"></div></div>
+        <MudContainer Class="logoContainer"><MudContainer Class="o-logo ml-2"></MudContainer></MudContainer>
         <MudButton Color="Color.Inherit">Se connecter</MudButton>
         <UserInfo/>
     </MudAppBar>
-    <MudDrawer @bind-Open="@_drawerOpen">
-        <NavMenu/>
+    <MudDrawer @bind-Open="@_drawerOpen" Variant="DrawerVariant.Temporary">
+        <MudElement HtmlTag="div" Class="d-flex align-center">
+            <MudIconButton Icon="@Icons.Material.Filled.Close" Color="Color.Inherit" OnClick="@((e) => DrawerToggle())" Class="ma-2"/>
+            <MudElement HtmlTag="div" Class="o-drawer-logo"></MudElement>
+        </MudElement>
+        <MudDivider Class="flex-grow-0" />
+        <NavMenu />
     </MudDrawer>
     <MudMainContent>
         @Body
@@ -43,7 +46,7 @@
     {
         get
         {
-            MudTheme theme = _themeManager.Theme;
+            MudTheme theme = new MudTheme();
             MudColor cucumber = new MudColor("#00ab61ff");
             MudColor white = new MudColor("#fff");
             theme.Palette.Primary = cucumber;
@@ -56,27 +59,9 @@
                 string[] selectedFontFamily = new[] { "Muli" };
                 theme.Typography.Default.FontFamily = selectedFontFamily.Concat(theme.Typography.Default.FontFamily).ToArray();
             }
+            theme.LayoutProperties.DrawerWidthLeft = "300px";
             return theme;
         }
-    }
-
-    private ThemeManagerTheme _themeManager = new ThemeManagerTheme();
-    public bool _themeManagerOpen = false;
-
-    void OpenThemeManager(bool value)
-    {
-        _themeManagerOpen = value;
-    }
-
-    void UpdateTheme(ThemeManagerTheme value)
-    {
-        _themeManager = value;
-        StateHasChanged();
-    }
-
-    protected override void OnInitialized()
-    {
-        StateHasChanged();
     }
 
     #endregion

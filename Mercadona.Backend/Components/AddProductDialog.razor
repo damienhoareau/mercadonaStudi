@@ -3,16 +3,16 @@
 @using FluentValidation;
 @using Mercadona.Backend.Validation;
 
-<MudDialog>
+<MudDialog Class="customDialog">
     <DialogContent>
         <MudForm Model="@model" @ref="@addProductForm" Validation="@(ValidatorExt.ValidateValue(_productValidator))">
-            <MudTextField @bind-Value="model.Label" For="@(() => model.Label)" Immediate="true" Label="Libellé" />
-            <MudTextField @bind-Value="model.Description" For="@(() => model.Description)" Immediate="true" Label="Description" Lines="5" />
-            <MudAutocomplete T="string" SearchFuncWithCancel="@SearchCategories" @bind-Value="model.Category" For="@(() => model.Category)" Immediate="true" Label="Catégorie" />
-            <MudNumericField @bind-Value="model.Price" For="@(() => model.Price)" Min=@Product.PriceMin Immediate="true" Label="Prix" />
+            <MudTextField @ref="@labelField" @bind-Value="model.Label" For="@(() => model.Label)" Immediate="true" Label="Libellé" Required />
+            <MudTextField @bind-Value="model.Description" For="@(() => model.Description)" Immediate="true" Label="Description" Lines="3" Required />
+            <MudAutocomplete T="string" SearchFuncWithCancel="@SearchCategories" OpenIcon="" CloseIcon="" CoerceText="false" @bind-Value="model.Category" TextChanged="@CategoryTextChanged" For="@(() => model.Category)" Immediate="true" Label="Catégorie" Required />
+            <MudNumericField @bind-Value="model.Price" For="@(() => model.Price)" Min=@Product.PriceMin Immediate="true" Label="Prix" Format="N2" Adornment="Adornment.End" AdornmentText="€" />
             <MudFileUpload T="IReadOnlyList<IBrowserFile>" OnFilesChanged="OnInputFileChanged" @ondragenter="@SetDragClass" @ondragleave="@ClearDragClass" @ondragend="@ClearDragClass">
                 <ButtonTemplate>
-                    <MudPaper Height="100px" Outlined="true" Class="@DragClass">
+                    <MudPaper Height="100px" Outlined="true" Class="@DragClass" Style="display: grid; grid-template-rows: 1fr auto">
                         <MudText>Glisser l'image ici.</MudText>
                         @foreach(var file in fileNames)
                         {
@@ -35,24 +35,37 @@
     [Parameter] public List<DiscountedProduct> DiscountedProducts { get; set; }
     [Inject] IValidator<Product> _productValidator { get; set; }
 
+    MudForm addProductForm;
+    MudTextField<string> labelField;
+
     protected override Task OnInitializedAsync()
     {
         return base.OnInitializedAsync();
     }
 
-    MudForm addProductForm;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        if (firstRender)
+            await labelField.FocusAsync();
+        await addProductForm.Validate();
+    }
 
     Product model = new Product();
 
-    void Submit() => MudDialog.Close(DialogResult.Ok(true));
-    void Cancel() => MudDialog.Cancel();
-
     Task<IEnumerable<string>> SearchCategories(string value, CancellationToken cancellationToken)
     {
-        return Task.Run(() => DiscountedProducts.Select(_ => _.Category).Distinct().Where(_ => _.Contains(value, StringComparison.InvariantCultureIgnoreCase)));
+        if (value == null)
+            return Task.FromResult<IEnumerable<string>>(Array.Empty<string>());
+        return Task.Run(() => DiscountedProducts.GroupBy(_ => _.Category).Select(_ => _.Key).OrderBy(_ => _).Where(_ => _.Contains(value, StringComparison.InvariantCultureIgnoreCase)));
     }
 
-    static string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full z-10";
+    void CategoryTextChanged(string newCategory)
+    {
+        model.Category = newCategory;
+    }
+
+    static string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-1 mt-2 mud-width-full mud-height-full z-10 justify-center";
     string DragClass = DefaultDragClass;
     List<string> fileNames = new List<string>();
 
@@ -82,4 +95,7 @@
     {
         DragClass = DefaultDragClass;
     }
+
+    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    void Cancel() => MudDialog.Cancel();
 }
