@@ -69,7 +69,7 @@ namespace Mercadona.Tests.Data
                 {
                     StartDate = DateOnly.FromDateTime(DateTime.Today),
                     EndDate = DateOnly.FromDateTime(DateTime.Today.AddDays(1)),
-                    Percentage = 0.2M
+                    Percentage = 20
                 };
 
             // Act

@@ -1,32 +1,27 @@
-﻿@inherits LayoutComponentBase
+﻿@using Mercadona.Backend.Components
+@using MudBlazor.Utilities;
+@inherits LayoutComponentBase
 
 <PageTitle>Mercadona.Backend</PageTitle>
 
-<MudThemeProvider />
+<MudThemeProvider Theme="CustomTheme" />
 <MudDialogProvider />
 <MudSnackbarProvider />
 
 <MudLayout>
-    <MudAppBar>
+    <MudAppBar Elevation="1">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())"/>
-        <MudText>Mercadona</MudText>
-        <MudSpacer/>
+        <MudContainer Class="logoContainer"><MudContainer Class="o-logo ml-2"></MudContainer></MudContainer>
         <MudButton Color="Color.Inherit">Se connecter</MudButton>
-        <MudMenu AnchorOrigin="Origin.BottomRight" Dense="true">
-            <ActivatorContent>
-                <MudAvatar>A</MudAvatar>
-            </ActivatorContent>
-            <ChildContent>
-                <MudText>toto@toto.fr</MudText>
-                <MudMenuItem>Se déconnecter</MudMenuItem>
-            </ChildContent>
-        </MudMenu>
+        <UserInfo/>
     </MudAppBar>
-    <MudDrawer @bind-Open="@_drawerOpen">
-        <MudNavMenu>
-            <MudNavLink Href="/" Match="NavLinkMatch.All">Catalogue</MudNavLink>
-            <MudNavLink Href="/products" Match="NavLinkMatch.Prefix">Produits</MudNavLink>
-        </MudNavMenu>
+    <MudDrawer @bind-Open="@_drawerOpen" Variant="DrawerVariant.Temporary">
+        <MudElement HtmlTag="div" Class="d-flex align-center">
+            <MudIconButton Icon="@Icons.Material.Filled.Close" Color="Color.Inherit" OnClick="@((e) => DrawerToggle())" Class="ma-2"/>
+            <MudElement HtmlTag="div" Class="o-drawer-logo"></MudElement>
+        </MudElement>
+        <MudDivider Class="flex-grow-0" />
+        <NavMenu />
     </MudDrawer>
     <MudMainContent>
         @Body
@@ -34,10 +29,40 @@
 </MudLayout>
 
 @code{
-    bool _drawerOpen = true;
+    #region Drawer
+
+    private bool _drawerOpen = false;
 
     void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
     }
+
+    #endregion
+
+    #region ThemeManager
+
+    private MudTheme CustomTheme
+    {
+        get
+        {
+            MudTheme theme = new MudTheme();
+            MudColor cucumber = new MudColor("#00ab61ff");
+            MudColor white = new MudColor("#fff");
+            theme.Palette.Primary = cucumber;
+            theme.Palette.AppbarBackground = white;
+            theme.Palette.AppbarText = cucumber;
+            theme.Palette.DrawerBackground = cucumber;
+            theme.Palette.DrawerText = white;
+            if (!theme.Typography.Default.FontFamily.Contains("Muli"))
+            {
+                string[] selectedFontFamily = new[] { "Muli" };
+                theme.Typography.Default.FontFamily = selectedFontFamily.Concat(theme.Typography.Default.FontFamily).ToArray();
+            }
+            theme.LayoutProperties.DrawerWidthLeft = "300px";
+            return theme;
+        }
+    }
+
+    #endregion
 }

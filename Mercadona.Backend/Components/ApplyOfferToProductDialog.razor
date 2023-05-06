@@ -1,0 +1,115 @@
+﻿@using Mercadona.Backend.Data;
+@using Mercadona.Backend.Models;
+@using FluentValidation;
+@using Mercadona.Backend.Validation;
+
+<MudDialog Class="customDialog">
+    <DialogContent>
+        <MudForm Model="@model" @ref="@applyOfferToProductForm" Validation="@(ValidatorExt.ValidateValue(_offerValidator))">
+            <MudText Typo="Typo.h6">@Product.Label</MudText>
+            <MudSelect T="Offer" Label="Promotions existantes" @bind-Value="SelectedOffer" AdornmentIcon="@Icons.Material.Filled.LocalOffer" AdornmentColor="Color.Primary">
+                @foreach (Offer existingOffer in existingOffers)
+                {
+                    <MudSelectItem T="Offer" Value="@existingOffer">
+                        <OfferElement Offer="@existingOffer" />
+                    </MudSelectItem>
+                }
+            </MudSelect>
+            <MudDateRangePicker Label="Période de la promotion" @bind-DateRange="OfferDateRange" IsDateDisabledFunc="IsDateDisabled" AdornmentColor="Color.Primary" PickerVariant="PickerVariant.Inline"  DisableToolbar/>
+            <MudNumericField @bind-Value="model.Percentage" Step="10" For="@(() => model.Percentage)" Min=@Offer.PercentageMin Max=@Offer.PercentageMax Immediate="true" Label="Pourcentage" Adornment="Adornment.End" AdornmentText="%" />
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Outlined" OnClick="Cancel">Annuler</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+    [Parameter] public Product Product { get; set; }
+    [Inject] IValidator<Offer> _offerValidator { get; set; }
+    [Inject] IValidator<(Product product, Offer offer)> _productAddOfferValidator { get; set; }
+
+    MudForm applyOfferToProductForm;
+
+    protected override Task OnInitializedAsync()
+    {
+        model = new Offer()
+        {
+            StartDate = DateOnly.FromDateTime(OfferDateRange.Start ?? DateTime.Now.Date),
+            EndDate = DateOnly.FromDateTime(OfferDateRange.End ?? DateTime.Now.Date.AddDays(5).Date),
+            Percentage = 10
+        };
+        existingOffers = new List<Offer>()
+        {
+            new Offer(){ StartDate = DateOnly.FromDateTime(DateTime.Now.Date), EndDate = DateOnly.FromDateTime(DateTime.Now.Date), Percentage = 10 },
+            new Offer(){ StartDate = DateOnly.FromDateTime(DateTime.Now.AddDays(7).Date), EndDate = DateOnly.FromDateTime(DateTime.Now.AddDays(10).Date), Percentage = 50 },
+            new Offer(){ StartDate = DateOnly.FromDateTime(DateTime.Now.AddDays(14).Date), EndDate = DateOnly.FromDateTime(DateTime.Now.AddDays(20).Date), Percentage = 10 },
+        };
+        return base.OnInitializedAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        await applyOfferToProductForm.Validate();
+    }
+
+    IEnumerable<Offer> existingOffers = Array.Empty<Offer>();
+    Offer model = new Offer();
+
+    DateRange _offerDateRange = new DateRange(DateTime.Now.Date, DateTime.Now.AddDays(5).Date);
+    DateRange OfferDateRange
+    {
+        get => _offerDateRange;
+        set
+        {
+            _offerDateRange = value;
+            model.StartDate = DateOnly.FromDateTime(_offerDateRange.Start!.Value);
+            model.EndDate = DateOnly.FromDateTime(_offerDateRange.End!.Value);
+
+            StateHasChanged();
+        }
+    }
+
+    Offer? _selectedOffer;
+    public Offer? SelectedOffer
+    {
+        get
+        {
+            if (model == null)
+                return null;
+            return existingOffers.FirstOrDefault(_ => _.StartDate == model.StartDate && _.EndDate == model.EndDate && _.Percentage == model.Percentage);
+        }
+        set
+        {
+            _selectedOffer = value;
+            if (_selectedOffer == null)
+                return;
+            _offerDateRange = new DateRange(_selectedOffer.StartDate.ToDateTime(TimeOnly.MinValue), _selectedOffer.EndDate.ToDateTime(TimeOnly.MinValue));
+            model.StartDate = _selectedOffer.StartDate;
+            model.EndDate = _selectedOffer.EndDate;
+            model.Percentage = _selectedOffer.Percentage;
+        }
+    }
+    void SelectedOfferChanged(Offer newOffer)
+    {
+        if (newOffer == null)
+            return;
+        _offerDateRange = new DateRange(newOffer.StartDate.ToDateTime(TimeOnly.MinValue), newOffer.EndDate.ToDateTime(TimeOnly.MinValue));
+        model.StartDate = newOffer.StartDate;
+        model.EndDate = newOffer.EndDate;
+        model.Percentage = newOffer.Percentage;
+    }
+
+    bool IsDateDisabled(DateTime dateTime)
+    {
+        return dateTime.Date < DateTime.Now.Date;
+    }
+
+    MudBlazor.Converter<decimal, string> PercentageConverter = new MudBlazor.Converter<decimal, string>();
+
+    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    void Cancel() => MudDialog.Cancel();
+}

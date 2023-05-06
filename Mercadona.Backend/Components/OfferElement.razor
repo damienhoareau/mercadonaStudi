@@ -1,0 +1,12 @@
+﻿@using Mercadona.Backend.Data;
+
+<MudElement Class="offerElement d-flex pa-0 align-center">
+    <MudText>@Offer.StartDate</MudText>
+    <MudIcon Icon="@Icons.Material.Filled.ArrowRightAlt" />
+    <MudText>@Offer.EndDate</MudText>
+    <MudChip Text="@($"{Offer.Percentage}%")" Size="Size.Small" Color="Color.Primary"></MudChip>
+</MudElement>
+
+@code {
+    [Parameter] public Offer Offer { get; set; }
+}

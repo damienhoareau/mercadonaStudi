@@ -1,0 +1,55 @@
+﻿@inject IDialogService DialogService
+@using Mercadona.Backend.Data;
+@using Mercadona.Backend.Models;
+
+<MudSelect T="string" Style="margin:12px" Label="Catégories" AnchorOrigin="Origin.BottomCenter" MultiSelection="true" @bind-SelectedValues="SelectedCategories" SelectAll="true" SelectAllText="Toutes les catégories" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary">
+    @foreach (string category in categories)
+    {
+        <MudSelectItem T="string" Value="@category">@category</MudSelectItem>
+    }
+</MudSelect>
+<MudGrid Style="width:100%;margin:unset">
+    @foreach (DiscountedProduct discountedProduct in filteredDiscountedProducts)
+    {
+        <MudItem xs="6" sm="4" md="3">
+            <ProductCard CanEdit=@CanEdit DiscountedProduct=@discountedProduct products=@products />
+        </MudItem>
+    }
+</MudGrid>
+@if (CanEdit)
+{
+    <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" Style="position: fixed;bottom: 10px; right: 10px" Title="Ajouter un produit" OnClick="OpenAddProductDialog" />
+}
+
+@code {
+    [Parameter] public bool CanEdit { get; set; } = false;
+
+    private List<Product> products = new List<Product>();
+    private List<DiscountedProduct> discountedProducts = new List<DiscountedProduct>();
+    private List<string> categories => products.GroupBy(_ => _.Category).Select(_ => _.Key).OrderBy(_ => _).ToList();
+    List<DiscountedProduct> filteredDiscountedProducts => discountedProducts.Where(_ => SelectedCategories.Any() ? SelectedCategories.Contains(_.Category) : true).ToList();
+
+    protected override Task OnInitializedAsync()
+    {
+        products = new List<Product>
+        {
+            new Product(() => File.Open("wwwroot/assets/steaksX8.webp", FileMode.Open, FileAccess.Read, FileShare.ReadWrite)){ Label = "Steacks x 8", Description = "Boite de steacks de boeuf en lot de 8.", Category = "Surgelé", Price = 8.99M },
+            new Product(() => File.Open("wwwroot/assets/robeLongue.webp", FileMode.Open, FileAccess.Read, FileShare.ReadWrite)){ Label = "Robe longue", Description = "Sulime robe longue blanche qui vous rendra belle pour l'été.", Category = "Prêt à porter", Price = 84.99M },
+            new Product(() => File.Open("wwwroot/assets/macbook.jpeg", FileMode.Open, FileAccess.Read, FileShare.ReadWrite)){ Label = "MacBook Air", Description = "Cette ordinateur vous rendra de grands services pour le travail.", Category = "Electronique", Price = 1099.99M },
+        };
+        int counter = 1;
+        DateOnly today = DateOnly.FromDateTime(DateTime.Now);
+        discountedProducts = products.Select(_ => new DiscountedProduct(_, counter++ == 2 ? null : new Offer() { StartDate = today, EndDate = today, Percentage = 20 })).ToList();
+        return base.OnInitializedAsync();
+    }
+
+    IEnumerable<string> SelectedCategories { get; set; } = new HashSet<string>();
+
+    void OpenAddProductDialog()
+    {
+        DialogOptions options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = true };
+        DialogParameters parameters = new DialogParameters();
+        parameters.Add("DiscountedProducts", discountedProducts);
+        DialogService.Show<AddProductDialog>("Ajouter un produit", parameters, options);
+    }
+}
