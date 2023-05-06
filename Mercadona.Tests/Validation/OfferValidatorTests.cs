@@ -25,7 +25,7 @@ namespace Mercadona.Tests.Validation
                 {
                     StartDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-1)),
                     EndDate = DateOnly.FromDateTime(DateTime.Today),
-                    Percentage = 0.5M
+                    Percentage = 50
                 };
 
             // Act
@@ -50,7 +50,7 @@ namespace Mercadona.Tests.Validation
                 {
                     StartDate = DateOnly.FromDateTime(DateTime.Today.AddDays(1)),
                     EndDate = DateOnly.FromDateTime(DateTime.Today),
-                    Percentage = 0.5M
+                    Percentage = 50
                 };
 
             // Act
@@ -75,7 +75,7 @@ namespace Mercadona.Tests.Validation
                 {
                     StartDate = DateOnly.FromDateTime(DateTime.Today),
                     EndDate = DateOnly.FromDateTime(DateTime.Today.AddDays(1)),
-                    Percentage = 0M
+                    Percentage = 0
                 };
 
             // Act
@@ -100,7 +100,7 @@ namespace Mercadona.Tests.Validation
                 {
                     StartDate = DateOnly.FromDateTime(DateTime.Today),
                     EndDate = DateOnly.FromDateTime(DateTime.Today.AddDays(1)),
-                    Percentage = 1M
+                    Percentage = 100
                 };
 
             // Act
@@ -124,7 +124,7 @@ namespace Mercadona.Tests.Validation
                 {
                     StartDate = DateOnly.FromDateTime(DateTime.Today),
                     EndDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-1)),
-                    Percentage = 1M
+                    Percentage = 100
                 };
 
             // Act
@@ -158,7 +158,7 @@ namespace Mercadona.Tests.Validation
                 {
                     StartDate = DateOnly.FromDateTime(DateTime.Today),
                     EndDate = DateOnly.FromDateTime(DateTime.Today.AddDays(1)),
-                    Percentage = 0.2M
+                    Percentage = 20
                 };
 
             // Act

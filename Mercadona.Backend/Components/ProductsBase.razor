@@ -39,7 +39,7 @@
         };
         int counter = 1;
         DateOnly today = DateOnly.FromDateTime(DateTime.Now);
-        discountedProducts = products.Select(_ => new DiscountedProduct(_, counter++ == 2 ? null : new Offer() { StartDate = today, EndDate = today, Percentage = 0.2M })).ToList();
+        discountedProducts = products.Select(_ => new DiscountedProduct(_, counter++ == 2 ? null : new Offer() { StartDate = today, EndDate = today, Percentage = 20 })).ToList();
         return base.OnInitializedAsync();
     }
 

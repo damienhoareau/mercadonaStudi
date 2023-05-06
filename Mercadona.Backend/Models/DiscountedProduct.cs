@@ -57,6 +57,7 @@ namespace Mercadona.Backend.Models
         /// <summary>
         /// Prix du produit avec la promotion appliquée
         /// </summary>
-        public decimal DiscountedPrice => Math.Round(Price * (1M - (Offer?.Percentage ?? 0M)), 2);
+        public decimal DiscountedPrice =>
+            Math.Round(Price * (100 - (Offer?.Percentage ?? 0)) / 100, 2);
     }
 }

@@ -24,7 +24,7 @@ namespace Mercadona.Tests.Validation
                 {
                     StartDate = DateOnly.FromDateTime(DateTime.Today),
                     EndDate = DateOnly.FromDateTime(DateTime.Today.AddDays(1)),
-                    Percentage = 0.5M
+                    Percentage = 50
                 };
 
             Product product =
@@ -62,7 +62,7 @@ namespace Mercadona.Tests.Validation
                 {
                     StartDate = DateOnly.FromDateTime(DateTime.Today),
                     EndDate = DateOnly.FromDateTime(DateTime.Today.AddDays(1)),
-                    Percentage = 0.5M
+                    Percentage = 50
                 };
 
             Product product =
@@ -86,7 +86,7 @@ namespace Mercadona.Tests.Validation
                 {
                     StartDate = DateOnly.FromDateTime(DateTime.Today.AddDays(1)),
                     EndDate = DateOnly.FromDateTime(DateTime.Today.AddDays(2)),
-                    Percentage = 0.1M
+                    Percentage = 10
                 }
             );
 
@@ -113,7 +113,7 @@ namespace Mercadona.Tests.Validation
                 {
                     StartDate = DateOnly.FromDateTime(DateTime.Today),
                     EndDate = DateOnly.FromDateTime(DateTime.Today.AddDays(1)),
-                    Percentage = 0.5M
+                    Percentage = 50
                 };
 
             Product product =
@@ -137,14 +137,14 @@ namespace Mercadona.Tests.Validation
                 {
                     StartDate = DateOnly.FromDateTime(DateTime.Today.AddDays(-1)),
                     EndDate = DateOnly.FromDateTime(DateTime.Today),
-                    Percentage = 0.1M
+                    Percentage = 10
                 };
             Offer offer2 =
                 new()
                 {
                     StartDate = DateOnly.FromDateTime(DateTime.Today.AddDays(1)),
                     EndDate = DateOnly.FromDateTime(DateTime.Today.AddDays(2)),
-                    Percentage = 0.1M
+                    Percentage = 10
                 };
             product.Offers.Add(offer1);
             product.Offers.Add(offer2);

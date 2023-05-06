@@ -23,7 +23,7 @@ namespace Mercadona.Tests.Controllers
             {
                 StartDate = today,
                 EndDate = today,
-                Percentage = 0.5M
+                Percentage = 50
             };
             _items = new List<Offer> { _item };
         }

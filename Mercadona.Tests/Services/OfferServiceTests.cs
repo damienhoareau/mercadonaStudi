@@ -53,28 +53,28 @@ namespace Mercadona.Tests.Services
                 {
                     StartDate = today.AddDays(-1),
                     EndDate = today.AddDays(-1),
-                    Percentage = 0.5M
+                    Percentage = 50
                 };
             Offer currentOffer =
                 new()
                 {
                     StartDate = today,
                     EndDate = today,
-                    Percentage = 0.5M
+                    Percentage = 50
                 };
             Offer futureOffer10Percent =
                 new()
                 {
                     StartDate = today.AddDays(1),
                     EndDate = today.AddDays(1),
-                    Percentage = 0.1M
+                    Percentage = 10
                 };
             Offer futureOffer20Percent =
                 new()
                 {
                     StartDate = today.AddDays(1),
                     EndDate = today.AddDays(1),
-                    Percentage = 0.2M
+                    Percentage = 20
                 };
             await _dbContext.AddAsync(oudatedOffer);
             await _dbContext.AddAsync(currentOffer);
@@ -103,7 +103,7 @@ namespace Mercadona.Tests.Services
                 {
                     StartDate = DateOnly.FromDateTime(today),
                     EndDate = DateOnly.FromDateTime(today.AddDays(-1)),
-                    Percentage = 0.5M
+                    Percentage = 50
                 };
 
             // Act
@@ -127,7 +127,7 @@ namespace Mercadona.Tests.Services
                 {
                     StartDate = DateOnly.FromDateTime(today),
                     EndDate = DateOnly.FromDateTime(today),
-                    Percentage = 0.5M
+                    Percentage = 50
                 };
             await _dbContext.AddAsync(offer);
             await _dbContext.SaveChangesAsync();
@@ -148,7 +148,7 @@ namespace Mercadona.Tests.Services
                 {
                     StartDate = DateOnly.FromDateTime(today),
                     EndDate = DateOnly.FromDateTime(today),
-                    Percentage = 0.5M
+                    Percentage = 50
                 };
             await _dbContext.AddAsync(offer);
             await _dbContext.SaveChangesAsync();
@@ -158,7 +158,7 @@ namespace Mercadona.Tests.Services
                 {
                     StartDate = DateOnly.FromDateTime(today),
                     EndDate = DateOnly.FromDateTime(today),
-                    Percentage = 0.2M
+                    Percentage = 20
                 };
 
             // Act

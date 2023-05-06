@@ -17,7 +17,7 @@ namespace Mercadona.Backend.Data.Migrations
                 {
                     StartDate = table.Column<DateOnly>(type: "date", nullable: false),
                     EndDate = table.Column<DateOnly>(type: "date", nullable: false),
-                    Percentage = table.Column<decimal>(type: "numeric", nullable: false)
+                    Percentage = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -47,7 +47,7 @@ namespace Mercadona.Backend.Data.Migrations
                     ProductsId = table.Column<Guid>(type: "uuid", nullable: false),
                     OffersStartDate = table.Column<DateOnly>(type: "date", nullable: false),
                     OffersEndDate = table.Column<DateOnly>(type: "date", nullable: false),
-                    OffersPercentage = table.Column<decimal>(type: "numeric", nullable: false)
+                    OffersPercentage = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {

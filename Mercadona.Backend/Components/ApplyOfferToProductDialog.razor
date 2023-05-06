@@ -16,7 +16,7 @@
                 }
             </MudSelect>
             <MudDateRangePicker Label="Période de la promotion" @bind-DateRange="OfferDateRange" IsDateDisabledFunc="IsDateDisabled" AdornmentColor="Color.Primary" PickerVariant="PickerVariant.Inline"  DisableToolbar/>
-            <MudNumericField @bind-Value="model.Percentage" Step="0.1M" For="@(() => model.Percentage)" Min=@Offer.PercentageMin Max=@Offer.PercentageMax Immediate="true" Label="Pourcentage" Adornment="Adornment.End" AdornmentText="%" />
+            <MudNumericField @bind-Value="model.Percentage" Step="10" For="@(() => model.Percentage)" Min=@Offer.PercentageMin Max=@Offer.PercentageMax Immediate="true" Label="Pourcentage" Adornment="Adornment.End" AdornmentText="%" />
         </MudForm>
     </DialogContent>
     <DialogActions>
@@ -39,13 +39,13 @@
         {
             StartDate = DateOnly.FromDateTime(OfferDateRange.Start ?? DateTime.Now.Date),
             EndDate = DateOnly.FromDateTime(OfferDateRange.End ?? DateTime.Now.Date.AddDays(5).Date),
-            Percentage = 0.1M
+            Percentage = 10
         };
         existingOffers = new List<Offer>()
         {
-            new Offer(){ StartDate = DateOnly.FromDateTime(DateTime.Now.Date), EndDate = DateOnly.FromDateTime(DateTime.Now.Date), Percentage = 0.1M },
-            new Offer(){ StartDate = DateOnly.FromDateTime(DateTime.Now.AddDays(7).Date), EndDate = DateOnly.FromDateTime(DateTime.Now.AddDays(10).Date), Percentage = 0.5M },
-            new Offer(){ StartDate = DateOnly.FromDateTime(DateTime.Now.AddDays(14).Date), EndDate = DateOnly.FromDateTime(DateTime.Now.AddDays(20).Date), Percentage = 0.1M },
+            new Offer(){ StartDate = DateOnly.FromDateTime(DateTime.Now.Date), EndDate = DateOnly.FromDateTime(DateTime.Now.Date), Percentage = 10 },
+            new Offer(){ StartDate = DateOnly.FromDateTime(DateTime.Now.AddDays(7).Date), EndDate = DateOnly.FromDateTime(DateTime.Now.AddDays(10).Date), Percentage = 50 },
+            new Offer(){ StartDate = DateOnly.FromDateTime(DateTime.Now.AddDays(14).Date), EndDate = DateOnly.FromDateTime(DateTime.Now.AddDays(20).Date), Percentage = 10 },
         };
         SelectedOfferConverter.SetFunc = offer =>
         {

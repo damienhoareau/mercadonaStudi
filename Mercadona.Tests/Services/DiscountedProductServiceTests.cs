@@ -117,7 +117,7 @@ namespace Mercadona.Tests.Services
                 {
                     StartDate = DateOnly.FromDateTime(today.AddDays(-1)),
                     EndDate = DateOnly.FromDateTime(today.AddDays(1)),
-                    Percentage = 0.2M
+                    Percentage = 20
                 };
             EntityEntry<Product> addedProduct = await _dbContext.AddAsync(discountedProduct);
             EntityEntry<Offer> addedOffer = await _dbContext.AddAsync(offer);
@@ -166,7 +166,7 @@ namespace Mercadona.Tests.Services
                 {
                     StartDate = DateOnly.FromDateTime(today.AddDays(-1)),
                     EndDate = DateOnly.FromDateTime(today.AddDays(-1)),
-                    Percentage = 0.2M
+                    Percentage = 20
                 };
             EntityEntry<Product> addedProduct = await _dbContext.AddAsync(discountedProduct);
             EntityEntry<Offer> addedOffer = await _dbContext.AddAsync(offer);
@@ -215,7 +215,7 @@ namespace Mercadona.Tests.Services
                 {
                     StartDate = DateOnly.FromDateTime(today.AddDays(1)),
                     EndDate = DateOnly.FromDateTime(today.AddDays(1)),
-                    Percentage = 0.2M
+                    Percentage = 20
                 };
             EntityEntry<Product> addedProduct = await _dbContext.AddAsync(discountedProduct);
             EntityEntry<Offer> addedOffer = await _dbContext.AddAsync(offer);
@@ -280,14 +280,14 @@ namespace Mercadona.Tests.Services
                 {
                     StartDate = DateOnly.FromDateTime(today.AddDays(-1)),
                     EndDate = DateOnly.FromDateTime(today.AddDays(1)),
-                    Percentage = 0.2M
+                    Percentage = 20
                 };
             Offer outdatedOffer =
                 new()
                 {
                     StartDate = DateOnly.FromDateTime(today.AddDays(-1)),
                     EndDate = DateOnly.FromDateTime(today.AddDays(-1)),
-                    Percentage = 0.2M
+                    Percentage = 20
                 };
             EntityEntry<Product> product2 = await _dbContext.AddAsync(discountedProduct);
             EntityEntry<Product> product1 = await _dbContext.AddAsync(notDiscountedProduct);
@@ -351,14 +351,14 @@ namespace Mercadona.Tests.Services
                 {
                     StartDate = DateOnly.FromDateTime(today.AddDays(-1)),
                     EndDate = DateOnly.FromDateTime(today.AddDays(1)),
-                    Percentage = 0.2M
+                    Percentage = 20
                 };
             Offer outdatedOffer =
                 new()
                 {
                     StartDate = DateOnly.FromDateTime(today.AddDays(-1)),
                     EndDate = DateOnly.FromDateTime(today.AddDays(-1)),
-                    Percentage = 0.2M
+                    Percentage = 20
                 };
             EntityEntry<Product> product2 = await _dbContext.AddAsync(discountedProduct);
             EntityEntry<Product> product1 = await _dbContext.AddAsync(notDiscountedProduct);
@@ -424,7 +424,7 @@ namespace Mercadona.Tests.Services
                 {
                     StartDate = DateOnly.FromDateTime(today.AddDays(-1)),
                     EndDate = DateOnly.FromDateTime(today.AddDays(1)),
-                    Percentage = 0.2M
+                    Percentage = 20
                 };
             EntityEntry<Product> product2 = await _dbContext.AddAsync(discountedProduct2);
             EntityEntry<Product> product1 = await _dbContext.AddAsync(discountedProduct1);
@@ -471,7 +471,7 @@ namespace Mercadona.Tests.Services
                 {
                     StartDate = DateOnly.FromDateTime(today.AddDays(1)),
                     EndDate = DateOnly.FromDateTime(today),
-                    Percentage = 0.2M
+                    Percentage = 20
                 };
             EntityEntry<Product> addedProduct = await _dbContext.AddAsync(product);
             await _dbContext.SaveChangesAsync();
@@ -514,7 +514,7 @@ namespace Mercadona.Tests.Services
                 {
                     StartDate = DateOnly.FromDateTime(today.AddDays(-1)),
                     EndDate = DateOnly.FromDateTime(today.AddDays(-1)),
-                    Percentage = 0.2M
+                    Percentage = 20
                 };
             EntityEntry<Product> addedProduct = await _dbContext.AddAsync(product);
             await _dbContext.SaveChangesAsync();
@@ -557,14 +557,14 @@ namespace Mercadona.Tests.Services
                 {
                     StartDate = DateOnly.FromDateTime(today.AddDays(1)),
                     EndDate = DateOnly.FromDateTime(today.AddDays(2)),
-                    Percentage = 0.2M
+                    Percentage = 20
                 };
             Offer newOffer =
                 new()
                 {
                     StartDate = DateOnly.FromDateTime(today),
                     EndDate = DateOnly.FromDateTime(today.AddDays(3)),
-                    Percentage = 0.2M
+                    Percentage = 20
                 };
             EntityEntry<Product> addedProduct = await _dbContext.AddAsync(product);
             EntityEntry<Offer> addedOffer = await _dbContext.AddAsync(offer);
@@ -609,14 +609,14 @@ namespace Mercadona.Tests.Services
                 {
                     StartDate = DateOnly.FromDateTime(today),
                     EndDate = DateOnly.FromDateTime(today),
-                    Percentage = 0.2M
+                    Percentage = 20
                 };
             Offer newOffer =
                 new()
                 {
                     StartDate = DateOnly.FromDateTime(today),
                     EndDate = DateOnly.FromDateTime(today),
-                    Percentage = 0.2M
+                    Percentage = 20
                 };
             EntityEntry<Product> addedProduct = await _dbContext.AddAsync(product);
             EntityEntry<Offer> addedOffer = await _dbContext.AddAsync(offer);
@@ -678,14 +678,14 @@ namespace Mercadona.Tests.Services
                 {
                     StartDate = today.AddDays(1),
                     EndDate = today.AddDays(2),
-                    Percentage = 0.2M
+                    Percentage = 20
                 };
             Offer newOffer =
                 new()
                 {
                     StartDate = today,
                     EndDate = today.AddDays(3),
-                    Percentage = 0.3M
+                    Percentage = 30
                 };
             EntityEntry<Product> addedProduct = await _dbContext.AddAsync(product);
             EntityEntry<Offer> addedOffer = await _dbContext.AddAsync(offer);

@@ -30,8 +30,8 @@ namespace Mercadona.Backend.Data.Migrations
                     b.Property<DateOnly>("EndDate")
                         .HasColumnType("date");
 
-                    b.Property<decimal>("Percentage")
-                        .HasColumnType("numeric");
+                    b.Property<int>("Percentage")
+                        .HasColumnType("integer");
 
                     b.HasKey("StartDate", "EndDate", "Percentage");
 
@@ -279,8 +279,8 @@ namespace Mercadona.Backend.Data.Migrations
                     b.Property<DateOnly>("OffersEndDate")
                         .HasColumnType("date");
 
-                    b.Property<decimal>("OffersPercentage")
-                        .HasColumnType("numeric");
+                    b.Property<int>("OffersPercentage")
+                        .HasColumnType("integer");
 
                     b.HasKey("ProductsId", "OffersStartDate", "OffersEndDate", "OffersPercentage");
 
