@@ -105,3 +105,7 @@
     min-width: 60vh;
     max-width: 90vh;
 }
+
+.mud-select-input .offerElement {
+    margin-top: -8px;
+}

@@ -7,7 +7,7 @@
     <DialogContent>
         <MudForm Model="@model" @ref="@applyOfferToProductForm" Validation="@(ValidatorExt.ValidateValue(_offerValidator))">
             <MudText Typo="Typo.h6">@Product.Label</MudText>
-            <MudSelect T="Offer" Label="Promotions existantes" Converter=@SelectedOfferConverter ValueChanged=@((e) => SelectedOfferChanged(e)) Text=@SelectedOfferText AdornmentIcon="@Icons.Material.Filled.LocalOffer" AdornmentColor="Color.Primary">
+            <MudSelect T="Offer" Label="Promotions existantes" @bind-Value="SelectedOffer" AdornmentIcon="@Icons.Material.Filled.LocalOffer" AdornmentColor="Color.Primary">
                 @foreach (Offer existingOffer in existingOffers)
                 {
                     <MudSelectItem T="Offer" Value="@existingOffer">
@@ -47,15 +47,6 @@
             new Offer(){ StartDate = DateOnly.FromDateTime(DateTime.Now.AddDays(7).Date), EndDate = DateOnly.FromDateTime(DateTime.Now.AddDays(10).Date), Percentage = 50 },
             new Offer(){ StartDate = DateOnly.FromDateTime(DateTime.Now.AddDays(14).Date), EndDate = DateOnly.FromDateTime(DateTime.Now.AddDays(20).Date), Percentage = 10 },
         };
-        SelectedOfferConverter.SetFunc = offer =>
-        {
-            if (offer == null)
-                return null;
-            Offer? existingOffer = existingOffers.FirstOrDefault(_ => _.StartDate == offer.StartDate && _.EndDate == offer.EndDate && _.Percentage == offer.Percentage);
-            if (existingOffer == null)
-                return null;
-            return $"{existingOffer.StartDate} - {existingOffer.EndDate} : {existingOffer.Percentage}";
-        };
         return base.OnInitializedAsync();
     }
 
@@ -82,9 +73,26 @@
         }
     }
 
-    string? SelectedOfferText => SelectedOfferConverter.Set(model);
-    MudBlazor.Converter<Offer, string> SelectedOfferConverter = new MudBlazor.Converter<Offer, string>();
-
+    Offer? _selectedOffer;
+    public Offer? SelectedOffer
+    {
+        get
+        {
+            if (model == null)
+                return null;
+            return existingOffers.FirstOrDefault(_ => _.StartDate == model.StartDate && _.EndDate == model.EndDate && _.Percentage == model.Percentage);
+        }
+        set
+        {
+            _selectedOffer = value;
+            if (_selectedOffer == null)
+                return;
+            _offerDateRange = new DateRange(_selectedOffer.StartDate.ToDateTime(TimeOnly.MinValue), _selectedOffer.EndDate.ToDateTime(TimeOnly.MinValue));
+            model.StartDate = _selectedOffer.StartDate;
+            model.EndDate = _selectedOffer.EndDate;
+            model.Percentage = _selectedOffer.Percentage;
+        }
+    }
     void SelectedOfferChanged(Offer newOffer)
     {
         if (newOffer == null)
