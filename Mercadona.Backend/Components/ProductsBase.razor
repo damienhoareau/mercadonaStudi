@@ -1,8 +1,8 @@
-﻿@inject IDialogService DialogService
+@inject IDialogService DialogService
 @using Mercadona.Backend.Data;
 @using Mercadona.Backend.Models;
 
-<MudSelect T="string" Style="margin:12px" Label="Catégories" AnchorOrigin="Origin.BottomCenter" MultiSelection="true" @bind-SelectedValues="SelectedCategories" SelectAll="true" SelectAllText="Toutes les catégories" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary">
+<MudSelect T="string" Class="ma-3" Label="Catégories" AnchorOrigin="Origin.BottomCenter" MultiSelection="true" @bind-SelectedValues="SelectedCategories" SelectAll="true" SelectAllText="Toutes les catégories" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary">
     @foreach (string category in categories)
     {
         <MudSelectItem T="string" Value="@category">@category</MudSelectItem>

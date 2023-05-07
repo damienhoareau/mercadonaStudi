@@ -1,0 +1,71 @@
+﻿@using Mercadona.Backend.Data;
+@using Mercadona.Backend.Models;
+@using FluentValidation;
+@using Mercadona.Backend.Validation;
+
+<MudDialog Class="customDialog">
+    <DialogContent>
+        <MudForm Model="@model" @ref="@loginForm">
+            <MudTextField @ref="@usernameField" @bind-Value="model.Username" Immediate="true" Label="Identifiant" Required RequiredError="Requis" />
+            <MudTextField @bind-Value="model.Password" InputType="@PasswordInput" Immediate="true" Label="Mot de passe" Required RequiredError="Requis" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="PasswordAdornmentClick" AdornmentAriaLabel="Voir le mot de passe" />
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Outlined" OnClick="Cancel">Annuler</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
+
+    MudForm loginForm;
+    MudTextField<string> usernameField;
+
+    bool passwordIsShown;
+    InputType PasswordInput = InputType.Password;
+    string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+
+    protected override Task OnInitializedAsync()
+    {
+        return base.OnInitializedAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        if (firstRender)
+            await usernameField.FocusAsync();
+    }
+
+    UserModel model = new UserModel();
+
+    void PasswordAdornmentClick()
+    {
+        @if (passwordIsShown)
+        {
+            passwordIsShown = false;
+            PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+            PasswordInput = InputType.Password;
+        }
+        else
+        {
+            passwordIsShown = true;
+            PasswordInputIcon = Icons.Material.Filled.Visibility;
+            PasswordInput = InputType.Text;
+        }
+    }
+
+    void PasswordBlur(FocusEventArgs e)
+    {
+        @if (passwordIsShown)
+        {
+            passwordIsShown = false;
+            PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+            PasswordInput = InputType.Password;
+        }
+    }
+
+    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    void Cancel() => MudDialog.Cancel();
+}

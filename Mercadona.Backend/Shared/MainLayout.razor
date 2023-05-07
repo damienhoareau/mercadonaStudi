@@ -1,4 +1,5 @@
-﻿@using Mercadona.Backend.Components
+﻿@inject IDialogService DialogService
+@using Mercadona.Backend.Components
 @using MudBlazor.Utilities;
 @inherits LayoutComponentBase
 
@@ -8,25 +9,31 @@
 <MudDialogProvider />
 <MudSnackbarProvider />
 
-<MudLayout>
-    <MudAppBar Elevation="1">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())"/>
-        <MudContainer Class="logoContainer"><MudContainer Class="o-logo ml-2"></MudContainer></MudContainer>
-        <MudButton Color="Color.Inherit">Se connecter</MudButton>
-        <UserInfo/>
-    </MudAppBar>
-    <MudDrawer @bind-Open="@_drawerOpen" Variant="DrawerVariant.Temporary">
-        <MudElement HtmlTag="div" Class="d-flex align-center">
-            <MudIconButton Icon="@Icons.Material.Filled.Close" Color="Color.Inherit" OnClick="@((e) => DrawerToggle())" Class="ma-2"/>
-            <MudElement HtmlTag="div" Class="o-drawer-logo"></MudElement>
-        </MudElement>
-        <MudDivider Class="flex-grow-0" />
-        <NavMenu />
-    </MudDrawer>
-    <MudMainContent>
-        @Body
-    </MudMainContent>
-</MudLayout>
+    <MudLayout>
+        <MudAppBar Elevation="1">
+            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+            <MudContainer Class="logoContainer"><MudContainer Class="o-logo ml-2"></MudContainer></MudContainer>
+            <AuthorizeView>
+                <Authorized>
+                    <UserInfo />
+                </Authorized>
+                <NotAuthorized>
+                    <MudButton Color="Color.Inherit" OnClick="@((e)=>OpenLoginDialog())">Se&nbsp;connecter</MudButton>
+                </NotAuthorized>
+            </AuthorizeView>
+        </MudAppBar>
+        <MudDrawer @bind-Open="@_drawerOpen" Variant="DrawerVariant.Temporary">
+            <MudElement HtmlTag="div" Class="d-flex align-center">
+                <MudIconButton Icon="@Icons.Material.Filled.Close" Color="Color.Inherit" OnClick="@((e) => DrawerToggle())" Class="ma-2" />
+                <MudElement HtmlTag="div" Class="o-drawer-logo"></MudElement>
+            </MudElement>
+            <MudDivider Class="flex-grow-0" />
+            <NavMenu />
+        </MudDrawer>
+        <MudMainContent>
+            @Body
+        </MudMainContent>
+    </MudLayout>
 
 @code{
     #region Drawer
@@ -62,6 +69,15 @@
             theme.LayoutProperties.DrawerWidthLeft = "300px";
             return theme;
         }
+    }
+
+    #endregion
+
+    #region Login
+
+    void OpenLoginDialog()
+    {
+        DialogService.Show<LoginDialog>("Se connecter");
     }
 
     #endregion
