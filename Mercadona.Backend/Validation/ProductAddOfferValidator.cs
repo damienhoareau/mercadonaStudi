@@ -8,8 +8,10 @@ namespace Mercadona.Backend.Validation
     /// </summary>
     public class ProductAddOfferValidator : AbstractValidator<(Product product, Offer offer)>
     {
+#pragma warning disable CS1591 // Commentaire XML manquant pour le type ou le membre visible publiquement
         public const string OFFER_ALREADY_EXISTS =
             "Une(Des) promotion(s) existent déjà sur la période de la nouvelle promotion.";
+#pragma warning restore CS1591 // Commentaire XML manquant pour le type ou le membre visible publiquement
 
         /// <summary>
         /// Initialises une nouvelle instance de la classe <see cref="ProductAddOfferValidator"/>.

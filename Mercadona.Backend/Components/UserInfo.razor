@@ -2,7 +2,7 @@
     <Authorized>
         <MudMenu AnchorOrigin="Origin.BottomRight" Dense="true">
             <ActivatorContent>
-                <MudAvatar Color="Color.Primary">@context.User.Identity?.Name.ToUpperInvariant().First()</MudAvatar>
+                <MudAvatar Color="Color.Primary">@context.User.Identity?.Name?.ToUpperInvariant().First()</MudAvatar>
             </ActivatorContent>
             <ChildContent>
                 <MudText Style="margin: 10px" Align="Align.Center">@context.User.Identity?.Name</MudText>

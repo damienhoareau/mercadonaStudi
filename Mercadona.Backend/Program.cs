@@ -55,7 +55,10 @@ builder.Services
             ValidAudience = builder.Configuration["JWT:ValidAudience"],
             ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"])
+                Encoding.UTF8.GetBytes(
+                    builder.Configuration["JWT:Secret"]
+                        ?? throw new Exception("Impossible de charger JWT:Secret")
+                )
             )
         };
     });
@@ -105,7 +108,7 @@ builder.Services.AddSwaggerGen(options =>
             Version = "v1",
             Title = "Mercadona API",
             Description =
-                "API pour la gestion de produits remisés<br/>Dans le cadre d'une formation Bachelor Développeur C# chez Studi.",
+                "API pour la gestion de produits remisï¿½s<br/>Dans le cadre d'une formation Bachelor Dï¿½veloppeur C# chez Studi.",
             Contact = new OpenApiContact
             {
                 Name = "Damien HOAREAU",
@@ -116,7 +119,7 @@ builder.Services.AddSwaggerGen(options =>
     string xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 
-    // Définir le schéma de sécurité
+    // Dï¿½finir le schï¿½ma de sï¿½curitï¿½
     options.AddSecurityDefinition(
         "Bearer",
         new OpenApiSecurityScheme
@@ -149,7 +152,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-// API Documentation (avant le pipeline de sécurité afin de permettre les requêtes publiques)
+// API Documentation (avant le pipeline de sï¿½curitï¿½ afin de permettre les requï¿½tes publiques)
 app.UseSwagger();
 app.UseSwaggerUI();
 

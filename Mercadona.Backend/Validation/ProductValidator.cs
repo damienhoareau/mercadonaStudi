@@ -11,11 +11,13 @@ namespace Mercadona.Backend.Validation
     /// </summary>
     public class ProductValidator : AbstractValidator<Product>
     {
+#pragma warning disable CS1591 // Commentaire XML manquant pour le type ou le membre visible publiquement
         public const string LABEL_NOT_EMPTY = "Le libellé ne peut pas être vide.";
         public const string DESCRIPTION_NOT_EMPTY = "La description ne peut pas être vide.";
         public const string PRICE_GREATER_THAN_0 = "Le prix doit être supérieur à 0.";
         public const string IMAGE_IS_VALID = "Ce n'est pas une image valide.";
         public const string CATEGORY_NOT_EMPTY = "La catégorie ne peut pas être vide.";
+#pragma warning restore CS1591 // Commentaire XML manquant pour le type ou le membre visible publiquement
 
         private readonly ContentInspector _inspector;
 

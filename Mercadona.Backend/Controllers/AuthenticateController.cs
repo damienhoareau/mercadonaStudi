@@ -16,6 +16,7 @@ namespace Mercadona.Backend.Controllers
     [ApiController]
     public class AuthenticateController : ControllerBase
     {
+#pragma warning disable CS1591 // Commentaire XML manquant pour le type ou le membre visible publiquement
         public static string USER_ALREADY_EXISTS(string username) =>
             $"L'utilisateur {username} existe déjà!";
 
@@ -24,6 +25,7 @@ namespace Mercadona.Backend.Controllers
 
         public const string TOKEN_NOT_FOUND =
             "Le jeton de renouvellement n'a pas été trouvé dans la session.";
+#pragma warning restore CS1591 // Commentaire XML manquant pour le type ou le membre visible publiquement
 
         private readonly IAuthenticationService _authenticationService;
         private readonly IValidator<UserModel> _userModelValidator;
