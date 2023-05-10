@@ -1,7 +1,8 @@
-﻿@inject IDialogService DialogService
-@using Mercadona.Backend.Components
+﻿@using Mercadona.Backend.Components;
+@using Mercadona.Backend.Models;
 @using MudBlazor.Utilities;
-@inherits LayoutComponentBase
+@inherits LayoutComponentBase;
+@inject IDialogService DialogService;
 
 <PageTitle>Mercadona.Backend</PageTitle>
 
@@ -11,7 +12,11 @@
 
     <MudLayout>
         <MudAppBar Elevation="1">
-            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+            <AuthorizeView>
+                <Authorized>
+                    <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+                </Authorized>
+            </AuthorizeView>
             <MudContainer Class="logoContainer"><MudContainer Class="o-logo ml-2"></MudContainer></MudContainer>
             <AuthorizeView>
                 <Authorized>

@@ -104,7 +104,7 @@ namespace Mercadona.Tests.Services
         }
 
         [Fact]
-        public void GetPrincipalFromExpiredToken_InvalidToken_ShouldThrowSecurityTokenException()
+        public void GetPrincipalFromToken_InvalidToken_ShouldThrowSecurityTokenException()
         {
             // Arrange
             string refreshToken = _tokenService.GenerateRefreshToken();
@@ -135,7 +135,7 @@ namespace Mercadona.Tests.Services
             // Act
             Action act = () =>
             {
-                ClaimsPrincipal result = _tokenService.GetPrincipalFromExpiredToken(accessToken);
+                ClaimsPrincipal result = _tokenService.GetPrincipalFromToken(accessToken);
             };
 
             // Assert
@@ -143,7 +143,7 @@ namespace Mercadona.Tests.Services
         }
 
         [Fact]
-        public void GetPrincipalFromExpiredToken_ShouldGetCorrectPrincipal()
+        public void GetPrincipalFromToken_ShouldGetCorrectPrincipal()
         {
             // Arrange
             string refreshToken = _tokenService.GenerateRefreshToken();
@@ -156,7 +156,7 @@ namespace Mercadona.Tests.Services
             string accessToken = _tokenService.GenerateAccessToken(refreshToken, authClaims);
 
             // Act
-            ClaimsPrincipal result = _tokenService.GetPrincipalFromExpiredToken(accessToken);
+            ClaimsPrincipal result = _tokenService.GetPrincipalFromToken(accessToken);
 
             // Assert
             result.Identity.Should().NotBeNull();

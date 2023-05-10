@@ -23,15 +23,27 @@ namespace Mercadona.Backend.Services.Interfaces
         string GenerateRefreshToken();
 
         /// <summary>
-        /// Extrait l'identité d'un utilisateur à partir d'un jeton expiré.
+        /// Extrait l'identité d'un utilisateur à partir d'un jeton d'accès.
         /// </summary>
-        /// <param name="expiredToken">Le jeton expiré.</param>
+        /// <param name="token">Le jeton d'accès.</param>
         /// <exception cref="SecurityTokenException"/>
         /// <returns>
-        /// <seealso cref="ClaimsPrincipal"/> extrait du jeton<br/>
-        /// <seealso cref="SecurityTokenException"/> : Si le jeton n'est pas valide<br/>
+        /// <seealso cref="ClaimsPrincipal"/> extrait du jeton d'accès<br/>
+        /// <seealso cref="SecurityTokenException"/> : Si le jeton d'accès n'est pas valide<br/>
         /// </returns>
-        ClaimsPrincipal GetPrincipalFromExpiredToken(string expiredToken);
+        ClaimsPrincipal GetPrincipalFromToken(string token);
+
+        /// <summary>
+        /// Extrait l'identité d'un utilisateur à partir d'un jeton d'accès.
+        /// </summary>
+        /// <param name="token">Le jeton d'accès.</param>
+        /// <param name="validateLifetime">Booléen déterminant si on doit valider la date du jeton.</param>
+        /// <exception cref="SecurityTokenException"/>
+        /// <returns>
+        /// <seealso cref="ClaimsPrincipal"/> extrait du jeton d'accès<br/>
+        /// <seealso cref="SecurityTokenException"/> : Si le jeton d'accès n'est pas valide<br/>
+        /// </returns>
+        ClaimsPrincipal ValidateToken(string token, bool validateLifetime = true);
 
         /// <summary>
         /// Revoque le jeton de renouvellement.

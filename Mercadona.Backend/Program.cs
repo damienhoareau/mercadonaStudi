@@ -1,6 +1,8 @@
-using FluentValidation;
+﻿using FluentValidation;
+using Mercadona.Backend;
 using Mercadona.Backend.Areas.Identity;
 using Mercadona.Backend.Data;
+using Mercadona.Backend.Models;
 using Mercadona.Backend.Options;
 using Mercadona.Backend.Security;
 using Mercadona.Backend.Services;
@@ -9,6 +11,7 @@ using Mercadona.Backend.Swagger;
 using Mercadona.Backend.Validation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.Server;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -43,6 +46,7 @@ builder.Services
         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
         options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
     })
+    .AddCookie()
     // Adding Jwt Bearer
     .AddJwtBearer(options =>
     {
@@ -67,16 +71,43 @@ builder.Services.AddJwtInSession();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddMudServices();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient();
+builder.Services.AddTransient(provider =>
+{
+    HttpClient httpClient = provider.GetRequiredService<IHttpClientFactory>().CreateClient();
+    ConnectedUser connectedUser = provider.GetRequiredService<ConnectedUser>();
+    if (!string.IsNullOrWhiteSpace(connectedUser.AccessToken))
+        httpClient.DefaultRequestHeaders.Authorization =
+            new System.Net.Http.Headers.AuthenticationHeaderValue(
+                JwtBearerDefaults.AuthenticationScheme,
+                connectedUser.AccessToken
+            );
+    return new AuthenticateClient("https://localhost:44387", httpClient);
+});
+
+// Informations sur l'utilisateur connecté
+builder.Services.AddScoped<ConnectedUser>();
 builder.Services.AddScoped<
     AuthenticationStateProvider,
     RevalidatingIdentityAuthenticationStateProvider<IdentityUser>
 >();
+builder.Services.AddScoped<IHostEnvironmentAuthenticationStateProvider>(provider =>
+{
+    // this is safe because
+    //     the `RevalidatingIdentityAuthenticationStateProvider` extends the `ServerAuthenticationStateProvider`
+    ServerAuthenticationStateProvider authenticationStateProvider =
+        (ServerAuthenticationStateProvider)
+            provider.GetRequiredService<AuthenticationStateProvider>();
+    return authenticationStateProvider;
+});
 
 // Validators
 builder.Services.AddValidatorsFromAssemblyContaining<ProductValidator>();
 
 // Services
 builder.Services.AddSingleton<ITokenService, TokenService>();
+builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IOfferService, OfferService>();
 builder.Services.AddScoped<IDiscountedProductService, DiscountedProductService>();
@@ -108,7 +139,7 @@ builder.Services.AddSwaggerGen(options =>
             Version = "v1",
             Title = "Mercadona API",
             Description =
-                "API pour la gestion de produits remis�s<br/>Dans le cadre d'une formation Bachelor D�veloppeur C# chez Studi.",
+                "API pour la gestion de produits remisés<br/>Dans le cadre d'une formation Bachelor Développeur C# chez Studi.",
             Contact = new OpenApiContact
             {
                 Name = "Damien HOAREAU",
@@ -119,13 +150,13 @@ builder.Services.AddSwaggerGen(options =>
     string xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 
-    // D�finir le sch�ma de s�curit�
+    // Définir le schéma de sécurité
     options.AddSecurityDefinition(
-        "Bearer",
+        JwtBearerDefaults.AuthenticationScheme,
         new OpenApiSecurityScheme
         {
             Type = SecuritySchemeType.Http,
-            Scheme = "Bearer",
+            Scheme = JwtBearerDefaults.AuthenticationScheme,
             BearerFormat = "JWT"
         }
     );
@@ -152,7 +183,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-// API Documentation (avant le pipeline de s�curit� afin de permettre les requ�tes publiques)
+// API Documentation (avant le pipeline de sécurité afin de permettre les requêtes publiques)
 app.UseSwagger();
 app.UseSwaggerUI();
 

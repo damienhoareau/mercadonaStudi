@@ -7,7 +7,7 @@ namespace Mercadona.Backend.Services.Interfaces
     /// <summary>
     /// Service permettant de gérer l'authentification
     /// </summary>
-    public class AuthenticationService
+    public class AuthenticationService : IAuthenticationService
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly ITokenService _tokenService;
@@ -48,7 +48,7 @@ namespace Mercadona.Backend.Services.Interfaces
                 List<Claim> authClaims =
                     new()
                     {
-                        new Claim(ClaimTypes.Name, user!.UserName),
+                        new Claim(ClaimTypes.Name, user.UserName!),
                         new Claim(JwtRegisteredClaimNames.Jti, refreshToken),
                     };
 

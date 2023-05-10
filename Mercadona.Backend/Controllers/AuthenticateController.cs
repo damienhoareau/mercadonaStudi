@@ -2,11 +2,14 @@
 using FluentValidation.Results;
 using Mercadona.Backend.Models;
 using Mercadona.Backend.Services;
-using Mercadona.Backend.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
+using IAuthenticationService = Mercadona.Backend.Services.Interfaces.IAuthenticationService;
 
 namespace Mercadona.Backend.Controllers
 {
@@ -25,6 +28,9 @@ namespace Mercadona.Backend.Controllers
 
         public const string TOKEN_NOT_FOUND =
             "Le jeton de renouvellement n'a pas été trouvé dans la session.";
+
+        public const string USERNAME_OR_PASSWORD_IS_NOT_VALID =
+            "L'identifiant ou le mot de passe est incorrect.";
 #pragma warning restore CS1591 // Commentaire XML manquant pour le type ou le membre visible publiquement
 
         private readonly IAuthenticationService _authenticationService;
@@ -53,8 +59,8 @@ namespace Mercadona.Backend.Controllers
         /// <response code="401">Si l'identifiant ou le mot de passe n'est pas correct.</response>
         [HttpPost]
         [Route("account/login")]
-        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ConnectedUser), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(TextResponse), StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> LoginAsync([FromBody] UserModel model)
         {
             IdentityUser? user = await _authenticationService.FindUserByNameAsync(model.Username);
@@ -69,9 +75,54 @@ namespace Mercadona.Backend.Controllers
 
                 HttpContext.Session.SetString(TokenService.REFRESH_TOKEN_NAME, refreshToken);
 
-                return Ok(accessToken);
+                return Ok(
+                    new ConnectedUser
+                    {
+                        UserName = model.Username,
+                        RefreshToken = refreshToken,
+                        AccessToken = accessToken
+                    }
+                );
             }
-            return Unauthorized();
+            return Unauthorized(new TextResponse(USERNAME_OR_PASSWORD_IS_NOT_VALID));
+        }
+
+        /// <summary>
+        /// Permet de stocker les jetons d'authentification Blazor dans un cookie
+        /// </summary>
+        /// <param name="user">Modèle représentant l'utilisateur connecté</param>
+        /// <returns></returns>
+        /// <response code="200">Si l'action s'est bien déroulée.</response>
+        [HttpPost]
+        [Route("account/storeCookie")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> StoreCookieAsync([FromBody] ConnectedUser user)
+        {
+            await Task.Run(() =>
+            {
+                HttpContext.Session.SetString(TokenService.REFRESH_TOKEN_NAME, user.RefreshToken);
+                HttpContext.Session.SetString(TokenService.ACCESS_TOKEN_NAME, user.AccessToken);
+            });
+
+            return Ok();
+        }
+
+        /// <summary>
+        /// Permet de supprimer les jetons d'authentification Blazor des cookies
+        /// </summary>
+        /// <returns></returns>
+        /// <response code="200">Si l'action s'est bien déroulée.</response>
+        [HttpPost]
+        [Route("account/clearCookie")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> ClearCookieAsync()
+        {
+            await Task.Run(() =>
+            {
+                HttpContext.Session.Clear();
+            });
+
+            return Ok();
         }
 
         /// <summary>

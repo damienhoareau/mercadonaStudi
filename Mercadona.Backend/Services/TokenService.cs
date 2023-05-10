@@ -1,4 +1,5 @@
-﻿using Mercadona.Backend.Services.Interfaces;
+﻿using Mercadona.Backend.Security;
+using Mercadona.Backend.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
@@ -14,8 +15,11 @@ namespace Mercadona.Backend.Services
     /// </summary>
     public class TokenService : ITokenService
     {
+#pragma warning disable CS1591 // Commentaire XML manquant pour le type ou le membre visible publiquement
         public const string REFRESH_TOKEN_NAME = "mercadonaRefreshToken";
+        public const string ACCESS_TOKEN_NAME = "mercadonaAccessToken";
         public const string INVALID_TOKEN = "Invalid token";
+#pragma warning restore CS1591 // Commentaire XML manquant pour le type ou le membre visible publiquement
 
         /// <summary>
         /// La durée de vie du jeton d'accès en minutes
@@ -27,7 +31,7 @@ namespace Mercadona.Backend.Services
         /// </summary>
         public const int REFRESH_TOKEN_DURATION = 8;
 
-        private readonly IMemoryCache _whiteList;
+        private readonly WhiteList _whiteList;
         private readonly JwtBearerOptions _jwtOptions;
 
         /// <summary>
@@ -36,7 +40,7 @@ namespace Mercadona.Backend.Services
         /// <param name="whiteList">Cache mémoire pour les jetons de renouvellement.</param>
         /// <param name="jwtOptionsMonitor">Options des jetons JWT.</param>
         public TokenService(
-            IMemoryCache whiteList,
+            WhiteList whiteList,
             IOptionsMonitor<JwtBearerOptions> jwtOptionsMonitor
         )
         {
@@ -89,25 +93,39 @@ namespace Mercadona.Backend.Services
         }
 
         /// <inheritdoc/>
-        public ClaimsPrincipal GetPrincipalFromExpiredToken(string expiredToken)
+        public ClaimsPrincipal GetPrincipalFromToken(string token)
         {
-            TokenValidationParameters tokenValidationParameters =
-                _jwtOptions.TokenValidationParameters;
-            tokenValidationParameters.ValidateLifetime = false;
-            ClaimsPrincipal principal = new JwtSecurityTokenHandler().ValidateToken(
-                expiredToken,
-                tokenValidationParameters,
-                out SecurityToken token
-            );
-            if (
-                token is not JwtSecurityToken jwtSecurityToken
-                || !jwtSecurityToken.Header.Alg.Equals(
-                    SecurityAlgorithms.HmacSha256,
-                    StringComparison.InvariantCultureIgnoreCase
+            return ValidateToken(token, false);
+        }
+
+        /// <inheritdoc/>
+        public ClaimsPrincipal ValidateToken(string token, bool validateLifetime = true)
+        {
+            try
+            {
+                TokenValidationParameters tokenValidationParameters =
+                    _jwtOptions.TokenValidationParameters;
+                if (validateLifetime == false)
+                    tokenValidationParameters.ValidateLifetime = false;
+                ClaimsPrincipal principal = new JwtSecurityTokenHandler().ValidateToken(
+                    token,
+                    tokenValidationParameters,
+                    out SecurityToken securityToken
+                );
+                if (
+                    securityToken is not JwtSecurityToken jwtSecurityToken
+                    || !jwtSecurityToken.Header.Alg.Equals(
+                        SecurityAlgorithms.HmacSha256,
+                        StringComparison.InvariantCultureIgnoreCase
+                    )
                 )
-            )
-                throw new SecurityTokenException(INVALID_TOKEN);
-            return principal;
+                    throw new SecurityTokenException(INVALID_TOKEN);
+                return principal;
+            }
+            catch (Exception ex)
+            {
+                throw new SecurityTokenException(INVALID_TOKEN, ex);
+            }
         }
 
         /// <inheritdoc/>
