@@ -41,54 +41,7 @@ namespace Mercadona.Backend.Security
         public static IApplicationBuilder UseJwtInSession(this IApplicationBuilder app)
         {
             app.UseSession();
-
-            app.Use(
-                async (context, next) =>
-                {
-                    // On récupère le token de l'entête Authorization Bearer (Swagger)
-                    if (
-                        context.Request.Headers.Authorization.ToString() is string authorization
-                        && authorization.StartsWith($"{JwtBearerDefaults.AuthenticationScheme} ")
-                    )
-                    {
-                        string accessToken = authorization[
-                            $"{JwtBearerDefaults.AuthenticationScheme} ".Length..
-                        ];
-                        // On récupère le refresh token
-                        string? refreshToken = context.Session.GetString(
-                            TokenService.REFRESH_TOKEN_NAME
-                        );
-                        if (refreshToken == null)
-                        {
-                            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                            return;
-                        }
-                        // On vérifie que le refresh token est bien autorisé
-                        WhiteList whiteList =
-                            context.RequestServices.GetRequiredService<WhiteList>();
-                        if (!whiteList.TryGetValue(refreshToken, out _))
-                        {
-                            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                            return;
-                        }
-                        // On vérifie que le refresh token correspond bien à l'access token
-                        ITokenService tokenService =
-                            context.RequestServices.GetRequiredService<ITokenService>();
-                        ClaimsPrincipal principal = tokenService.GetPrincipalFromToken(accessToken);
-                        if (
-                            principal.Claims
-                                .FirstOrDefault(_ => _.Type == JwtRegisteredClaimNames.Jti)
-                                ?.Value != refreshToken
-                        )
-                        {
-                            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                            return;
-                        }
-                    }
-
-                    await next(context);
-                }
-            );
+            app.UseMiddleware<JwtInSessionMiddleware>();
 
             return app;
         }
@@ -105,5 +58,60 @@ namespace Mercadona.Backend.Security
         /// </summary>
         /// <param name="options">Les options.</param>
         public WhiteList(IOptions<MemoryCacheOptions> options) : base(options) { }
+    }
+
+    /// <summary>
+    /// Middleware de stockage d'un JWT dans un cookie de session
+    /// </summary>
+    /// <seealso cref="Microsoft.AspNetCore.Http.IMiddleware" />
+    public class JwtInSessionMiddleware : IMiddleware
+    {
+        /// <summary>
+        /// Exécute le middleware.
+        /// </summary>
+        /// <param name="context">The <see cref="T:Microsoft.AspNetCore.Http.HttpContext" /> pour la requête courante.</param>
+        /// <param name="next">Le délégé qui représente le prochain middleware dans la pile.</param>
+        public async Task InvokeAsync(HttpContext context, RequestDelegate next)
+        {
+            // On récupère le token de l'entête Authorization Bearer (Swagger)
+            if (
+                context.Request.Headers.Authorization.ToString() is string authorization
+                && authorization.StartsWith($"{JwtBearerDefaults.AuthenticationScheme} ")
+            )
+            {
+                string accessToken = authorization[
+                    $"{JwtBearerDefaults.AuthenticationScheme} ".Length..
+                ];
+                // On récupère le refresh token
+                string? refreshToken = context.Session.GetString(TokenService.REFRESH_TOKEN_NAME);
+                if (refreshToken == null)
+                {
+                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    return;
+                }
+                // On vérifie que le refresh token est bien autorisé
+                WhiteList whiteList = context.RequestServices.GetRequiredService<WhiteList>();
+                if (!whiteList.TryGetValue(refreshToken, out _))
+                {
+                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    return;
+                }
+                // On vérifie que le refresh token correspond bien à l'access token
+                ITokenService tokenService =
+                    context.RequestServices.GetRequiredService<ITokenService>();
+                ClaimsPrincipal principal = tokenService.GetPrincipalFromToken(accessToken);
+                if (
+                    principal.Claims
+                        .FirstOrDefault(_ => _.Type == JwtRegisteredClaimNames.Jti)
+                        ?.Value != refreshToken
+                )
+                {
+                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    return;
+                }
+            }
+
+            await next(context);
+        }
     }
 }

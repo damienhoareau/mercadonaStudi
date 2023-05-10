@@ -153,7 +153,11 @@ namespace Mercadona.Backend
             }
         }
 
-        /// <returns>Success</returns>
+        /// <summary>
+        /// Permet de stocker les jetons d'authentification Blazor dans un cookie
+        /// </summary>
+        /// <param name="body">Modèle représentant l'utilisateur connecté</param>
+        /// <returns>Si l'action s'est bien déroulée.</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task StoreCookieAsync(ConnectedUser body)
         {
@@ -161,7 +165,11 @@ namespace Mercadona.Backend
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
+        /// <summary>
+        /// Permet de stocker les jetons d'authentification Blazor dans un cookie
+        /// </summary>
+        /// <param name="body">Modèle représentant l'utilisateur connecté</param>
+        /// <returns>Si l'action s'est bien déroulée.</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task StoreCookieAsync(ConnectedUser body, System.Threading.CancellationToken cancellationToken)
         {
@@ -225,7 +233,10 @@ namespace Mercadona.Backend
             }
         }
 
-        /// <returns>Success</returns>
+        /// <summary>
+        /// Permet de supprimer les jetons d'authentification Blazor des cookies
+        /// </summary>
+        /// <returns>Si l'action s'est bien déroulée.</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual System.Threading.Tasks.Task ClearCookieAsync()
         {
@@ -233,7 +244,10 @@ namespace Mercadona.Backend
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
+        /// <summary>
+        /// Permet de supprimer les jetons d'authentification Blazor des cookies
+        /// </summary>
+        /// <returns>Si l'action s'est bien déroulée.</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         public virtual async System.Threading.Tasks.Task ClearCookieAsync(System.Threading.CancellationToken cancellationToken)
         {

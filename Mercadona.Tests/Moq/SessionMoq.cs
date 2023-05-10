@@ -22,7 +22,7 @@ namespace Mercadona.Tests.Moq
 
         public void Clear()
         {
-            throw new NotImplementedException();
+            _sessionData.Clear();
         }
 
         public Task CommitAsync(CancellationToken cancellationToken = default)

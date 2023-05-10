@@ -40,7 +40,7 @@ namespace Mercadona.Tests.Controllers
             );
 
             // Assert
-            result.Should().BeActionResult<UnauthorizedResult>();
+            result.Should().BeActionResult<UnauthorizedObjectResult>();
         }
 
         [Fact]
@@ -64,7 +64,7 @@ namespace Mercadona.Tests.Controllers
             );
 
             // Assert
-            result.Should().BeActionResult<UnauthorizedResult>();
+            result.Should().BeActionResult<UnauthorizedObjectResult>();
         }
 
         [Fact]
@@ -105,8 +105,98 @@ namespace Mercadona.Tests.Controllers
                 .Should()
                 .BeActionResult<OkObjectResult>(response =>
                 {
-                    response.Value.Should().BeOfType<string>();
+                    response.Value.Should().BeOfType<ConnectedUser>();
                 });
+        }
+
+        [Fact]
+        public async Task StoreCookieAsync_ShouldSaveCookies()
+        {
+            // Arrange
+            Mock<IAuthenticationService> mockAuthenticationService =
+                TestsHelper.GetServiceMock<IAuthenticationService>();
+            Mock<IValidator<UserModel>> mockUserModelValidator = TestsHelper.GetServiceMock<
+                IValidator<UserModel>
+            >();
+            AuthenticateController controller =
+                TestsHelper.CreateController<AuthenticateController>(
+                    mockAuthenticationService.Object,
+                    mockUserModelValidator.Object
+                );
+            ConnectedUser connectedUser =
+                new()
+                {
+                    UserName = "toto@toto.fr",
+                    RefreshToken = "refreshToken",
+                    AccessToken = "accessToken"
+                };
+
+            // Act
+            IActionResult result = await controller.StoreCookieAsync(connectedUser);
+
+            // Asset
+            result.Should().BeActionResult<OkResult>();
+            controller.HttpContext.Session
+                .GetString(TokenService.REFRESH_TOKEN_NAME)
+                .Should()
+                .NotBeNullOrWhiteSpace();
+            controller.HttpContext.Session
+                .GetString(TokenService.ACCESS_TOKEN_NAME)
+                .Should()
+                .NotBeNullOrWhiteSpace();
+            controller.HttpContext.Session
+                .GetString(TokenService.REFRESH_TOKEN_NAME)
+                .Should()
+                .Be(connectedUser.RefreshToken);
+            controller.HttpContext.Session
+                .GetString(TokenService.ACCESS_TOKEN_NAME)
+                .Should()
+                .Be(connectedUser.AccessToken);
+        }
+
+        [Fact]
+        public async Task ClearCookieAsync_ShouldRemoveCookies()
+        {
+            // Arrange
+            Mock<IAuthenticationService> mockAuthenticationService =
+                TestsHelper.GetServiceMock<IAuthenticationService>();
+            Mock<IValidator<UserModel>> mockUserModelValidator = TestsHelper.GetServiceMock<
+                IValidator<UserModel>
+            >();
+            AuthenticateController controller =
+                TestsHelper.CreateController<AuthenticateController>(
+                    mockAuthenticationService.Object,
+                    mockUserModelValidator.Object
+                );
+            ConnectedUser connectedUser =
+                new()
+                {
+                    UserName = "toto@toto.fr",
+                    RefreshToken = "refreshToken",
+                    AccessToken = "accessToken"
+                };
+            controller.HttpContext.Session.SetString(
+                TokenService.REFRESH_TOKEN_NAME,
+                connectedUser.RefreshToken
+            );
+            controller.HttpContext.Session.SetString(
+                TokenService.ACCESS_TOKEN_NAME,
+                connectedUser.AccessToken
+            );
+
+            // Act
+            IActionResult result = await controller.ClearCookieAsync();
+
+            // Asset
+            result.Should().BeActionResult<OkResult>();
+            controller.HttpContext.Session
+                .GetString(TokenService.REFRESH_TOKEN_NAME)
+                .Should()
+                .BeNull();
+            controller.HttpContext.Session
+                .GetString(TokenService.ACCESS_TOKEN_NAME)
+                .Should()
+                .BeNull();
         }
 
         [Fact]

@@ -1,9 +1,11 @@
 ﻿using FluentAssertions;
+using Mercadona.Backend.Security;
 using Mercadona.Backend.Services;
 using Mercadona.Backend.Services.Interfaces;
 using Mercadona.Tests.Fixtures;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -24,6 +26,13 @@ namespace Mercadona.Tests.Services
             _fixture.Reconfigure(services =>
             {
                 services.AddMemoryCache();
+                services.AddSingleton<WhiteList>();
+                services.AddSingleton<IConfiguration>(provider =>
+                {
+                    ConfigurationBuilder builder = new();
+                    builder.AddInMemoryCollection();
+                    return builder.Build();
+                });
                 services
                     .AddAuthentication(options =>
                     {
@@ -85,7 +94,7 @@ namespace Mercadona.Tests.Services
             JwtSecurityToken validatedJwtToken = (JwtSecurityToken)validatedToken;
             validatedJwtToken.Id.Should().Be(refreshToken);
             JwtSecurityToken? inMemoryJwtToken = _fixture
-                .GetRequiredService<IMemoryCache>()
+                .GetRequiredService<WhiteList>()
                 .Get<JwtSecurityToken>(validatedJwtToken.Id);
             inMemoryJwtToken.Should().NotBeNull();
         }
@@ -184,7 +193,7 @@ namespace Mercadona.Tests.Services
 
             // Assert (login)
             JwtSecurityToken? inMemoryJwtToken = _fixture
-                .GetRequiredService<IMemoryCache>()
+                .GetRequiredService<WhiteList>()
                 .Get<JwtSecurityToken>(refreshToken);
             inMemoryJwtToken.Should().NotBeNull();
 
@@ -193,7 +202,7 @@ namespace Mercadona.Tests.Services
 
             // Assert (logout)
             inMemoryJwtToken = _fixture
-                .GetRequiredService<IMemoryCache>()
+                .GetRequiredService<WhiteList>()
                 .Get<JwtSecurityToken>(refreshToken);
             inMemoryJwtToken.Should().BeNull();
         }
