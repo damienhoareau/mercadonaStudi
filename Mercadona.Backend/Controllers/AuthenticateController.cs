@@ -1,15 +1,15 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
 using Mercadona.Backend.Models;
-using Mercadona.Backend.Security;
 using Mercadona.Backend.Services;
-using Mercadona.Backend.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using System.Text;
+using IAuthenticationService = Mercadona.Backend.Services.Interfaces.IAuthenticationService;
 
 namespace Mercadona.Backend.Controllers
 {
@@ -19,6 +19,7 @@ namespace Mercadona.Backend.Controllers
     [ApiController]
     public class AuthenticateController : ControllerBase
     {
+#pragma warning disable CS1591 // Commentaire XML manquant pour le type ou le membre visible publiquement
         public static string USER_ALREADY_EXISTS(string username) =>
             $"L'utilisateur {username} existe déjà!";
 
@@ -28,24 +29,24 @@ namespace Mercadona.Backend.Controllers
         public const string TOKEN_NOT_FOUND =
             "Le jeton de renouvellement n'a pas été trouvé dans la session.";
 
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly ITokenService _tokenService;
+        public const string USERNAME_OR_PASSWORD_IS_NOT_VALID =
+            "L'identifiant ou le mot de passe est incorrect.";
+#pragma warning restore CS1591 // Commentaire XML manquant pour le type ou le membre visible publiquement
+
+        private readonly IAuthenticationService _authenticationService;
         private readonly IValidator<UserModel> _userModelValidator;
 
         /// <summary>
         /// Controlleur gérant les connexions à l'application
         /// </summary>
-        /// <param name="userManager">Manager des utilisateurs</param>
-        /// <param name="tokenService">Service de gestion des jetons JWT</param>
+        /// <param name="authenticationService">Service d'authentification</param>
         /// <param name="userModelValidator">Validateur d'UserModel</param>
         public AuthenticateController(
-            UserManager<IdentityUser> userManager,
-            ITokenService tokenService,
+            IAuthenticationService authenticationService,
             IValidator<UserModel> userModelValidator
         )
         {
-            _userManager = userManager;
-            _tokenService = tokenService;
+            _authenticationService = authenticationService;
             _userModelValidator = userModelValidator;
         }
 
@@ -58,27 +59,70 @@ namespace Mercadona.Backend.Controllers
         /// <response code="401">Si l'identifiant ou le mot de passe n'est pas correct.</response>
         [HttpPost]
         [Route("account/login")]
-        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ConnectedUser), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(TextResponse), StatusCodes.Status401Unauthorized)]
         public async Task<IActionResult> LoginAsync([FromBody] UserModel model)
         {
-            IdentityUser? user = await _userManager.FindByNameAsync(model.Username);
-            if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
+            IdentityUser? user = await _authenticationService.FindUserByNameAsync(model.Username);
+            if (
+                user != null
+                && await _authenticationService.CheckPasswordAsync(user, model.Password)
+            )
             {
-                string refreshToken = _tokenService.GenerateRefreshToken();
-                List<Claim> authClaims =
-                    new()
-                    {
-                        new Claim(ClaimTypes.Name, user!.UserName),
-                        new Claim(JwtRegisteredClaimNames.Jti, refreshToken),
-                    };
+                (string refreshToken, string accessToken) = await _authenticationService.LoginAsync(
+                    user
+                );
 
-                string token = _tokenService.GenerateAccessToken(refreshToken, authClaims);
                 HttpContext.Session.SetString(TokenService.REFRESH_TOKEN_NAME, refreshToken);
 
-                return Ok(token);
+                return Ok(
+                    new ConnectedUser
+                    {
+                        UserName = model.Username,
+                        RefreshToken = refreshToken,
+                        AccessToken = accessToken
+                    }
+                );
             }
-            return Unauthorized();
+            return Unauthorized(new TextResponse(USERNAME_OR_PASSWORD_IS_NOT_VALID));
+        }
+
+        /// <summary>
+        /// Permet de stocker les jetons d'authentification Blazor dans un cookie
+        /// </summary>
+        /// <param name="user">Modèle représentant l'utilisateur connecté</param>
+        /// <returns></returns>
+        /// <response code="200">Si l'action s'est bien déroulée.</response>
+        [HttpPost]
+        [Route("account/storeCookie")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> StoreCookieAsync([FromBody] ConnectedUser user)
+        {
+            await Task.Run(() =>
+            {
+                HttpContext.Session.SetString(TokenService.REFRESH_TOKEN_NAME, user.RefreshToken);
+                HttpContext.Session.SetString(TokenService.ACCESS_TOKEN_NAME, user.AccessToken);
+            });
+
+            return Ok();
+        }
+
+        /// <summary>
+        /// Permet de supprimer les jetons d'authentification Blazor des cookies
+        /// </summary>
+        /// <returns></returns>
+        /// <response code="200">Si l'action s'est bien déroulée.</response>
+        [HttpPost]
+        [Route("account/clearCookie")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> ClearCookieAsync()
+        {
+            await Task.Run(() =>
+            {
+                HttpContext.Session.Clear();
+            });
+
+            return Ok();
         }
 
         /// <summary>
@@ -105,22 +149,20 @@ namespace Mercadona.Backend.Controllers
                     string.Join("\n", userModelValidationResult.Errors.Select(_ => _.ErrorMessage)),
                     statusCode: StatusCodes.Status400BadRequest
                 );
-            IdentityUser? userExists = await _userManager.FindByNameAsync(model.Username);
+            IdentityUser? userExists = await _authenticationService.FindUserByNameAsync(
+                model.Username
+            );
             if (userExists != null)
                 return Problem(
                     USER_ALREADY_EXISTS(model.Username),
                     statusCode: StatusCodes.Status500InternalServerError
                 );
 
-            IdentityUser user =
-                new()
-                {
-                    Email = model.Username,
-                    SecurityStamp = Guid.NewGuid().ToString(),
-                    UserName = model.Username
-                };
-            IdentityResult result = await _userManager.CreateAsync(user, model.Password);
-            if (!result.Succeeded)
+            bool result = await _authenticationService.RegisterAsync(
+                model.Username,
+                model.Password
+            );
+            if (!result)
                 return Problem(
                     USER_CREATION_FAILED,
                     statusCode: StatusCodes.Status500InternalServerError
@@ -140,34 +182,26 @@ namespace Mercadona.Backend.Controllers
         [Route("account/logout")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public Task<IActionResult> LogoutAsync()
+        public async Task<IActionResult> LogoutAsync()
         {
-            return Task.Run<IActionResult>(() =>
+            try
             {
-                try
-                {
-                    // TODO : Il faut stocker les tokens dans un dictionnaire (userId, token)
-                    // Gérer les autorisations lorsque le token a été supprimé, il faut aussi le supprimé de la session si le temps est expiré
-                    string? refreshToken = HttpContext.Session.GetString(
-                        TokenService.REFRESH_TOKEN_NAME
-                    );
-                    if (refreshToken == null)
-                        return Problem(
-                            TOKEN_NOT_FOUND,
-                            statusCode: StatusCodes.Status500InternalServerError
-                        );
-                    _tokenService.RevokeRefreshToken(refreshToken);
-                    HttpContext.Session.Remove(TokenService.REFRESH_TOKEN_NAME);
-                    return Ok();
-                }
-                catch (Exception ex)
-                {
+                string? refreshToken = HttpContext.Session.GetString(
+                    TokenService.REFRESH_TOKEN_NAME
+                );
+                if (refreshToken == null)
                     return Problem(
-                        ex.Message,
+                        TOKEN_NOT_FOUND,
                         statusCode: StatusCodes.Status500InternalServerError
                     );
-                }
-            });
+                await _authenticationService.LogoutAsync(refreshToken);
+                HttpContext.Session.Remove(TokenService.REFRESH_TOKEN_NAME);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message, statusCode: StatusCodes.Status500InternalServerError);
+            }
         }
     }
 }

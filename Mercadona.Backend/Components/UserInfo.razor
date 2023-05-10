@@ -1,12 +1,36 @@
-﻿<MudMenu AnchorOrigin="Origin.BottomRight" Dense="true">
-    <ActivatorContent>
-        <MudAvatar Color="Color.Primary">A</MudAvatar>
-    </ActivatorContent>
-    <ChildContent>
-        <MudText Style="margin: 10px" Align="Align.Center">totffffffffffffffo@toto.fr</MudText>
-        <MudMenuItem Style="text-align: center; color: var(--mud-palette-primary)">Se déconnecter</MudMenuItem>
-    </ChildContent>
-</MudMenu>
+﻿@using Mercadona.Backend.Models;
+@using Mercadona.Backend.Services.Interfaces;
+@using System.Security.Claims;
+@inject NavigationManager _navigationManager;
+@inject IAuthenticationService _authenticationService;
+@inject ConnectedUser ConnectedUser;
+@inject IHostEnvironmentAuthenticationStateProvider HostAuthentication;
+@inject IJSRuntime _jsRuntime;
+
+<AuthorizeView>
+    <Authorized>
+        <MudMenu AnchorOrigin="Origin.BottomRight" Dense="true">
+            <ActivatorContent>
+                <MudAvatar Color="Color.Primary">@context.User.Identity?.Name?.ToUpperInvariant().First()</MudAvatar>
+            </ActivatorContent>
+            <ChildContent>
+                <MudText Style="margin: 10px" Align="Align.Center">@context.User.Identity?.Name</MudText>
+                <MudMenuItem Style="text-align: center; color: var(--mud-palette-primary)" OnClick="Logout">Se déconnecter</MudMenuItem>
+            </ChildContent>
+        </MudMenu>
+    </Authorized>
+</AuthorizeView>
 
 @code {
+    async Task Logout()
+    {
+        await _authenticationService.LogoutAsync(ConnectedUser.RefreshToken);
+        ConnectedUser.UserName = string.Empty;
+        ConnectedUser.RefreshToken = string.Empty;
+        ConnectedUser.AccessToken = string.Empty;
+        HostAuthentication.SetAuthenticationState(Task.FromResult(new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()))));
+        IJSObjectReference authModule = await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/auth.js");
+        await authModule.InvokeVoidAsync("ClearCookie");
+        _navigationManager.NavigateTo("/");
+    }
 }

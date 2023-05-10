@@ -7,16 +7,18 @@ namespace Mercadona.Backend.Validation
     /// <summary>
     /// Validateur d'utilisateur
     /// </summary>
-    public class UserModelValidator : AbstractValidator<UserModel>
+    public partial class UserModelValidator : AbstractValidator<UserModel>
     {
+#pragma warning disable CS1591 // Commentaire XML manquant pour le type ou le membre visible publiquement
         public const string USERNAME_VALID_EMAIL = "Il ne s'agit pas d'un email valide.";
         public const string WEAK_PASSWORD =
             "Le mot de passe doit faire 8 caractères minimum,\ncomporter au moins 1 chiffre et un caractère spécial\net comporter des lettres en majuscule et minuscule.";
+#pragma warning restore CS1591 // Commentaire XML manquant pour le type ou le membre visible publiquement
 
-        private static int MinimumNumericCharacters = 1;
-        private static int MinimumSymbolCharacters = 1;
-        private static int PreferredPasswordLength = 8;
-        private static bool RequiresUpperAndLowerCaseCharacters = true;
+        private static readonly int MinimumNumericCharacters = 1;
+        private static readonly int MinimumSymbolCharacters = 1;
+        private static readonly int PreferredPasswordLength = 8;
+        private static readonly bool RequiresUpperAndLowerCaseCharacters = true;
 
         /// <summary>
         /// Initialise une nouvelle instance de la classe <see cref="UserModelValidator"/>.
@@ -41,9 +43,8 @@ namespace Mercadona.Backend.Validation
                 && ContainsNumericCharacters(password, MinimumNumericCharacters)
                 && ContainsSpecialCharacters(password, MinimumSymbolCharacters)
                 && (
-                    RequiresUpperAndLowerCaseCharacters
-                        ? ContainsUppercaseAndLowercaseCharacters(password)
-                        : true
+                    !RequiresUpperAndLowerCaseCharacters
+                    || ContainsUppercaseAndLowercaseCharacters(password)
                 );
         }
 
@@ -58,7 +59,7 @@ namespace Mercadona.Backend.Validation
         /// </returns>
         public virtual bool ContainsNumericCharacters(string password, int minimumNumericCharacters)
         {
-            int numericCharacters = Regex.Matches(password, @"\d").Count;
+            int numericCharacters = NumericRegex().Matches(password).Count;
             return numericCharacters >= minimumNumericCharacters;
         }
 
@@ -73,7 +74,7 @@ namespace Mercadona.Backend.Validation
         /// </returns>
         public virtual bool ContainsSpecialCharacters(string password, int minimumSpecialCharacters)
         {
-            int specialCharacters = Regex.Matches(password, @"[^0-9a-zA-Z\s]").Count;
+            int specialCharacters = SpecialCharacterRegex().Matches(password).Count;
             return specialCharacters >= minimumSpecialCharacters;
         }
 
@@ -87,9 +88,21 @@ namespace Mercadona.Backend.Validation
         /// </returns>
         public virtual bool ContainsUppercaseAndLowercaseCharacters(string password)
         {
-            bool hasLowercaseCharacters = Regex.Matches(password, @"[a-z]").Any();
-            bool hasUppercaseCharacters = Regex.Matches(password, @"[A-Z]").Any();
+            bool hasLowercaseCharacters = LowerCaseRegex().Matches(password).Any();
+            bool hasUppercaseCharacters = UpperCaseRegex().Matches(password).Any();
             return hasLowercaseCharacters && hasUppercaseCharacters;
         }
+
+        [GeneratedRegex("\\d")]
+        private static partial Regex NumericRegex();
+
+        [GeneratedRegex("[^0-9a-zA-Z\\s]")]
+        private static partial Regex SpecialCharacterRegex();
+
+        [GeneratedRegex("[a-z]")]
+        private static partial Regex LowerCaseRegex();
+
+        [GeneratedRegex("[A-Z]")]
+        private static partial Regex UpperCaseRegex();
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Diagnostics.CodeAnalysis;
@@ -49,7 +50,7 @@ namespace Mercadona.Backend.Swagger
                                 Reference = new OpenApiReference
                                 {
                                     Type = ReferenceType.SecurityScheme,
-                                    Id = "Bearer"
+                                    Id = JwtBearerDefaults.AuthenticationScheme
                                 }
                             },
                             new string[] { }

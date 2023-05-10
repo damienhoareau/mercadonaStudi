@@ -31,12 +31,12 @@
 </MudDialog>
 
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
-    [Parameter] public List<DiscountedProduct> DiscountedProducts { get; set; }
-    [Inject] IValidator<Product> _productValidator { get; set; }
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = null!;
+    [Parameter] public List<DiscountedProduct> DiscountedProducts { get; set; } = null!;
+    [Inject] IValidator<Product> _productValidator { get; set; } = null!;
 
-    MudForm addProductForm;
-    MudTextField<string> labelField;
+    MudForm addProductForm = null!;
+    MudTextField<string> labelField = null!;
 
     protected override Task OnInitializedAsync()
     {

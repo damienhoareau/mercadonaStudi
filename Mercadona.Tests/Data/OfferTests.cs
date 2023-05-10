@@ -172,7 +172,15 @@ namespace Mercadona.Tests.Data
             string result = offer.ToString();
 
             // Assert
-            result.Should().Be("06/05/2023 -> 07/05/2023 : 20%");
+            result
+                .Should()
+                .Be(
+                    string.Format(
+                        "{0} -> {1} : 20%",
+                        DateOnly.FromDateTime(DateTime.Today),
+                        DateOnly.FromDateTime(DateTime.Today.AddDays(1))
+                    )
+                );
         }
     }
 }

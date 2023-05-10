@@ -17,7 +17,7 @@ namespace Mercadona.Tests.Fixtures
         public DatabaseServerFixture()
         {
             PgPort = RandomPort;
-            _pgServer = new PgServer("10.7.1", port: PgPort);
+            _pgServer = new PgServer("10.7.1", port: PgPort, clearInstanceDirOnStop: true);
             _pgServer.Start();
 
             _usedPorts.TryAdd(PgPort, this);

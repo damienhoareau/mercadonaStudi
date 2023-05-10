@@ -24,10 +24,10 @@
 
 @code {
     [Parameter] public bool CanEdit { get; set; } = false;
-    [Parameter] public DiscountedProduct DiscountedProduct { get; set; }
+    [Parameter] public DiscountedProduct DiscountedProduct { get; set; } = null!;
 
     // TODO : Remove
-    [Parameter] public List<Product> products { get; set; }
+    [Parameter] public List<Product> products { get; set; } = null!;
 
     string? GetImageURL(Guid productId)
     {

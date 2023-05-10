@@ -1,7 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-Mercadona.Backend-6e5e7a6a-3baf-4124-8ff7-4c167f4d67f4</UserSecretsId>
@@ -12,10 +12,10 @@
 
   <ItemGroup>
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.16" />
-    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="6.0.16" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.16" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.16" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="7.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="7.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -23,8 +23,36 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.18.1" />
     <PackageReference Include="Mime-Detective" Version="22.12.14" />
     <PackageReference Include="MudBlazor" Version="6.2.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.4" />
+    <PackageReference Include="NSwag.MSBuild" Version="13.19.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ApiClient\" />
+  </ItemGroup>
+
+  <Target Name="Generate OpenAPI Specification Document" AfterTargets="Build">
+    <PropertyGroup>
+      <OpenApiDocumentName>v1</OpenApiDocumentName>
+      <ApiDll>$(OutputPath)$(AssemblyName).dll</ApiDll>
+      <OutputApiDocument>$(OutputPath)$(AssemblyName).json</OutputApiDocument>
+    </PropertyGroup>
+    <Exec Command="swagger tofile --output $(OutputApiDocument) $(ApiDll) $(OpenApiDocumentName)" ContinueOnError="true" />
+  </Target>
+
+  <Target Name="NSwag" AfterTargets="PostBuildEvent" Condition=" '$(Configuration)' == 'Debug' ">
+    <!--<Exec Command="$(NSwagExe_Net70) new" />-->
+    <PropertyGroup>
+      <OpenApiDocument>bin/Debug/net7.0/Mercadona.Backend.json</OpenApiDocument>
+      <NSwagConfiguration>nswag.json</NSwagConfiguration>
+      <GeneratedOutput>ApiClient/Client.cs</GeneratedOutput>
+    </PropertyGroup>
+    <Exec Command="$(NSwagExe_Net70) run $(NSwagConfiguration) /variables:OpenApiDocument=$(OpenApiDocument),GeneratedOutput=$(GeneratedOutput)" />
+  </Target>
 
 </Project>

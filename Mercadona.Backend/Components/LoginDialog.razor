@@ -1,0 +1,153 @@
+﻿@using Mercadona.Backend.Controllers;
+@using Mercadona.Backend.Data;
+@using Mercadona.Backend.Models;
+@using FluentValidation;
+@using Mercadona.Backend.Services.Interfaces;
+@using Mercadona.Backend.Services;
+@using Mercadona.Backend.Validation;
+@using Microsoft.AspNetCore.Identity;
+@using System.Security.Claims;
+@inject ConnectedUser _connectedUser;
+@inject ISnackbar _snackbar;
+@inject IAuthenticationService _authenticationService;
+@inject IHostEnvironmentAuthenticationStateProvider _hostAuthentication;
+@inject ITokenService _tokenService;
+@inject IJSRuntime _jsRuntime;
+
+<MudDialog Class="customDialog">
+    <DialogContent>
+        <MudForm Model="@model" @ref="@loginForm">
+            <MudTextField @ref="@usernameField" @bind-Value="model.Username" Immediate="true" Label="Identifiant" Required RequiredError="Requis" OnKeyDown="OnPressEnter" />
+            <MudTextField @ref="@passwordField" @bind-Value="model.Password" InputType="@PasswordInput" Immediate="true" Label="Mot de passe" Required RequiredError="Requis" OnKeyDown="OnPressEnter" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="PasswordAdornmentClick" AdornmentAriaLabel="Voir le mot de passe" />
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Outlined" OnClick="Cancel">Annuler</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Disabled="@(CanNotLogin || _processing)">
+            @if (_processing)
+            {
+                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                <MudText Class="ms-2">Vérification</MudText>
+            }
+            else
+            {
+                <MudText>Ok</MudText>
+            }
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = null!;
+
+    MudForm loginForm = null!;
+    MudTextField<string> usernameField = null!;
+    MudTextField<string> passwordField = null!;
+
+    bool passwordIsShown;
+    InputType PasswordInput = InputType.Password;
+    string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+
+    protected override Task OnInitializedAsync()
+    {
+        return base.OnInitializedAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        if (firstRender)
+            await usernameField.FocusAsync();
+    }
+
+    UserModel model = new UserModel();
+
+    void PasswordAdornmentClick()
+    {
+        @if (passwordIsShown)
+        {
+            passwordIsShown = false;
+            PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+            PasswordInput = InputType.Password;
+        }
+        else
+        {
+            passwordIsShown = true;
+            PasswordInputIcon = Icons.Material.Filled.Visibility;
+            PasswordInput = InputType.Text;
+        }
+    }
+
+    void PasswordBlur(FocusEventArgs e)
+    {
+        @if (passwordIsShown)
+        {
+            passwordIsShown = false;
+            PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+            PasswordInput = InputType.Password;
+        }
+    }
+
+    async Task OnPressEnter(KeyboardEventArgs e)
+    {
+        if (e.Key != "Enter" || CanNotLogin)
+            return;
+        await Submit();
+    }
+
+    bool CanNotLogin => string.IsNullOrWhiteSpace(model.Username) || string.IsNullOrWhiteSpace(model.Password);
+
+    private bool _processing = false;
+
+    async Task Submit()
+    {
+        _processing = true;
+        try
+        {
+            IdentityUser? user = await _authenticationService.FindUserByNameAsync(model.Username);
+            if (
+                user != null
+                && await _authenticationService.CheckPasswordAsync(user, model.Password)
+            )
+            {
+                (string refreshToken, string accessToken) = await _authenticationService.LoginAsync(
+                    user
+                );
+
+                MudDialog.Close(DialogResult.Ok(true));
+
+                _connectedUser.UserName = model.Username;
+                _connectedUser.RefreshToken = refreshToken;
+                _connectedUser.AccessToken = accessToken;
+
+                ClaimsPrincipal principal = _tokenService.GetPrincipalFromToken(_connectedUser.AccessToken);
+                ClaimsIdentity identity = new ClaimsIdentity(principal.Claims, Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme);
+                principal = new ClaimsPrincipal(identity);
+                _hostAuthentication.SetAuthenticationState(Task.FromResult(new AuthenticationState(principal)));
+                IJSObjectReference authModule = await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/auth.js");
+                await authModule.InvokeVoidAsync("StoreCookie", _connectedUser);
+                return;
+            }
+            _snackbar.Add(AuthenticateController.USERNAME_OR_PASSWORD_IS_NOT_VALID, MudBlazor.Severity.Error);
+        }
+        catch (ApiException<TextResponse> ex)
+        {
+            _snackbar.Add(ex.Result.Text, MudBlazor.Severity.Error);
+        }
+        catch (Exception ex)
+        {
+            _snackbar.Add(ex.Message, MudBlazor.Severity.Error);
+        }
+        finally
+        {
+            _processing = false;
+            model.Username = string.Empty;
+            model.Password = string.Empty;
+            await usernameField.Clear();
+            await passwordField.Clear();
+            await usernameField.FocusAsync();
+        }
+    }
+
+    void Cancel() => MudDialog.Cancel();
+}
