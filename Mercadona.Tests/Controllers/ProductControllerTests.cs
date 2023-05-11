@@ -125,10 +125,13 @@ namespace Mercadona.Tests.Controllers
             // Assert
             result
                 .Should()
-                .BeActionResult<FileStreamResult>(
-                    typedResult =>
-                        typedResult.FileStream.Length.Should().Be(_item.ImageStream.Length)
-                );
+                .BeActionResult<FileStreamResult>(typedResult =>
+                {
+                    MemoryStream memoryStream = new();
+                    typedResult.FileStream.CopyTo(memoryStream);
+                    memoryStream.Length.Should().Be(_item.ImageStream.Length);
+                    memoryStream.ToArray().Should().BeEquivalentTo(_item.Image);
+                });
         }
 
         [Fact]
