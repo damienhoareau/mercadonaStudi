@@ -11,12 +11,11 @@
     }
 </MudSelect>
 <MudGrid Style="width:100%;margin:unset">
-    @foreach (DiscountedProduct discountedProduct in filteredDiscountedProducts)
-    {
+    <Virtualize Items="@filteredDiscountedProducts" Context="discountedProduct">
         <MudItem xs="6" sm="4" md="3">
             <ProductCard CanEdit=@CanEdit DiscountedProduct=@discountedProduct />
         </MudItem>
-    }
+    </Virtualize>
 </MudGrid>
 @if (CanEdit)
 {
