@@ -29,6 +29,7 @@ namespace Mercadona.Backend.Security
             });
             services.AddSession();
             services.AddSingleton<WhiteList>();
+            services.AddScoped<JwtInSessionMiddleware>();
 
             return services;
         }

@@ -1,7 +1,10 @@
 ﻿@using Mercadona.Backend.Data;
 @using Mercadona.Backend.Models;
 @using FluentValidation;
+@using Mercadona.Backend.Services.Interfaces;
 @using Mercadona.Backend.Validation;
+@inject IProductService _productService;
+@inject ISnackbar _snackbar;
 
 <MudDialog Class="customDialog">
     <DialogContent>
@@ -10,15 +13,20 @@
             <MudTextField @bind-Value="model.Description" For="@(() => model.Description)" Immediate="true" Label="Description" Lines="3" Required />
             <MudAutocomplete T="string" SearchFuncWithCancel="@SearchCategories" OpenIcon="" CloseIcon="" CoerceText="false" @bind-Value="model.Category" TextChanged="@CategoryTextChanged" For="@(() => model.Category)" Immediate="true" Label="Catégorie" Required />
             <MudNumericField @bind-Value="model.Price" For="@(() => model.Price)" Min=@Product.PriceMin Immediate="true" Label="Prix" Format="N2" Adornment="Adornment.End" AdornmentText="€" />
-            <MudFileUpload T="IReadOnlyList<IBrowserFile>" OnFilesChanged="OnInputFileChanged" @ondragenter="@SetDragClass" @ondragleave="@ClearDragClass" @ondragend="@ClearDragClass">
+            <MudFileUpload T="IBrowserFile" OnFilesChanged="OnInputFileChanged" Hidden="false" Class="flex-1"
+                           InputClass="absolute mud-width-full mud-height-full overflow-hidden z-20" InputStyle="opacity:0"
+                           Accept="@(string.Join(",", acceptedExtensions))"
+                           @ondragenter="@SetDragClass" @ondragleave="@ClearDragClass" @ondragend="@ClearDragClass">
                 <ButtonTemplate>
-                    <MudPaper Height="100px" Outlined="true" Class="@DragClass" Style="display: grid; grid-template-rows: 1fr auto">
-                        <MudText>Glisser l'image ici.</MudText>
-                        @foreach(var file in fileNames)
+                    <MudPaper Height="100px" Outlined="true" Class="@DragClass">
+                        <MudElement HtmlTag="div" Class="d-flex justify-center align-center">
+                            <MudIcon Icon="@Icons.Material.Filled.CloudUpload" Class="mr-1" />
+                            <MudText Typo="Typo.h6">Glisser une image ou cliquer ici (Max 5MB)</MudText>
+                        </MudElement>
+                        @if (file != null)
                         {
-                            <MudChip Color="Color.Dark" Text="@file"/>
+                            <MudChip Color="Color.Primary" Text="@file.Name" Class="align-self-center" />
                         }
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary">Parcourir</MudButton>
                     </MudPaper>
                 </ButtonTemplate>
             </MudFileUpload>
@@ -26,7 +34,17 @@
     </DialogContent>
     <DialogActions>
         <MudButton Variant="Variant.Outlined" OnClick="Cancel">Annuler</MudButton>
-        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit">Ok</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Submit" Disabled="@(CanNotAdd || _processing)">
+            @if (_processing)
+            {
+                <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+                <MudText Class="ms-2">En cours</MudText>
+            }
+            else
+            {
+                <MudText>Ok</MudText>
+            }
+        </MudButton>
     </DialogActions>
 </MudDialog>
 
@@ -65,37 +83,87 @@
         model.Category = newCategory;
     }
 
-    static string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-1 mt-2 mud-width-full mud-height-full z-10 justify-center";
-    string DragClass = DefaultDragClass;
-    List<string> fileNames = new List<string>();
+    private static string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-2 mt-2 d-flex flex-column mud-width-full mud-height-full z-10";
+    private string DragClass = DefaultDragClass;
+    private List<string> acceptedExtensions = new List<string> { ".bmp",".gif",".jpeg",".jpg",".png" };
+    private IBrowserFile? file { get; set; }
 
-    void OnInputFileChanged(InputFileChangeEventArgs e)
+    private void OnInputFileChanged(InputFileChangeEventArgs e)
     {
         ClearDragClass();
-        var files = e.GetMultipleFiles();
-        foreach(var file in files)
+        IReadOnlyList<IBrowserFile> files = e.GetMultipleFiles();
+        IBrowserFile candidateFile = files.First();
+        if (!acceptedExtensions.Contains(Path.GetExtension(candidateFile.Name))
+            || candidateFile.Size > 5 * 1024 * 1024)
+            return;
+        file = candidateFile;
+    }
+
+    private void SetDragClass(DragEventArgs args)
+    {
+        if (args.DataTransfer.Items.First().Type.StartsWith("image/"))
         {
-            fileNames.Add(file.Name);
+            DragClass = $"{DefaultDragClass} mud-border-primary";
+        }
+        else
+        {
+            DragClass = $"{DefaultDragClass} mud-border-error";
         }
     }
 
-    async Task Clear()
-    {
-        fileNames.Clear();
-        ClearDragClass();
-        await Task.Delay(100);
-    }
-
-    void SetDragClass()
-    {
-        DragClass = $"{DefaultDragClass} mud-border-primary";
-    }
-
-    void ClearDragClass()
+    private void ClearDragClass()
     {
         DragClass = DefaultDragClass;
     }
 
-    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+    bool CanNotAdd => string.IsNullOrWhiteSpace(model.Label)
+        || string.IsNullOrWhiteSpace(model.Description)
+        || string.IsNullOrWhiteSpace(model.Category)
+        || model.Price <= 0
+        || file == null;
+
+    async Task<MemoryStream> MemoryStreamFromIBrowserFile(IBrowserFile browserFile, CancellationToken cancellationToken = default)
+    {
+        Stream browserFileStream = browserFile.OpenReadStream(5 * 1024 * 1024, cancellationToken);
+        MemoryStream memoryStream = new MemoryStream();
+        await browserFileStream.CopyToAsync(memoryStream, cancellationToken);
+        memoryStream.Position = 0;
+        return memoryStream;
+    }
+
+    private bool _processing = false;
+
+    async Task Submit()
+    {
+        _processing = true;
+        try
+        {
+            MemoryStream memoryStream = await MemoryStreamFromIBrowserFile(file!);
+            Product productToAdd = new Product(() => memoryStream)
+            {
+                Label = model.Label,
+                Description = model.Description,
+                Category = model.Category,
+                Price = model.Price
+            };
+            Product addedProduct = await _productService.AddProductAsync(productToAdd);
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+        catch (ValidationException ex)
+        {
+            _snackbar.Add(ex.Message, MudBlazor.Severity.Error);
+            await labelField.FocusAsync();
+        }
+        catch (Exception ex)
+        {
+            _snackbar.Add(ex.Message, MudBlazor.Severity.Error);
+            await labelField.FocusAsync();
+        }
+        finally
+        {
+            _processing = false;
+        }
+    }
+
     void Cancel() => MudDialog.Cancel();
 }
