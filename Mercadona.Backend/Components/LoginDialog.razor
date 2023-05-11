@@ -1,4 +1,4 @@
-﻿@using Mercadona.Backend.Controllers;
+@using Mercadona.Backend.Controllers;
 @using Mercadona.Backend.Data;
 @using Mercadona.Backend.Models;
 @using FluentValidation;
@@ -7,6 +7,7 @@
 @using Mercadona.Backend.Validation;
 @using Microsoft.AspNetCore.Identity;
 @using System.Security.Claims;
+@inject NavigationManager _navigationManager;
 @inject ConnectedUser _connectedUser;
 @inject ISnackbar _snackbar;
 @inject IAuthenticationService _authenticationService;
@@ -126,6 +127,7 @@
                 _hostAuthentication.SetAuthenticationState(Task.FromResult(new AuthenticationState(principal)));
                 IJSObjectReference authModule = await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/auth.js");
                 await authModule.InvokeVoidAsync("StoreCookie", _connectedUser);
+                _navigationManager.NavigateTo("/products");
                 return;
             }
             _snackbar.Add(AuthenticateController.USERNAME_OR_PASSWORD_IS_NOT_VALID, MudBlazor.Severity.Error);
@@ -141,10 +143,6 @@
         finally
         {
             _processing = false;
-            model.Username = string.Empty;
-            model.Password = string.Empty;
-            await usernameField.Clear();
-            await passwordField.Clear();
             await usernameField.FocusAsync();
         }
     }
