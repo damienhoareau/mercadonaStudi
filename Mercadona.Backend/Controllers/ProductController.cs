@@ -77,13 +77,16 @@ namespace Mercadona.Backend.Controllers
                     productId,
                     HttpContext.RequestAborted
                 );
-                return imageStream != null
-                    ? File(
-                        imageStream,
-                        _inspector.Inspect(imageStream).First().Definition.File.MimeType
-                            ?? "application/octet-stream"
-                    )
-                    : NotFound();
+                if (imageStream != null)
+                {
+                    string? mimeType = _inspector
+                        .Inspect(imageStream)
+                        .First()
+                        .Definition.File.MimeType;
+                    imageStream.Seek(0, SeekOrigin.Begin);
+                    return File(imageStream, mimeType ?? "application/octet-stream");
+                }
+                return NotFound();
             }
             catch (Exception ex)
             {

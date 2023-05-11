@@ -27,9 +27,8 @@
 
 @code {
     [CascadingParameter] MudDialogInstance MudDialog { get; set; } = null!;
-    [Parameter] public Product Product { get; set; } = null!;
+    [Parameter] public DiscountedProduct Product { get; set; } = null!;
     [Inject] IValidator<Offer> _offerValidator { get; set; } = null!;
-    [Inject] IValidator<(Product product, Offer offer)> _productAddOfferValidator { get; set; } = null!;
 
     MudForm applyOfferToProductForm = null!;
 
