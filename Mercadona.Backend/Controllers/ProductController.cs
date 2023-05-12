@@ -4,6 +4,8 @@ using Mercadona.Backend.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MimeDetective;
+using System.ComponentModel.DataAnnotations;
+using ValidationException = FluentValidation.ValidationException;
 
 namespace Mercadona.Backend.Controllers
 {
@@ -65,11 +67,12 @@ namespace Mercadona.Backend.Controllers
         /// <response code="500">Si une erreur survient au niveau du code.</response>
         [AllowAnonymous]
         [HttpGet]
-        [Route("api/products/{productId}/image")]
+        [Route("api/products/image")]
+        [ResponseCache(Duration = int.MaxValue)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetImageAsync([FromRoute] Guid productId)
+        public async Task<IActionResult> GetImageAsync([FromQuery] [Required] Guid productId)
         {
             try
             {

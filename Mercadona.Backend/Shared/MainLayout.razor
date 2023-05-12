@@ -2,7 +2,7 @@
 @using Mercadona.Backend.Models;
 @using MudBlazor.Utilities;
 @inherits LayoutComponentBase;
-@inject IDialogService DialogService;
+@inject IDialogService _dialogService;
 
 <PageTitle>Mercadona.Backend</PageTitle>
 
@@ -82,7 +82,7 @@
 
     void OpenLoginDialog()
     {
-        DialogService.Show<LoginDialog>("Se connecter");
+        _dialogService.Show<LoginDialog>("Se connecter");
     }
 
     #endregion

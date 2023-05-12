@@ -16,7 +16,7 @@ namespace Mercadona.Tests.Services
     public class ProductServiceTests : IClassFixture<ApplicationDbContextFixture>, IAsyncLifetime
     {
         private readonly ApplicationDbContextFixture _fixture;
-        private readonly ApplicationDbContext _dbContext;
+        private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
         private readonly IProductService _productService;
 
         public ProductServiceTests(ApplicationDbContextFixture fixture)
@@ -36,13 +36,14 @@ namespace Mercadona.Tests.Services
                 return services;
             });
 
-            _dbContext = _fixture.GetRequiredService<ApplicationDbContext>();
+            _dbContextFactory = _fixture.GetRequiredService<
+                IDbContextFactory<ApplicationDbContext>
+            >();
             _productService = _fixture.GetRequiredService<IProductService>();
         }
 
         public Task InitializeAsync()
         {
-            _dbContext.ChangeTracker.Clear();
             return _fixture.ResetDbAsync();
         }
 
@@ -55,6 +56,7 @@ namespace Mercadona.Tests.Services
         public async Task EFQueriesCanSetImage()
         {
             // Arrange
+            using ApplicationDbContext context = await _dbContextFactory.CreateDbContextAsync();
             Product product =
                 new(
                     () =>
@@ -72,13 +74,12 @@ namespace Mercadona.Tests.Services
                     Category = "Surgelé"
                 };
             long imageStreamLength = product.ImageStream.Length;
-            await _dbContext.AddAsync(product);
-            await _dbContext.SaveChangesAsync();
-            _dbContext.ChangeTracker.Clear();
+            await context.AddAsync(product);
+            await context.SaveChangesAsync();
 
             // Act
             // Assert
-            byte[] data = await _dbContext.Products.Select(_ => _.Image).FirstAsync();
+            byte[] data = await context.Products.Select(_ => _.Image).FirstAsync();
             data.LongLength.Should().Be(imageStreamLength);
         }
 
@@ -86,6 +87,7 @@ namespace Mercadona.Tests.Services
         public async Task EFQueriesDoNotGetImage()
         {
             // Arrange
+            using ApplicationDbContext context = await _dbContextFactory.CreateDbContextAsync();
             Product product =
                 new(
                     () =>
@@ -102,13 +104,12 @@ namespace Mercadona.Tests.Services
                     Price = 1M,
                     Category = "Surgelé"
                 };
-            await _dbContext.AddAsync(product);
-            await _dbContext.SaveChangesAsync();
-            _dbContext.ChangeTracker.Clear();
+            await context.AddAsync(product);
+            await context.SaveChangesAsync();
 
             // Act
             // Assert
-            Product dbProduct = await _dbContext.Products
+            Product dbProduct = await context.Products
                 .Select(
                     _ =>
                         new Product
@@ -128,6 +129,7 @@ namespace Mercadona.Tests.Services
         public async Task GetAllAsync_GetAllSorted()
         {
             // Arrange
+            using ApplicationDbContext context = await _dbContextFactory.CreateDbContextAsync();
             Product product3 =
                 new(
                     () =>
@@ -176,11 +178,10 @@ namespace Mercadona.Tests.Services
                     Price = 1M,
                     Category = "Surgelé"
                 };
-            await _dbContext.AddAsync(product3);
-            await _dbContext.AddAsync(product2);
-            await _dbContext.AddAsync(product1);
-            await _dbContext.SaveChangesAsync();
-            _dbContext.ChangeTracker.Clear();
+            await context.AddAsync(product3);
+            await context.AddAsync(product2);
+            await context.AddAsync(product1);
+            await context.SaveChangesAsync();
 
             // Act
             List<Product> result = (await _productService.GetAllAsync()).ToList();
@@ -211,6 +212,7 @@ namespace Mercadona.Tests.Services
         public async Task AddProductAsync_InvalidProduct_ThrowsValidationException()
         {
             // Arrange
+            using ApplicationDbContext context = await _dbContextFactory.CreateDbContextAsync();
             Product invalidProduct =
                 new(
                     () =>
@@ -240,6 +242,7 @@ namespace Mercadona.Tests.Services
         public async Task AddProductAsync_ValidProduct_ReturnsAddedProduct()
         {
             // Arrange
+            using ApplicationDbContext context = await _dbContextFactory.CreateDbContextAsync();
             Product product =
                 new(
                     () =>
@@ -262,7 +265,7 @@ namespace Mercadona.Tests.Services
 
             // Assert
             resultProduct.Should().BeEquivalentTo(product);
-            List<Product> products = await _dbContext.Products
+            List<Product> products = await context.Products
                 .Select(
                     _ =>
                         new Product
@@ -289,6 +292,7 @@ namespace Mercadona.Tests.Services
         public async Task GetImageAsync_NotExists_ReturnsNull()
         {
             // Arrange
+            using ApplicationDbContext context = await _dbContextFactory.CreateDbContextAsync();
             Product product =
                 new(
                     () =>
@@ -305,9 +309,8 @@ namespace Mercadona.Tests.Services
                     Price = 1M,
                     Category = "Surgelé"
                 };
-            EntityEntry<Product> productEntry = await _dbContext.AddAsync(product);
-            await _dbContext.SaveChangesAsync();
-            _dbContext.ChangeTracker.Clear();
+            EntityEntry<Product> productEntry = await context.AddAsync(product);
+            await context.SaveChangesAsync();
 
             // Act
             Stream? result = await _productService.GetImageAsync(Guid.NewGuid());
@@ -320,6 +323,7 @@ namespace Mercadona.Tests.Services
         public async Task GetImageAsync_Exists_ReturnsCorrespondingStream()
         {
             // Arrange
+            using ApplicationDbContext context = await _dbContextFactory.CreateDbContextAsync();
             Product product =
                 new(
                     () =>
@@ -337,9 +341,8 @@ namespace Mercadona.Tests.Services
                     Category = "Surgelé"
                 };
             long streamSize = product.Image.LongLength;
-            EntityEntry<Product> productEntry = await _dbContext.AddAsync(product);
-            await _dbContext.SaveChangesAsync();
-            _dbContext.ChangeTracker.Clear();
+            EntityEntry<Product> productEntry = await context.AddAsync(product);
+            await context.SaveChangesAsync();
 
             // Act
             Stream? result = await _productService.GetImageAsync(productEntry.Entity.Id);

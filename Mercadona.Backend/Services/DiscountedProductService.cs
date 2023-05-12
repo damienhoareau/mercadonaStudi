@@ -5,6 +5,7 @@ using Mercadona.Backend.Models;
 using Mercadona.Backend.Services.Interfaces;
 using Mercadona.Backend.Validation;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Mercadona.Backend.Services
 {
@@ -14,29 +15,25 @@ namespace Mercadona.Backend.Services
     /// <seealso cref="Mercadona.Backend.Services.Interfaces.IDiscountedProductService" />
     public class DiscountedProductService : IDiscountedProductService
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
         private readonly IValidator<Offer> _offerValidator;
         private readonly IValidator<(Product product, Offer offer)> _productAddOfferValidator;
-        private readonly IOfferService _offerService;
 
         /// <summary>
         /// Initialise une nouvelle instance de la classe <see cref="DiscountedProductService"/>.
         /// </summary>
-        /// <param name="dbContext">Le contexte de la base de donnée.</param>
+        /// <param name="dbContextFactory">La fabrique de contexte de la base de donnée.</param>
         /// <param name="offerValidator">Le validateur de promotion.</param>
         /// <param name="productAddOfferValidator">Le validateur d'application de promotion à un produit.</param>
-        /// <param name="offerService">Le service gérant les promotions.</param>
         public DiscountedProductService(
-            ApplicationDbContext dbContext,
+            IDbContextFactory<ApplicationDbContext> dbContextFactory,
             IValidator<Offer> offerValidator,
-            IValidator<(Product product, Offer offer)> productAddOfferValidator,
-            IOfferService offerService
+            IValidator<(Product product, Offer offer)> productAddOfferValidator
         )
         {
-            _dbContext = dbContext;
+            _dbContextFactory = dbContextFactory;
             _offerValidator = offerValidator;
             _productAddOfferValidator = productAddOfferValidator;
-            _offerService = offerService;
         }
 
         /// <inheritdoc/>
@@ -44,9 +41,13 @@ namespace Mercadona.Backend.Services
             CancellationToken cancellationToken = default
         )
         {
+            using ApplicationDbContext context = await _dbContextFactory.CreateDbContextAsync(
+                cancellationToken
+            );
+
             DateOnly today = DateOnly.FromDateTime(DateTime.Today);
 
-            List<Product> products = await _dbContext.Products
+            List<Product> products = await context.Products
                 .AsNoTracking()
                 .Include(p => p.Offers.Where(o => o.StartDate <= today && o.EndDate >= today))
                 .OrderBy(_ => _.Label)
@@ -82,9 +83,13 @@ namespace Mercadona.Backend.Services
             CancellationToken cancellationToken = default
         )
         {
+            using ApplicationDbContext context = await _dbContextFactory.CreateDbContextAsync(
+                cancellationToken
+            );
+
             DateOnly today = DateOnly.FromDateTime(DateTime.Today);
 
-            List<Product> products = await _dbContext.Products
+            List<Product> products = await context.Products
                 .AsNoTracking()
                 .Include(p => p.Offers.Where(o => o.StartDate <= today && o.EndDate >= today))
                 .Where(p => p.Offers.Any(o => o.StartDate <= today && o.EndDate >= today))
@@ -123,12 +128,14 @@ namespace Mercadona.Backend.Services
             bool forceReplace = false
         )
         {
+            using ApplicationDbContext context = await _dbContextFactory.CreateDbContextAsync();
+
             DateOnly today = DateOnly.FromDateTime(DateTime.Today);
 
             // On vérifie que l'offre est valide
             await _offerValidator.ValidateAndThrowAsync(offer);
 
-            Product product = await _dbContext.Products
+            Product product = await context.Products
                 .Include(p => p.Offers.Where(o => o.EndDate >= today)) // Inclure uniquement les offres en cours ou futures
                 .Select(
                     _ =>
@@ -143,7 +150,7 @@ namespace Mercadona.Backend.Services
                         }
                 )
                 .SingleAsync(_ => _.Id == productId);
-            _dbContext.Attach(product);
+            context.Attach(product);
 
             // On vérifie qu'une promotion n'est pas en cours durant la promotion 'offer'
             // et que la période de la promotion n'a pas été dépassée.
@@ -151,24 +158,38 @@ namespace Mercadona.Backend.Services
                 (product, offer)
             );
             if (
-                validationResult.Errors.Count == 1
-                && validationResult.Errors.First().ErrorMessage
-                    == ProductAddOfferValidator.OFFER_ALREADY_EXISTS
-                && !forceReplace
+                validationResult.Errors.Any(
+                    _ => _.ErrorMessage == ProductAddOfferValidator.OFFER_ALREADY_EXISTS
+                ) && !forceReplace
             )
-                throw new ValidationException(validationResult.Errors);
+                throw new ValidationException(
+                    validationResult.Errors
+                        .Where(
+                            _ =>
+                                _.ErrorMessage == ProductAddOfferValidator.OFFER_ALREADY_EXISTS
+                                && _.AttemptedValue is Offer
+                        )
+                        .OrderBy(_ => ((Offer)_.AttemptedValue).StartDate)
+                        .ThenBy(_ => ((Offer)_.AttemptedValue).Percentage)
+                );
 
             // Si la promotion existe déjà, on ne la crée pas.
-            Offer? existingOffer = await _dbContext.Offers.SingleOrDefaultAsync(
+            Offer? existingOffer = await context.Offers.SingleOrDefaultAsync(
                 _ =>
                     _.StartDate == offer.StartDate
                     && _.EndDate == offer.EndDate
                     && _.Percentage == offer.Percentage
             );
             if (existingOffer == null)
-                offer = await _offerService.AddOfferAsync(offer);
+            {
+                await _offerValidator.ValidateAndThrowAsync(offer);
+                EntityEntry<Offer> result = await context.AddAsync(offer);
+                offer = result.Entity;
+            }
             else
+            {
                 offer = existingOffer;
+            }
 
             // On supprime les promotions qui seront à cheval sur celles appliquée
             foreach (
@@ -187,7 +208,7 @@ namespace Mercadona.Backend.Services
 
             // On applique la promotion 'offer' au produit 'product'.
             product.Offers.Add(offer);
-            await _dbContext.SaveChangesAsync();
+            await context.SaveChangesAsync();
 
             return new DiscountedProduct(product, offer);
         }

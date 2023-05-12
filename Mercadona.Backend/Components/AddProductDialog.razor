@@ -147,7 +147,7 @@
                 Price = model.Price
             };
             Product addedProduct = await _productService.AddProductAsync(productToAdd);
-            MudDialog.Close(DialogResult.Ok(true));
+            MudDialog.Close(DialogResult.Ok(addedProduct));
         }
         catch (ValidationException ex)
         {

@@ -1,0 +1,51 @@
+﻿@using Mercadona.Backend.Data;
+@using Mercadona.Backend.Models;
+@using FluentValidation;
+@using Mercadona.Backend.Services.Interfaces;
+@using Mercadona.Backend.Validation;
+
+<MudDialog Class=@($"customDialog {DialogTypeClasses[Type]}".Trim())>
+    <DialogContent>
+        @DialogContent
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Outlined" OnClick="Cancel">Non</MudButton>
+        <MudButton Variant="Variant.Filled" Color="@DialogTypeColors[Type]" OnClick="Submit">
+            <MudText>Oui</MudText>
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    public enum DialogType
+    {
+        Info,
+        Warning,
+        Error
+    }
+    public static Dictionary<DialogType, Color> DialogTypeColors = new Dictionary<DialogType, Color>()
+    {
+        { DialogType.Info, Color.Primary },
+        { DialogType.Warning, Color.Warning },
+        { DialogType.Error, Color.Error },
+    };
+    public static Dictionary<DialogType, string> DialogTypeClasses = new Dictionary<DialogType, string>()
+    {
+        { DialogType.Info, string.Empty },
+        { DialogType.Warning, "dialog-warning" },
+        { DialogType.Error, "dialog-error" },
+    };
+
+    [CascadingParameter] MudDialogInstance MudDialog { get; set; } = null!;
+    [Parameter] public RenderFragment DialogContent { get; set; } = null!;
+    [Parameter] public DialogType Type { get; set; } = DialogType.Info;
+
+    protected override Task OnInitializedAsync()
+    {
+        return base.OnInitializedAsync();
+    }
+
+    void Submit() => MudDialog.Close(DialogResult.Ok(true));
+
+    void Cancel() => MudDialog.Cancel();
+}

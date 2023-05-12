@@ -14,7 +14,7 @@ namespace Mercadona.Tests.Services
     public class OfferServiceTests : IClassFixture<ApplicationDbContextFixture>, IAsyncLifetime
     {
         private readonly ApplicationDbContextFixture _fixture;
-        private readonly ApplicationDbContext _dbContext;
+        private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
         private readonly IOfferService _offerService;
 
         public OfferServiceTests(ApplicationDbContextFixture fixture)
@@ -28,13 +28,14 @@ namespace Mercadona.Tests.Services
                 return services;
             });
 
-            _dbContext = _fixture.GetRequiredService<ApplicationDbContext>();
+            _dbContextFactory = _fixture.GetRequiredService<
+                IDbContextFactory<ApplicationDbContext>
+            >();
             _offerService = _fixture.GetRequiredService<IOfferService>();
         }
 
         public Task InitializeAsync()
         {
-            _dbContext.ChangeTracker.Clear();
             return _fixture.ResetDbAsync();
         }
 
@@ -47,6 +48,7 @@ namespace Mercadona.Tests.Services
         public async Task GetAllAsync_GetOnlyCurrentOrFuture()
         {
             // Arrange
+            using ApplicationDbContext context = await _dbContextFactory.CreateDbContextAsync();
             DateOnly today = DateOnly.FromDateTime(DateTime.Today);
             Offer oudatedOffer =
                 new()
@@ -76,12 +78,11 @@ namespace Mercadona.Tests.Services
                     EndDate = today.AddDays(1),
                     Percentage = 20
                 };
-            await _dbContext.AddAsync(oudatedOffer);
-            await _dbContext.AddAsync(currentOffer);
-            await _dbContext.AddAsync(futureOffer10Percent);
-            await _dbContext.AddAsync(futureOffer20Percent);
-            await _dbContext.SaveChangesAsync();
-            _dbContext.ChangeTracker.Clear();
+            await context.AddAsync(oudatedOffer);
+            await context.AddAsync(currentOffer);
+            await context.AddAsync(futureOffer10Percent);
+            await context.AddAsync(futureOffer20Percent);
+            await context.SaveChangesAsync();
 
             // Act
             List<Offer> result = (await _offerService.GetAllAsync()).ToList();
@@ -97,6 +98,7 @@ namespace Mercadona.Tests.Services
         public async Task AddOfferAsync_InvalidOffer_ThrowsValidationException()
         {
             // Arrange
+            using ApplicationDbContext context = await _dbContextFactory.CreateDbContextAsync();
             DateTime today = DateTime.Today;
             Offer invalidOffer =
                 new()
@@ -121,6 +123,7 @@ namespace Mercadona.Tests.Services
         public async Task AddOfferAsync_AlreadyExists_ThrowsDbUpdateException()
         {
             // Arrange
+            using ApplicationDbContext context = await _dbContextFactory.CreateDbContextAsync();
             DateTime today = DateTime.Today;
             Offer offer =
                 new()
@@ -129,9 +132,8 @@ namespace Mercadona.Tests.Services
                     EndDate = DateOnly.FromDateTime(today),
                     Percentage = 50
                 };
-            await _dbContext.AddAsync(offer);
-            await _dbContext.SaveChangesAsync();
-            _dbContext.ChangeTracker.Clear();
+            await context.AddAsync(offer);
+            await context.SaveChangesAsync();
 
             // Act
             // Assert
@@ -142,6 +144,7 @@ namespace Mercadona.Tests.Services
         public async Task AddOfferAsync_ValidOffer_ReturnsAddedOffer()
         {
             // Arrange
+            using ApplicationDbContext context = await _dbContextFactory.CreateDbContextAsync();
             DateTime today = DateTime.Today;
             Offer offer =
                 new()
@@ -150,9 +153,8 @@ namespace Mercadona.Tests.Services
                     EndDate = DateOnly.FromDateTime(today),
                     Percentage = 50
                 };
-            await _dbContext.AddAsync(offer);
-            await _dbContext.SaveChangesAsync();
-            _dbContext.ChangeTracker.Clear();
+            await context.AddAsync(offer);
+            await context.SaveChangesAsync();
             Offer otherOffer =
                 new()
                 {
@@ -166,7 +168,7 @@ namespace Mercadona.Tests.Services
 
             // Assert
             resultOffer.Should().BeEquivalentTo(otherOffer);
-            List<Offer> offers = await _dbContext.Offers.OrderBy(_ => _.Percentage).ToListAsync();
+            List<Offer> offers = await context.Offers.OrderBy(_ => _.Percentage).ToListAsync();
             offers.Count.Should().Be(2);
             offers.First().Should().BeEquivalentTo(otherOffer);
             offers.Last().Should().BeEquivalentTo(offer);

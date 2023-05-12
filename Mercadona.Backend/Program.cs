@@ -25,7 +25,9 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(connectionString));
+builder.Services.AddDbContextFactory<ApplicationDbContext>(
+    options => options.UseNpgsql(connectionString)
+);
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 // For Identity
@@ -127,6 +129,7 @@ builder.Services
     {
         options.SuppressModelStateInvalidFilter = true;
     });
+builder.Services.AddResponseCaching();
 
 // API Documentation
 builder.Services.AddEndpointsApiExplorer();
@@ -161,6 +164,7 @@ builder.Services.AddSwaggerGen(options =>
         }
     );
     options.OperationFilter<AuthOperationFilter>();
+    options.SupportNonNullableReferenceTypes();
 });
 
 WebApplication app = builder.Build();
@@ -178,6 +182,8 @@ else
 }
 
 app.UseHttpsRedirection();
+
+app.UseResponseCaching();
 
 app.UseStaticFiles();
 

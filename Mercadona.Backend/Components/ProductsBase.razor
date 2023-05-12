@@ -1,7 +1,7 @@
 @using Mercadona.Backend.Data;
 @using Mercadona.Backend.Models;
 @using Mercadona.Backend.Services.Interfaces;
-@inject IDialogService DialogService;
+@inject IDialogService _dialogService;
 @inject IDiscountedProductService _discountedProductService;
 
 <MudSelect T="string" Class="ma-3" Label="Catégories" AnchorOrigin="Origin.BottomCenter" MultiSelection="true" @bind-SelectedValues="SelectedCategories" SelectAll="true" SelectAllText="Toutes les catégories" AdornmentIcon="@Icons.Material.Filled.Search" AdornmentColor="Color.Primary">
@@ -13,7 +13,7 @@
 <MudGrid Style="width:100%;margin:unset">
     <Virtualize Items="@filteredDiscountedProducts" Context="discountedProduct">
         <MudItem xs="6" sm="4" md="3">
-            <ProductCard CanEdit=@CanEdit DiscountedProduct=@discountedProduct />
+            <ProductCard CanEdit=@CanEdit DiscountedProduct=@discountedProduct OnAddOffer="RefreshProducts" />
         </MudItem>
     </Virtualize>
 </MudGrid>
@@ -31,17 +31,28 @@
 
     protected override async Task OnInitializedAsync()
     {
-        discountedProducts = (await _discountedProductService.GetAllAsync()).ToList();
+        await RefreshProducts();
         await base.OnInitializedAsync();
+    }
+
+    async Task RefreshProducts()
+    {
+        discountedProducts = (await _discountedProductService.GetAllAsync()).ToList();
     }
 
     IEnumerable<string> SelectedCategories { get; set; } = new HashSet<string>();
 
-    void OpenAddProductDialog()
+    async Task OpenAddProductDialog()
     {
         DialogOptions options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = true };
         DialogParameters parameters = new DialogParameters();
         parameters.Add("DiscountedProducts", discountedProducts);
-        DialogService.Show<AddProductDialog>("Ajouter un produit", parameters, options);
+        IDialogReference addProductDialogRef = await _dialogService.ShowAsync<AddProductDialog>("Ajouter un produit", parameters, options);
+        DialogResult dialogResult = await addProductDialogRef.Result;
+
+        if (!dialogResult.Canceled)
+        {
+            await RefreshProducts();
+        }
     }
 }
