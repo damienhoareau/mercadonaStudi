@@ -22,7 +22,7 @@ namespace Mercadona.Tests.Fixtures
         private IServiceCollection PrivateConfigure()
         {
             _services = new ServiceCollection();
-            _services.AddDbContext<ApplicationDbContext>(
+            _services.AddDbContextFactory<ApplicationDbContext>(
                 options =>
                     options.UseNpgsql(
                         $"Server=localhost;Port={PgPort};User Id=postgres;Password=test;Database=postgres"

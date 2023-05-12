@@ -96,6 +96,16 @@
     color: var(--mud-palette-primary-text);
 }
 
+.mud-dialog.dialog-warning .mud-dialog-title {
+    background: var(--mud-palette-warning);
+    color: var(--mud-palette-primary-text);
+}
+
+.mud-dialog.dialog-error .mud-dialog-title {
+    background: var(--mud-palette-error);
+    color: var(--mud-palette-primary-text);
+}
+
 .mud-picker-calendar .mud-day.mud-range.mud-range-between {
     background-color: var(--mud-palette-primary);
     color: var(--mud-palette-primary-text);

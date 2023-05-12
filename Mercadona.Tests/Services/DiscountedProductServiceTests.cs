@@ -18,7 +18,7 @@ namespace Mercadona.Tests.Services
             IAsyncLifetime
     {
         private readonly ApplicationDbContextFixture _fixture;
-        private readonly ApplicationDbContext _dbContext;
+        private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
         private readonly IDiscountedProductService _discountedProductService;
 
         public DiscountedProductServiceTests(ApplicationDbContextFixture fixture)
@@ -37,13 +37,14 @@ namespace Mercadona.Tests.Services
                 return services;
             });
 
-            _dbContext = _fixture.GetRequiredService<ApplicationDbContext>();
+            _dbContextFactory = _fixture.GetRequiredService<
+                IDbContextFactory<ApplicationDbContext>
+            >();
             _discountedProductService = _fixture.GetRequiredService<IDiscountedProductService>();
         }
 
         public Task InitializeAsync()
         {
-            _dbContext.ChangeTracker.Clear();
             return _fixture.ResetDbAsync();
         }
 
@@ -56,6 +57,7 @@ namespace Mercadona.Tests.Services
         public async Task GetAllAsync_GetOriginalIfNotDiscounted()
         {
             // Arrange
+            using ApplicationDbContext context = await _dbContextFactory.CreateDbContextAsync();
             Product notDiscountedProduct =
                 new(
                     () =>
@@ -72,9 +74,8 @@ namespace Mercadona.Tests.Services
                     Price = 100M,
                     Category = "Surgelé"
                 };
-            EntityEntry<Product> addedProduct = await _dbContext.AddAsync(notDiscountedProduct);
-            await _dbContext.SaveChangesAsync();
-            _dbContext.ChangeTracker.Clear();
+            EntityEntry<Product> addedProduct = await context.AddAsync(notDiscountedProduct);
+            await context.SaveChangesAsync();
 
             // Act
             List<DiscountedProduct> result = (
@@ -95,6 +96,7 @@ namespace Mercadona.Tests.Services
         public async Task GetAllAsync_GetDiscountedIfDiscounted()
         {
             // Arrange
+            using ApplicationDbContext context = await _dbContextFactory.CreateDbContextAsync();
             DateTime today = DateTime.Today;
             Product discountedProduct =
                 new(
@@ -119,11 +121,10 @@ namespace Mercadona.Tests.Services
                     EndDate = DateOnly.FromDateTime(today.AddDays(1)),
                     Percentage = 20
                 };
-            EntityEntry<Product> addedProduct = await _dbContext.AddAsync(discountedProduct);
-            EntityEntry<Offer> addedOffer = await _dbContext.AddAsync(offer);
+            EntityEntry<Product> addedProduct = await context.AddAsync(discountedProduct);
+            EntityEntry<Offer> addedOffer = await context.AddAsync(offer);
             addedProduct.Entity.Offers.Add(offer);
-            await _dbContext.SaveChangesAsync();
-            _dbContext.ChangeTracker.Clear();
+            await context.SaveChangesAsync();
 
             // Act
             List<DiscountedProduct> result = (
@@ -144,6 +145,7 @@ namespace Mercadona.Tests.Services
         public async Task GetAllAsync_GetOriginalIfOfferIsOutdated()
         {
             // Arrange
+            using ApplicationDbContext context = await _dbContextFactory.CreateDbContextAsync();
             DateTime today = DateTime.Today;
             Product discountedProduct =
                 new(
@@ -168,11 +170,10 @@ namespace Mercadona.Tests.Services
                     EndDate = DateOnly.FromDateTime(today.AddDays(-1)),
                     Percentage = 20
                 };
-            EntityEntry<Product> addedProduct = await _dbContext.AddAsync(discountedProduct);
-            EntityEntry<Offer> addedOffer = await _dbContext.AddAsync(offer);
+            EntityEntry<Product> addedProduct = await context.AddAsync(discountedProduct);
+            EntityEntry<Offer> addedOffer = await context.AddAsync(offer);
             addedProduct.Entity.Offers.Add(offer);
-            await _dbContext.SaveChangesAsync();
-            _dbContext.ChangeTracker.Clear();
+            await context.SaveChangesAsync();
 
             // Act
             List<DiscountedProduct> result = (
@@ -193,6 +194,7 @@ namespace Mercadona.Tests.Services
         public async Task GetAllAsync_GetOriginalIfOfferIsNotYetApplied()
         {
             // Arrange
+            using ApplicationDbContext context = await _dbContextFactory.CreateDbContextAsync();
             DateTime today = DateTime.Today;
             Product discountedProduct =
                 new(
@@ -217,11 +219,10 @@ namespace Mercadona.Tests.Services
                     EndDate = DateOnly.FromDateTime(today.AddDays(1)),
                     Percentage = 20
                 };
-            EntityEntry<Product> addedProduct = await _dbContext.AddAsync(discountedProduct);
-            EntityEntry<Offer> addedOffer = await _dbContext.AddAsync(offer);
+            EntityEntry<Product> addedProduct = await context.AddAsync(discountedProduct);
+            EntityEntry<Offer> addedOffer = await context.AddAsync(offer);
             addedProduct.Entity.Offers.Add(offer);
-            await _dbContext.SaveChangesAsync();
-            _dbContext.ChangeTracker.Clear();
+            await context.SaveChangesAsync();
 
             // Act
             List<DiscountedProduct> result = (
@@ -242,6 +243,7 @@ namespace Mercadona.Tests.Services
         public async Task GetAllAsync_GetSorted()
         {
             // Arrange
+            using ApplicationDbContext context = await _dbContextFactory.CreateDbContextAsync();
             DateTime today = DateTime.Today;
             Product discountedProduct =
                 new(
@@ -289,14 +291,13 @@ namespace Mercadona.Tests.Services
                     EndDate = DateOnly.FromDateTime(today.AddDays(-1)),
                     Percentage = 20
                 };
-            EntityEntry<Product> product2 = await _dbContext.AddAsync(discountedProduct);
-            EntityEntry<Product> product1 = await _dbContext.AddAsync(notDiscountedProduct);
-            EntityEntry<Offer> addedOffer = await _dbContext.AddAsync(offer);
-            EntityEntry<Offer> addedOudatedOffer = await _dbContext.AddAsync(outdatedOffer);
+            EntityEntry<Product> product2 = await context.AddAsync(discountedProduct);
+            EntityEntry<Product> product1 = await context.AddAsync(notDiscountedProduct);
+            EntityEntry<Offer> addedOffer = await context.AddAsync(offer);
+            EntityEntry<Offer> addedOudatedOffer = await context.AddAsync(outdatedOffer);
             product2.Entity.Offers.Add(offer);
             product1.Entity.Offers.Add(outdatedOffer);
-            await _dbContext.SaveChangesAsync();
-            _dbContext.ChangeTracker.Clear();
+            await context.SaveChangesAsync();
 
             // Act
             List<DiscountedProduct> result = (
@@ -313,6 +314,7 @@ namespace Mercadona.Tests.Services
         public async Task GetAllDiscountedAsync_GetOnlyDiscounted()
         {
             // Arrange
+            using ApplicationDbContext context = await _dbContextFactory.CreateDbContextAsync();
             DateTime today = DateTime.Today;
             Product discountedProduct =
                 new(
@@ -360,14 +362,13 @@ namespace Mercadona.Tests.Services
                     EndDate = DateOnly.FromDateTime(today.AddDays(-1)),
                     Percentage = 20
                 };
-            EntityEntry<Product> product2 = await _dbContext.AddAsync(discountedProduct);
-            EntityEntry<Product> product1 = await _dbContext.AddAsync(notDiscountedProduct);
-            EntityEntry<Offer> addedOffer = await _dbContext.AddAsync(offer);
-            EntityEntry<Offer> addedOudatedOffer = await _dbContext.AddAsync(outdatedOffer);
+            EntityEntry<Product> product2 = await context.AddAsync(discountedProduct);
+            EntityEntry<Product> product1 = await context.AddAsync(notDiscountedProduct);
+            EntityEntry<Offer> addedOffer = await context.AddAsync(offer);
+            EntityEntry<Offer> addedOudatedOffer = await context.AddAsync(outdatedOffer);
             product2.Entity.Offers.Add(offer);
             product1.Entity.Offers.Add(outdatedOffer);
-            await _dbContext.SaveChangesAsync();
-            _dbContext.ChangeTracker.Clear();
+            await context.SaveChangesAsync();
 
             // Act
             List<DiscountedProduct> result = (
@@ -375,7 +376,7 @@ namespace Mercadona.Tests.Services
             ).ToList();
 
             // Assert
-            (await _dbContext.Products.CountAsync())
+            (await context.Products.CountAsync())
                 .Should()
                 .Be(2);
             result.Count.Should().Be(1);
@@ -386,6 +387,7 @@ namespace Mercadona.Tests.Services
         public async Task GetAllDiscountedAsync_GetSorted()
         {
             // Arrange
+            using ApplicationDbContext context = await _dbContextFactory.CreateDbContextAsync();
             DateTime today = DateTime.Today;
             Product discountedProduct2 =
                 new(
@@ -426,13 +428,12 @@ namespace Mercadona.Tests.Services
                     EndDate = DateOnly.FromDateTime(today.AddDays(1)),
                     Percentage = 20
                 };
-            EntityEntry<Product> product2 = await _dbContext.AddAsync(discountedProduct2);
-            EntityEntry<Product> product1 = await _dbContext.AddAsync(discountedProduct1);
-            EntityEntry<Offer> addedOffer = await _dbContext.AddAsync(offer);
+            EntityEntry<Product> product2 = await context.AddAsync(discountedProduct2);
+            EntityEntry<Product> product1 = await context.AddAsync(discountedProduct1);
+            EntityEntry<Offer> addedOffer = await context.AddAsync(offer);
             product2.Entity.Offers.Add(offer);
             product1.Entity.Offers.Add(offer);
-            await _dbContext.SaveChangesAsync();
-            _dbContext.ChangeTracker.Clear();
+            await context.SaveChangesAsync();
 
             // Act
             List<DiscountedProduct> result = (
@@ -449,6 +450,7 @@ namespace Mercadona.Tests.Services
         public async Task ApplyOfferAsync_InvalidOffer_ThrowsValidationException()
         {
             // Arrange
+            using ApplicationDbContext context = await _dbContextFactory.CreateDbContextAsync();
             DateTime today = DateTime.Today;
             Product product =
                 new(
@@ -473,9 +475,8 @@ namespace Mercadona.Tests.Services
                     EndDate = DateOnly.FromDateTime(today),
                     Percentage = 20
                 };
-            EntityEntry<Product> addedProduct = await _dbContext.AddAsync(product);
-            await _dbContext.SaveChangesAsync();
-            _dbContext.ChangeTracker.Clear();
+            EntityEntry<Product> addedProduct = await context.AddAsync(product);
+            await context.SaveChangesAsync();
 
             // Act
             // Assert
@@ -492,6 +493,7 @@ namespace Mercadona.Tests.Services
         public async Task ApplyOfferAsync_OudatedOffer_ThrowsValidationException()
         {
             // Arrange
+            using ApplicationDbContext context = await _dbContextFactory.CreateDbContextAsync();
             DateTime today = DateTime.Today;
             Product product =
                 new(
@@ -516,9 +518,8 @@ namespace Mercadona.Tests.Services
                     EndDate = DateOnly.FromDateTime(today.AddDays(-1)),
                     Percentage = 20
                 };
-            EntityEntry<Product> addedProduct = await _dbContext.AddAsync(product);
-            await _dbContext.SaveChangesAsync();
-            _dbContext.ChangeTracker.Clear();
+            EntityEntry<Product> addedProduct = await context.AddAsync(product);
+            await context.SaveChangesAsync();
 
             // Act
             // Assert
@@ -535,6 +536,7 @@ namespace Mercadona.Tests.Services
         public async Task ApplyOfferAsync_OfferAlreadyApplied_ThrowsValidationException()
         {
             // Arrange
+            using ApplicationDbContext context = await _dbContextFactory.CreateDbContextAsync();
             DateTime today = DateTime.Today;
             Product product =
                 new(
@@ -566,11 +568,10 @@ namespace Mercadona.Tests.Services
                     EndDate = DateOnly.FromDateTime(today.AddDays(3)),
                     Percentage = 20
                 };
-            EntityEntry<Product> addedProduct = await _dbContext.AddAsync(product);
-            EntityEntry<Offer> addedOffer = await _dbContext.AddAsync(offer);
+            EntityEntry<Product> addedProduct = await context.AddAsync(product);
+            EntityEntry<Offer> addedOffer = await context.AddAsync(offer);
             product.Offers.Add(offer);
-            await _dbContext.SaveChangesAsync();
-            _dbContext.ChangeTracker.Clear();
+            await context.SaveChangesAsync();
 
             // Act
             // Assert
@@ -587,6 +588,7 @@ namespace Mercadona.Tests.Services
         public async Task ApplyOfferAsync_OfferAlreadyExists_NoCreateANewOne()
         {
             // Arrange
+            using ApplicationDbContext context = await _dbContextFactory.CreateDbContextAsync();
             DateTime today = DateTime.Today;
             Product product =
                 new(
@@ -618,10 +620,9 @@ namespace Mercadona.Tests.Services
                     EndDate = DateOnly.FromDateTime(today),
                     Percentage = 20
                 };
-            EntityEntry<Product> addedProduct = await _dbContext.AddAsync(product);
-            EntityEntry<Offer> addedOffer = await _dbContext.AddAsync(offer);
-            await _dbContext.SaveChangesAsync();
-            _dbContext.ChangeTracker.Clear();
+            EntityEntry<Product> addedProduct = await context.AddAsync(product);
+            EntityEntry<Offer> addedOffer = await context.AddAsync(offer);
+            await context.SaveChangesAsync();
 
             // Act
             DiscountedProduct discountedProduct = await _discountedProductService.ApplyOfferAsync(
@@ -630,11 +631,11 @@ namespace Mercadona.Tests.Services
             );
 
             // Assert
-            (await _dbContext.Offers.CountAsync())
+            (await context.Offers.CountAsync())
                 .Should()
                 .Be(1);
             (
-                await _dbContext.Products
+                await context.Products
                     .Include(_ => _.Offers)
                     .Select(
                         _ =>
@@ -656,6 +657,7 @@ namespace Mercadona.Tests.Services
         public async Task ApplyOfferAsync_OfferAlreadyApplied_Force_ApplyNewOffer()
         {
             // Arrange
+            using ApplicationDbContext context = await _dbContextFactory.CreateDbContextAsync();
             DateOnly today = DateOnly.FromDateTime(DateTime.Today);
             Product product =
                 new(
@@ -687,17 +689,16 @@ namespace Mercadona.Tests.Services
                     EndDate = today.AddDays(3),
                     Percentage = 30
                 };
-            EntityEntry<Product> addedProduct = await _dbContext.AddAsync(product);
-            EntityEntry<Offer> addedOffer = await _dbContext.AddAsync(offer);
+            EntityEntry<Product> addedProduct = await context.AddAsync(product);
+            EntityEntry<Offer> addedOffer = await context.AddAsync(offer);
             product.Offers.Add(offer);
-            await _dbContext.SaveChangesAsync();
-            _dbContext.ChangeTracker.Clear();
+            await context.SaveChangesAsync();
 
             // Act
             await _discountedProductService.ApplyOfferAsync(addedProduct.Entity.Id, newOffer, true);
 
             // Assert
-            Product discountedProduct = await _dbContext.Products
+            Product discountedProduct = await context.Products
                 .Include(p => p.Offers.Where(o => o.StartDate <= today && o.EndDate >= today))
                 .Select(
                     _ =>
@@ -714,7 +715,7 @@ namespace Mercadona.Tests.Services
                 .FirstAsync();
             discountedProduct.Offers.Should().ContainSingle();
             discountedProduct.Offers.First().Percentage.Should().Be(newOffer.Percentage);
-            (await _dbContext.Offers.CountAsync()).Should().Be(2);
+            (await context.Offers.CountAsync()).Should().Be(2);
         }
     }
 }

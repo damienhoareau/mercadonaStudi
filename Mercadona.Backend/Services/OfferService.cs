@@ -12,17 +12,20 @@ namespace Mercadona.Backend.Services
     /// <seealso cref="Mercadona.Backend.Services.Interfaces.IOfferService" />
     public class OfferService : IOfferService
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
         private readonly IValidator<Offer> _offerValidator;
 
         /// <summary>
         /// Initialise une nouvelle instance de la classe <see cref="OfferService"/>.
         /// </summary>
-        /// <param name="dbContext">Le contexte de la base de donnée.</param>
+        /// <param name="dbContextFactory">La fabrique de contexte de la base de donnée.</param>
         /// <param name="offerValidator">Le validateur de promotion.</param>
-        public OfferService(ApplicationDbContext dbContext, IValidator<Offer> offerValidator)
+        public OfferService(
+            IDbContextFactory<ApplicationDbContext> dbContextFactory,
+            IValidator<Offer> offerValidator
+        )
         {
-            _dbContext = dbContext;
+            _dbContextFactory = dbContextFactory;
             _offerValidator = offerValidator;
         }
 
@@ -31,9 +34,13 @@ namespace Mercadona.Backend.Services
             CancellationToken cancellationToken = default
         )
         {
+            using ApplicationDbContext context = await _dbContextFactory.CreateDbContextAsync(
+                cancellationToken
+            );
+
             DateOnly today = DateOnly.FromDateTime(DateTime.Today);
 
-            return await _dbContext.Offers
+            return await context.Offers
                 .AsNoTracking()
                 .Where(_ => _.EndDate >= today)
                 .OrderBy(_ => _.StartDate)
@@ -44,11 +51,13 @@ namespace Mercadona.Backend.Services
         /// <inheritdoc/>
         public async Task<Offer> AddOfferAsync(Offer offer)
         {
+            using ApplicationDbContext context = await _dbContextFactory.CreateDbContextAsync();
+
             await _offerValidator.ValidateAndThrowAsync(offer);
 
-            EntityEntry<Offer> result = await _dbContext.AddAsync(offer);
+            EntityEntry<Offer> result = await context.AddAsync(offer);
 
-            await _dbContext.SaveChangesAsync();
+            await context.SaveChangesAsync();
 
             return result.Entity;
         }

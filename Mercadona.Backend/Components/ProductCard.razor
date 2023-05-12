@@ -1,9 +1,9 @@
-﻿@inject IDialogService DialogService
-@using Mercadona.Backend.Data;
+﻿@using Mercadona.Backend.Data;
 @using Mercadona.Backend.Models;
+@inject IDialogService _dialogService;
 
 <MudCard Class="productCard">
-    <MudCardMedia Class="productCardMedia" Image=@($"/api/products/{DiscountedProduct.Id}/image") />
+    <MudCardMedia Class="productCardMedia" Image=@($"/api/products/image?productId={DiscountedProduct.Id}") />
     <MudCardHeader>
         <CardHeaderContent>
             <MudText Typo="Typo.h6">@DiscountedProduct.Label</MudText>
@@ -25,12 +25,19 @@
 @code {
     [Parameter] public bool CanEdit { get; set; } = false;
     [Parameter] public DiscountedProduct DiscountedProduct { get; set; } = null!;
+    [Parameter] public EventCallback<DiscountedProduct> OnAddOffer { get; set; }
 
-    void OpenAddOfferDialog(DiscountedProduct discountedProduct)
+    async Task OpenAddOfferDialog(DiscountedProduct discountedProduct)
     {
         DialogOptions options = new DialogOptions { CloseOnEscapeKey = true, DisableBackdropClick = true };
         DialogParameters parameters = new DialogParameters();
         parameters.Add("Product", DiscountedProduct);
-        DialogService.Show<ApplyOfferToProductDialog>("Appliquer une promotion à un produit", parameters, options);
+        IDialogReference addOfferDialogRef = await _dialogService.ShowAsync<ApplyOfferToProductDialog>("Appliquer une promotion à un produit", parameters, options);
+        DialogResult dialogResult = await addOfferDialogRef.Result;
+
+        if (!dialogResult.Canceled)
+        {
+            await OnAddOffer.InvokeAsync((DiscountedProduct)dialogResult.Data);
+        }
     }
 }

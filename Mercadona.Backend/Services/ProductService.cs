@@ -12,17 +12,20 @@ namespace Mercadona.Backend.Services
     /// <seealso cref="Mercadona.Backend.Services.Interfaces.IProductService" />
     public class ProductService : IProductService
     {
-        private readonly ApplicationDbContext _dbContext;
+        private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
         private readonly IValidator<Product> _productValidator;
 
         /// <summary>
         /// Initialise une nouvelle instance de la classe <see cref="ProductService"/>.
         /// </summary>
-        /// <param name="dbContext">Le contexte de la base de donnée.</param>
+        /// <param name="dbContextFactory">La fabrique de contexte de la base de donnée.</param>
         /// <param name="productValidator">Le validateur de produit.</param>
-        public ProductService(ApplicationDbContext dbContext, IValidator<Product> productValidator)
+        public ProductService(
+            IDbContextFactory<ApplicationDbContext> dbContextFactory,
+            IValidator<Product> productValidator
+        )
         {
-            _dbContext = dbContext;
+            _dbContextFactory = dbContextFactory;
             _productValidator = productValidator;
         }
 
@@ -31,7 +34,11 @@ namespace Mercadona.Backend.Services
             CancellationToken cancellationToken = default
         )
         {
-            return await _dbContext.Products
+            using ApplicationDbContext context = await _dbContextFactory.CreateDbContextAsync(
+                cancellationToken
+            );
+
+            return await context.Products
                 .AsNoTracking()
                 .OrderBy(_ => _.Label)
                 .Select(
@@ -54,7 +61,11 @@ namespace Mercadona.Backend.Services
             CancellationToken cancellationToken = default
         )
         {
-            byte[]? data = await _dbContext.Products
+            using ApplicationDbContext context = await _dbContextFactory.CreateDbContextAsync(
+                cancellationToken
+            );
+
+            byte[]? data = await context.Products
                 .Where(_ => _.Id == productId)
                 .Select(_ => _.Image)
                 .SingleOrDefaultAsync(cancellationToken);
@@ -65,11 +76,13 @@ namespace Mercadona.Backend.Services
         /// <inheritdoc/>
         public async Task<Product> AddProductAsync(Product product)
         {
+            using ApplicationDbContext context = await _dbContextFactory.CreateDbContextAsync();
+
             await _productValidator.ValidateAndThrowAsync(product);
 
-            EntityEntry<Product> result = await _dbContext.Products.AddAsync(product);
+            EntityEntry<Product> result = await context.Products.AddAsync(product);
 
-            await _dbContext.SaveChangesAsync();
+            await context.SaveChangesAsync();
 
             return result.Entity;
         }
