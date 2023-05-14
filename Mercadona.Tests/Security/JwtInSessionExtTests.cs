@@ -1,7 +1,6 @@
 using FluentAssertions;
 using HttpContextMoq;
 using HttpContextMoq.Extensions;
-using Mercadona.Backend.Options;
 using Mercadona.Backend.Security;
 using Mercadona.Backend.Services;
 using Mercadona.Backend.Services.Interfaces;
@@ -19,7 +18,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace Mercadona.Tests.Validation
+namespace Mercadona.Tests.Security
 {
     public class JwtInSessionExtTests
     {
@@ -169,8 +168,10 @@ namespace Mercadona.Tests.Validation
                     expires: DateTime.Now.AddMinutes(TokenService.ACCESS_TOKEN_DURATION),
                     claims: new List<Claim>()
                     {
+                        new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),
                         new Claim(ClaimTypes.Name, "toto@toto.fr"),
                         new Claim(JwtRegisteredClaimNames.Jti, "refreshToken"),
+                        new Claim("AspNet.Identity.SecurityStamp", Guid.NewGuid().ToString())
                     },
                     signingCredentials: new SigningCredentials(
                         new SymmetricSecurityKey(
@@ -196,8 +197,13 @@ namespace Mercadona.Tests.Validation
                         new ClaimsIdentity(
                             new List<Claim>()
                             {
+                                new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),
                                 new Claim(ClaimTypes.Name, "toto@toto.fr"),
                                 new Claim(JwtRegisteredClaimNames.Jti, "wrongRefreshToken"),
+                                new Claim(
+                                    "AspNet.Identity.SecurityStamp",
+                                    Guid.NewGuid().ToString()
+                                )
                             }
                         )
                     )
@@ -241,8 +247,10 @@ namespace Mercadona.Tests.Validation
                     expires: DateTime.Now.AddMinutes(TokenService.ACCESS_TOKEN_DURATION),
                     claims: new List<Claim>()
                     {
+                        new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),
                         new Claim(ClaimTypes.Name, "toto@toto.fr"),
                         new Claim(JwtRegisteredClaimNames.Jti, "refreshToken"),
+                        new Claim("AspNet.Identity.SecurityStamp", Guid.NewGuid().ToString())
                     },
                     signingCredentials: new SigningCredentials(
                         new SymmetricSecurityKey(
@@ -268,8 +276,13 @@ namespace Mercadona.Tests.Validation
                         new ClaimsIdentity(
                             new List<Claim>()
                             {
+                                new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),
                                 new Claim(ClaimTypes.Name, "toto@toto.fr"),
                                 new Claim(JwtRegisteredClaimNames.Jti, "refreshToken"),
+                                new Claim(
+                                    "AspNet.Identity.SecurityStamp",
+                                    Guid.NewGuid().ToString()
+                                )
                             }
                         )
                     )

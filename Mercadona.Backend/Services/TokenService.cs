@@ -24,7 +24,7 @@ namespace Mercadona.Backend.Services
         /// <summary>
         /// La durée de vie du jeton d'accès en minutes
         /// </summary>
-        public const int ACCESS_TOKEN_DURATION = 30;
+        public const int ACCESS_TOKEN_DURATION = 15;
 
         /// <summary>
         /// La durée de vie du jeton de renouvellement en heures

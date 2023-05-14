@@ -45,18 +45,7 @@ namespace Mercadona.Tests.Services
                     {
                         options.SaveToken = true;
                         options.RequireHttpsMetadata = true;
-                        options.TokenValidationParameters = new TokenValidationParameters()
-                        {
-                            ValidateIssuer = true,
-                            ValidateAudience = true,
-                            ValidAudience = "https://localhost:44387",
-                            ValidIssuer = "https://localhost:44387",
-                            IssuerSigningKey = new SymmetricSecurityKey(
-                                Encoding.UTF8.GetBytes(
-                                    "JWTAuthenticationHIGHsecuredPasswordVVVp1OH7XzyrForTest"
-                                )
-                            )
-                        };
+                        options.TokenValidationParameters = TestsHelper.TokenValidationParameters;
                     });
                 services.AddSingleton<ITokenService, TokenService>();
 
@@ -74,8 +63,10 @@ namespace Mercadona.Tests.Services
             List<Claim> authClaims =
                 new()
                 {
+                    new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),
                     new Claim(ClaimTypes.Name, "toto@toto.fr"),
                     new Claim(JwtRegisteredClaimNames.Jti, refreshToken),
+                    new Claim("AspNet.Identity.SecurityStamp", Guid.NewGuid().ToString())
                 };
 
             // Act
@@ -120,8 +111,10 @@ namespace Mercadona.Tests.Services
             List<Claim> authClaims =
                 new()
                 {
+                    new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),
                     new Claim(ClaimTypes.Name, "toto@toto.fr"),
                     new Claim(JwtRegisteredClaimNames.Jti, refreshToken),
+                    new Claim("AspNet.Identity.SecurityStamp", Guid.NewGuid().ToString())
                 };
             JwtBearerOptions jwtBearerOptions = _fixture
                 .GetRequiredService<IOptionsMonitor<JwtBearerOptions>>()
@@ -159,8 +152,10 @@ namespace Mercadona.Tests.Services
             List<Claim> authClaims =
                 new()
                 {
+                    new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),
                     new Claim(ClaimTypes.Name, "toto@toto.fr"),
                     new Claim(JwtRegisteredClaimNames.Jti, refreshToken),
+                    new Claim("AspNet.Identity.SecurityStamp", Guid.NewGuid().ToString())
                 };
             string accessToken = _tokenService.GenerateAccessToken(refreshToken, authClaims);
 
@@ -184,8 +179,10 @@ namespace Mercadona.Tests.Services
             List<Claim> authClaims =
                 new()
                 {
+                    new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),
                     new Claim(ClaimTypes.Name, "toto@toto.fr"),
                     new Claim(JwtRegisteredClaimNames.Jti, refreshToken),
+                    new Claim("AspNet.Identity.SecurityStamp", Guid.NewGuid().ToString())
                 };
 
             // Act (login)
