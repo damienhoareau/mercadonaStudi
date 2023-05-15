@@ -66,7 +66,7 @@ namespace Mercadona.Tests.Security
         {
             // Arrange
             JwtInSessionMiddleware middleware = new();
-            HttpContext httpContext = new HttpContextMock();
+            HttpContextMock httpContext = new();
             Mock<RequestDelegate> mockRequestDelegate = new();
             mockRequestDelegate.Setup(_ => _.Invoke(It.IsAny<HttpContext>())).Verifiable();
 
@@ -131,7 +131,7 @@ namespace Mercadona.Tests.Security
                 .SetupGet(_ => _.Value)
                 .Returns(new MemoryCacheOptions())
                 .Verifiable();
-            WhiteList whiteList = new WhiteList(mockMemoryCacheOptions.Object);
+            WhiteList whiteList = new(mockMemoryCacheOptions.Object);
             HttpContextMock httpContext = new HttpContextMock()
                 .SetupRequestHeaders(
                     new Dictionary<string, StringValues>()
@@ -140,7 +140,7 @@ namespace Mercadona.Tests.Security
                     }
                 )
                 .SetupSessionMoq()
-                .SetupRequestService<WhiteList>(whiteList);
+                .SetupRequestService(whiteList);
             httpContext.Session.SetString(TokenService.REFRESH_TOKEN_NAME, "refreshToken");
             Mock<RequestDelegate> mockRequestDelegate = new();
             mockRequestDelegate.Setup(_ => _.Invoke(It.IsAny<HttpContext>())).Verifiable();
@@ -217,8 +217,8 @@ namespace Mercadona.Tests.Security
                     }
                 )
                 .SetupSessionMoq()
-                .SetupRequestService<WhiteList>(whiteList)
-                .SetupRequestService<ITokenService>(mockTokenService.Object);
+                .SetupRequestService(whiteList)
+                .SetupRequestService(mockTokenService.Object);
             httpContext.Session.SetString(TokenService.REFRESH_TOKEN_NAME, "refreshToken");
             Mock<RequestDelegate> mockRequestDelegate = new();
             mockRequestDelegate.Setup(_ => _.Invoke(It.IsAny<HttpContext>())).Verifiable();
@@ -296,8 +296,8 @@ namespace Mercadona.Tests.Security
                     }
                 )
                 .SetupSessionMoq()
-                .SetupRequestService<WhiteList>(whiteList)
-                .SetupRequestService<ITokenService>(mockTokenService.Object);
+                .SetupRequestService(whiteList)
+                .SetupRequestService(mockTokenService.Object);
             httpContext.Session.SetString(TokenService.REFRESH_TOKEN_NAME, "refreshToken");
             Mock<RequestDelegate> mockRequestDelegate = new();
             mockRequestDelegate.Setup(_ => _.Invoke(It.IsAny<HttpContext>())).Verifiable();

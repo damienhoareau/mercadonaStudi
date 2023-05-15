@@ -99,6 +99,7 @@ namespace Mercadona.Tests.Security
         public async void GetAuthenticationStateAsync_NoRefreshToken_ShouldReturnAnonymous()
         {
             // Arrange
+            Mock<ITokenLifetimeValidator> mockTokenLifetimeValidator = new();
             RevalidatingIdentityAuthenticationStateProvider<IdentityUser> authStateProvider =
                 new(
                     new Mock<ILoggerFactory>().Object,
@@ -106,6 +107,7 @@ namespace Mercadona.Tests.Security
                     _mockIdentityOptions.Object,
                     CreateHttpContextAccessor(),
                     new Mock<ISecurityStampValidator<IdentityUser>>().Object,
+                    mockTokenLifetimeValidator.Object,
                     new Mock<ITokenService>().Object,
                     new Mock<IAuthenticationService>().Object,
                     _whiteList
@@ -115,6 +117,7 @@ namespace Mercadona.Tests.Security
             AuthenticationState authState = await authStateProvider.GetAuthenticationStateAsync();
 
             // Assert
+            mockTokenLifetimeValidator.Invocations.Should().BeEmpty();
             authState.User.Identity.Should().NotBeNull();
             authState.User.Identity?.IsAuthenticated.Should().BeFalse();
         }
@@ -123,6 +126,7 @@ namespace Mercadona.Tests.Security
         public async void GetAuthenticationStateAsync_NoAccessToken_ShouldReturnAnonymous()
         {
             // Arrange
+            Mock<ITokenLifetimeValidator> mockTokenLifetimeValidator = new();
             RevalidatingIdentityAuthenticationStateProvider<IdentityUser> authStateProvider =
                 new(
                     new Mock<ILoggerFactory>().Object,
@@ -130,6 +134,7 @@ namespace Mercadona.Tests.Security
                     _mockIdentityOptions.Object,
                     CreateHttpContextAccessor(true),
                     new Mock<ISecurityStampValidator<IdentityUser>>().Object,
+                    mockTokenLifetimeValidator.Object,
                     new Mock<ITokenService>().Object,
                     new Mock<IAuthenticationService>().Object,
                     _whiteList
@@ -139,6 +144,7 @@ namespace Mercadona.Tests.Security
             AuthenticationState authState = await authStateProvider.GetAuthenticationStateAsync();
 
             // Assert
+            mockTokenLifetimeValidator.Invocations.Should().BeEmpty();
             authState.User.Identity.Should().NotBeNull();
             authState.User.Identity?.IsAuthenticated.Should().BeFalse();
         }
@@ -147,6 +153,7 @@ namespace Mercadona.Tests.Security
         public async void GetAuthenticationStateAsync_Exception_ShouldReturnAnonymous()
         {
             // Arrange
+            Mock<ITokenLifetimeValidator> mockTokenLifetimeValidator = new();
             Mock<ITokenService> mockTokenService = new();
             mockTokenService
                 .Setup(_ => _.ValidateToken(It.IsAny<string>(), It.IsAny<bool>()))
@@ -158,6 +165,7 @@ namespace Mercadona.Tests.Security
                     _mockIdentityOptions.Object,
                     CreateHttpContextAccessor(true, true),
                     new Mock<ISecurityStampValidator<IdentityUser>>().Object,
+                    mockTokenLifetimeValidator.Object,
                     mockTokenService.Object,
                     new Mock<IAuthenticationService>().Object,
                     _whiteList
@@ -167,6 +175,7 @@ namespace Mercadona.Tests.Security
             AuthenticationState authState = await authStateProvider.GetAuthenticationStateAsync();
 
             // Assert
+            mockTokenLifetimeValidator.Invocations.Should().BeEmpty();
             mockTokenService.Verify();
             authState.User.Identity.Should().NotBeNull();
             authState.User.Identity?.IsAuthenticated.Should().BeFalse();
@@ -176,6 +185,7 @@ namespace Mercadona.Tests.Security
         public async void GetAuthenticationStateAsync_UserDoesNotExist_ShouldReturnAnonymous()
         {
             // Arrange
+            Mock<ITokenLifetimeValidator> mockTokenLifetimeValidator = new();
             Mock<ITokenService> mockTokenService = new();
             mockTokenService
                 .Setup(_ => _.ValidateToken(It.IsAny<string>(), It.IsAny<bool>()))
@@ -193,6 +203,7 @@ namespace Mercadona.Tests.Security
                     _mockIdentityOptions.Object,
                     CreateHttpContextAccessor(true, true),
                     new Mock<ISecurityStampValidator<IdentityUser>>().Object,
+                    mockTokenLifetimeValidator.Object,
                     mockTokenService.Object,
                     mockAuthenticationService.Object,
                     _whiteList
@@ -202,6 +213,7 @@ namespace Mercadona.Tests.Security
             AuthenticationState authState = await authStateProvider.GetAuthenticationStateAsync();
 
             // Assert
+            mockTokenLifetimeValidator.Invocations.Should().BeEmpty();
             mockTokenService.Verify();
             mockAuthenticationService.Verify();
             authState.User.Identity.Should().NotBeNull();
@@ -212,6 +224,7 @@ namespace Mercadona.Tests.Security
         public async void GetAuthenticationStateAsync_RefreshTokenNotAuthorized_ShouldReturnAnonymous()
         {
             // Arrange
+            Mock<ITokenLifetimeValidator> mockTokenLifetimeValidator = new();
             Mock<ITokenService> mockTokenService = new();
             mockTokenService
                 .Setup(_ => _.ValidateToken(It.IsAny<string>(), It.IsAny<bool>()))
@@ -229,6 +242,7 @@ namespace Mercadona.Tests.Security
                     _mockIdentityOptions.Object,
                     CreateHttpContextAccessor(true, true),
                     new Mock<ISecurityStampValidator<IdentityUser>>().Object,
+                    mockTokenLifetimeValidator.Object,
                     mockTokenService.Object,
                     mockAuthenticationService.Object,
                     _whiteList
@@ -238,6 +252,7 @@ namespace Mercadona.Tests.Security
             AuthenticationState authState = await authStateProvider.GetAuthenticationStateAsync();
 
             // Assert
+            mockTokenLifetimeValidator.Invocations.Should().BeEmpty();
             mockTokenService.Verify();
             mockAuthenticationService.Verify();
             authState.User.Identity.Should().NotBeNull();
@@ -249,6 +264,7 @@ namespace Mercadona.Tests.Security
         {
             // Arrange
             _whiteList.Set("refreshToken", GetJwtSecurityToken(true));
+            Mock<ITokenLifetimeValidator> mockTokenLifetimeValidator = new();
             Mock<ITokenService> mockTokenService = new();
             mockTokenService
                 .Setup(_ => _.ValidateToken(It.IsAny<string>(), It.IsAny<bool>()))
@@ -266,6 +282,7 @@ namespace Mercadona.Tests.Security
                     _mockIdentityOptions.Object,
                     CreateHttpContextAccessor(true, true),
                     new Mock<ISecurityStampValidator<IdentityUser>>().Object,
+                    mockTokenLifetimeValidator.Object,
                     mockTokenService.Object,
                     mockAuthenticationService.Object,
                     _whiteList
@@ -275,6 +292,7 @@ namespace Mercadona.Tests.Security
             AuthenticationState authState = await authStateProvider.GetAuthenticationStateAsync();
 
             // Assert
+            mockTokenLifetimeValidator.Invocations.Should().BeEmpty();
             mockTokenService.Verify();
             mockAuthenticationService.Verify();
             authState.User.Identity.Should().NotBeNull();
@@ -287,6 +305,7 @@ namespace Mercadona.Tests.Security
             // Arrange
             JwtSecurityToken token = GetJwtSecurityToken();
             _whiteList.Set("refreshToken", token);
+            Mock<ITokenLifetimeValidator> mockTokenLifetimeValidator = new();
             Mock<ITokenService> mockTokenService = new();
             mockTokenService
                 .Setup(_ => _.ValidateToken(It.IsAny<string>(), It.IsAny<bool>()))
@@ -310,6 +329,7 @@ namespace Mercadona.Tests.Security
                     _mockIdentityOptions.Object,
                     CreateHttpContextAccessor(true, true),
                     new Mock<ISecurityStampValidator<IdentityUser>>().Object,
+                    mockTokenLifetimeValidator.Object,
                     mockTokenService.Object,
                     mockAuthenticationService.Object,
                     _whiteList
@@ -319,6 +339,7 @@ namespace Mercadona.Tests.Security
             AuthenticationState authState = await authStateProvider.GetAuthenticationStateAsync();
 
             // Assert
+            mockTokenLifetimeValidator.Invocations.Should().BeEmpty();
             mockTokenService.Verify();
             mockAuthenticationService.Verify();
             authState.User.Identity.Should().NotBeNull();
@@ -343,6 +364,7 @@ namespace Mercadona.Tests.Security
                 TestsHelper.TokenValidationParameters,
                 out _
             );
+            Mock<ITokenLifetimeValidator> mockTokenLifetimeValidator = new();
             Mock<ISecurityStampValidator<IdentityUser>> mockSecurityStampValidator = new();
             RevalidatingIdentityAuthenticationStateProvider<IdentityUser> authStateProvider =
                 new(
@@ -351,6 +373,7 @@ namespace Mercadona.Tests.Security
                     _mockIdentityOptions.Object,
                     CreateHttpContextAccessor(),
                     mockSecurityStampValidator.Object,
+                    mockTokenLifetimeValidator.Object,
                     new Mock<ITokenService>().Object,
                     new Mock<IAuthenticationService>().Object,
                     _whiteList
@@ -371,6 +394,7 @@ namespace Mercadona.Tests.Security
             // Assert
             mockServiceScopeFactory.Verify();
             mockSyncScope.Verify();
+            mockTokenLifetimeValidator.Invocations.Should().BeEmpty();
             result.Should().BeFalse();
         }
 
@@ -393,6 +417,7 @@ namespace Mercadona.Tests.Security
                 TestsHelper.TokenValidationParameters,
                 out _
             );
+            Mock<ITokenLifetimeValidator> mockTokenLifetimeValidator = new();
             Mock<ISecurityStampValidator<IdentityUser>> mockSecurityStampValidator = new();
             RevalidatingIdentityAuthenticationStateProvider<IdentityUser> authStateProvider =
                 new(
@@ -401,6 +426,7 @@ namespace Mercadona.Tests.Security
                     _mockIdentityOptions.Object,
                     CreateHttpContextAccessor(),
                     mockSecurityStampValidator.Object,
+                    mockTokenLifetimeValidator.Object,
                     new Mock<ITokenService>().Object,
                     new Mock<IAuthenticationService>().Object,
                     _whiteList
@@ -421,6 +447,7 @@ namespace Mercadona.Tests.Security
             // Assert
             mockServiceScopeFactory.Verify();
             mockAsyncScope.Verify();
+            mockTokenLifetimeValidator.Invocations.Should().BeEmpty();
             result.Should().BeFalse();
         }
 
@@ -452,6 +479,7 @@ namespace Mercadona.Tests.Security
                 TestsHelper.TokenValidationParameters,
                 out _
             );
+            Mock<ITokenLifetimeValidator> mockTokenLifetimeValidator = new();
             Mock<ISecurityStampValidator<IdentityUser>> mockSecurityStampValidator = new();
             mockSecurityStampValidator
                 .Setup(
@@ -471,6 +499,7 @@ namespace Mercadona.Tests.Security
                     _mockIdentityOptions.Object,
                     CreateHttpContextAccessor(),
                     mockSecurityStampValidator.Object,
+                    mockTokenLifetimeValidator.Object,
                     new Mock<ITokenService>().Object,
                     new Mock<IAuthenticationService>().Object,
                     _whiteList
@@ -496,11 +525,12 @@ namespace Mercadona.Tests.Security
             mockServiceScopeFactory.Verify();
             mockSyncScope.Verify();
             mockSecurityStampValidator.Verify();
+            mockTokenLifetimeValidator.Invocations.Should().BeEmpty();
             result.Should().BeFalse();
         }
 
         [Fact]
-        public async void ValidateAuthenticationStateAsync_ValidateSecurityStampAsyncReturnsTrue_ShouldReturnTrue()
+        public async void ValidateAuthenticationStateAsync_ValidateTokenLifetimeAsyncReturnsFalse_ShouldReturnFalse()
         {
             // Arrange
             UserManagerMock userManagerMock =
@@ -527,6 +557,11 @@ namespace Mercadona.Tests.Security
                 TestsHelper.TokenValidationParameters,
                 out _
             );
+            Mock<ITokenLifetimeValidator> mockTokenLifetimeValidator = new();
+            mockTokenLifetimeValidator
+                .Setup(_ => _.ValidateTokenLifetimeAsync(It.IsAny<ClaimsPrincipal>()))
+                .ReturnsAsync(false)
+                .Verifiable();
             Mock<ISecurityStampValidator<IdentityUser>> mockSecurityStampValidator = new();
             mockSecurityStampValidator
                 .Setup(
@@ -546,6 +581,7 @@ namespace Mercadona.Tests.Security
                     _mockIdentityOptions.Object,
                     CreateHttpContextAccessor(),
                     mockSecurityStampValidator.Object,
+                    mockTokenLifetimeValidator.Object,
                     new Mock<ITokenService>().Object,
                     new Mock<IAuthenticationService>().Object,
                     _whiteList
@@ -571,6 +607,89 @@ namespace Mercadona.Tests.Security
             mockServiceScopeFactory.Verify();
             mockSyncScope.Verify();
             mockSecurityStampValidator.Verify();
+            mockTokenLifetimeValidator.Verify();
+            result.Should().BeFalse();
+        }
+
+        [Fact]
+        public async void ValidateAuthenticationStateAsync_ValidateTokenLifetimeAsyncReturnsTrue_ShouldReturnTrue()
+        {
+            // Arrange
+            UserManagerMock userManagerMock =
+                new(false, new UserModel { Username = "toto@toto.fr", Password = "V@lidPassw0rd" });
+            userManagerMock.SetSupportsUserSecurityStamp(true);
+            Mock<IServiceProvider> mockServiceProvider = new();
+            mockServiceProvider
+                .Setup(_ => _.GetService(typeof(UserManager<IdentityUser>)))
+                .Returns(userManagerMock);
+            Mock<IServiceScope> mockSyncScope = new();
+            mockSyncScope.Setup(_ => _.Dispose()).Verifiable();
+            mockSyncScope
+                .SetupGet(_ => _.ServiceProvider)
+                .Returns(mockServiceProvider.Object)
+                .Verifiable();
+            Mock<IServiceScopeFactory> mockServiceScopeFactory = new();
+            mockServiceScopeFactory
+                .Setup(_ => _.CreateScope())
+                .Returns(mockSyncScope.Object)
+                .Verifiable();
+            JwtSecurityToken token = GetJwtSecurityToken();
+            ClaimsPrincipal principal = new JwtSecurityTokenHandler().ValidateToken(
+                new JwtSecurityTokenHandler().WriteToken(token),
+                TestsHelper.TokenValidationParameters,
+                out _
+            );
+            Mock<ITokenLifetimeValidator> mockTokenLifetimeValidator = new();
+            mockTokenLifetimeValidator
+                .Setup(_ => _.ValidateTokenLifetimeAsync(It.IsAny<ClaimsPrincipal>()))
+                .ReturnsAsync(true)
+                .Verifiable();
+            Mock<ISecurityStampValidator<IdentityUser>> mockSecurityStampValidator = new();
+            mockSecurityStampValidator
+                .Setup(
+                    _ =>
+                        _.ValidateSecurityStampAsync(
+                            It.IsAny<UserManager<IdentityUser>>(),
+                            It.IsAny<ClaimsPrincipal>(),
+                            It.IsAny<IdentityOptions>()
+                        )
+                )
+                .ReturnsAsync(true)
+                .Verifiable();
+            RevalidatingIdentityAuthenticationStateProvider<IdentityUser> authStateProvider =
+                new(
+                    new Mock<ILoggerFactory>().Object,
+                    mockServiceScopeFactory.Object,
+                    _mockIdentityOptions.Object,
+                    CreateHttpContextAccessor(),
+                    mockSecurityStampValidator.Object,
+                    mockTokenLifetimeValidator.Object,
+                    new Mock<ITokenService>().Object,
+                    new Mock<IAuthenticationService>().Object,
+                    _whiteList
+                );
+            List<Claim> principalClaims = principal.Claims.ToList();
+            principalClaims.Add(
+                new Claim("AspNet.Identity.SecurityStamp", Guid.NewGuid().ToString())
+            );
+
+            // Act
+            MethodInfo? methodInfo =
+                typeof(RevalidatingServerAuthenticationStateProvider).GetMethod(
+                    "ValidateAuthenticationStateAsync",
+                    BindingFlags.Instance | BindingFlags.NonPublic
+                );
+            bool result = await (Task<bool>)
+                methodInfo?.Invoke(
+                    authStateProvider,
+                    new object?[] { new AuthenticationState(principal), CancellationToken.None }
+                );
+
+            // Assert
+            mockServiceScopeFactory.Verify();
+            mockSyncScope.Verify();
+            mockSecurityStampValidator.Verify();
+            mockTokenLifetimeValidator.Verify();
             result.Should().BeTrue();
         }
     }

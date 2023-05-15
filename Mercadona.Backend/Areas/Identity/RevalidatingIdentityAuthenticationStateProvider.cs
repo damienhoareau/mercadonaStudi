@@ -22,6 +22,7 @@ namespace Mercadona.Backend.Areas.Identity
         private readonly IdentityOptions _options;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly ISecurityStampValidator<TUser> _securityStampValidator;
+        private readonly ITokenLifetimeValidator _tokenLifetimeValidator;
         private readonly ITokenService _tokenService;
         private readonly IAuthenticationService _authenticationService;
         private readonly WhiteList _whiteList;
@@ -34,6 +35,7 @@ namespace Mercadona.Backend.Areas.Identity
         /// <param name="optionsAccessor">Options de <c>IdentityOptions</c>.</param>
         /// <param name="contextAccessor">Accesseur de contexte HTTP.</param>
         /// <param name="securityStampValidator">La classe de validation des tampons de sécurité.</param>
+        /// <param name="tokenLifetimeValidator">La classe de validation du temps restant du jeton d'accès.</param>
         /// <param name="tokenService">Le service de gestion des jetons.</param>
         /// <param name="authenticationService">Le service d'authentification.</param>
         /// <param name="whiteList">Cache mémoire pour les jetons de renouvellement.</param>
@@ -43,6 +45,7 @@ namespace Mercadona.Backend.Areas.Identity
             IOptions<IdentityOptions> optionsAccessor,
             IHttpContextAccessor contextAccessor,
             ISecurityStampValidator<TUser> securityStampValidator,
+            ITokenLifetimeValidator tokenLifetimeValidator,
             ITokenService tokenService,
             IAuthenticationService authenticationService,
             WhiteList whiteList
@@ -52,6 +55,7 @@ namespace Mercadona.Backend.Areas.Identity
             _options = optionsAccessor.Value;
             _contextAccessor = contextAccessor;
             _securityStampValidator = securityStampValidator;
+            _tokenLifetimeValidator = tokenLifetimeValidator;
             _tokenService = tokenService;
             _authenticationService = authenticationService;
             _whiteList = whiteList;
@@ -139,11 +143,21 @@ namespace Mercadona.Backend.Areas.Identity
                 UserManager<TUser> userManager = scope.ServiceProvider.GetRequiredService<
                     UserManager<TUser>
                 >();
-                return await _securityStampValidator.ValidateSecurityStampAsync(
-                    userManager,
-                    authenticationState.User,
-                    _options
-                );
+                bool securityStampIsValid =
+                    await _securityStampValidator.ValidateSecurityStampAsync(
+                        userManager,
+                        authenticationState.User,
+                        _options
+                    );
+                if (!securityStampIsValid)
+                    return false;
+                bool tokenLifetimeIsValid =
+                    await _tokenLifetimeValidator.ValidateTokenLifetimeAsync(
+                        authenticationState.User
+                    );
+                if (!tokenLifetimeIsValid)
+                    return false;
+                return true;
             }
             catch
             {
