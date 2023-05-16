@@ -40,9 +40,9 @@
             </AuthorizeView>
         </MudAppBar>
         <MudDrawer @bind-Open="@_drawerOpen" Variant="DrawerVariant.Temporary">
-            <MudElement HtmlTag="div" Class="d-flex align-center">
-                <MudIconButton Icon="@Icons.Material.Filled.Close" Color="Color.Inherit" OnClick="@((e) => DrawerToggle())" Class="ma-2" />
-                <MudElement HtmlTag="div" Class="o-drawer-logo"></MudElement>
+            <MudElement HtmlTag="div" Class="d-flex align-center openDrawer">
+                <MudIconButton Icon="@Icons.Material.Filled.Close" Color="Color.Inherit" OnClick="@((e) => DrawerToggle())" Class="openDrawerIcon" />
+                <MudElement HtmlTag="div" Class="o-drawer-logo" />
             </MudElement>
             <MudDivider Class="flex-grow-0" />
             <NavMenu />
