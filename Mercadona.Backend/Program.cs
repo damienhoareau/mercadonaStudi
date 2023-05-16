@@ -91,6 +91,11 @@ builder.Services.AddTransient(provider =>
 // Informations sur l'utilisateur connecté
 builder.Services.AddScoped<ConnectedUser>();
 builder.Services.AddScoped<
+    ISecurityStampValidator<IdentityUser>,
+    Mercadona.Backend.Areas.Identity.SecurityStampValidator<IdentityUser>
+>();
+builder.Services.AddScoped<ITokenLifetimeValidator, TokenLifetimeValidator>();
+builder.Services.AddScoped<
     AuthenticationStateProvider,
     RevalidatingIdentityAuthenticationStateProvider<IdentityUser>
 >();

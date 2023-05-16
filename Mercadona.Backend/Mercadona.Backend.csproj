@@ -36,6 +36,10 @@
     <Folder Include="ApiClient\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="Mercadona.Tests" />
+  </ItemGroup>
+
   <Target Name="Generate OpenAPI Specification Document" AfterTargets="Build">
     <PropertyGroup>
       <OpenApiDocumentName>v1</OpenApiDocumentName>

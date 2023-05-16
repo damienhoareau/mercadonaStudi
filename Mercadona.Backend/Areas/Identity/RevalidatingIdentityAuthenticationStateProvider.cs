@@ -21,6 +21,8 @@ namespace Mercadona.Backend.Areas.Identity
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly IdentityOptions _options;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly ISecurityStampValidator<TUser> _securityStampValidator;
+        private readonly ITokenLifetimeValidator _tokenLifetimeValidator;
         private readonly ITokenService _tokenService;
         private readonly IAuthenticationService _authenticationService;
         private readonly WhiteList _whiteList;
@@ -32,6 +34,8 @@ namespace Mercadona.Backend.Areas.Identity
         /// <param name="scopeFactory">La fabrique de périmètre.</param>
         /// <param name="optionsAccessor">Options de <c>IdentityOptions</c>.</param>
         /// <param name="contextAccessor">Accesseur de contexte HTTP.</param>
+        /// <param name="securityStampValidator">La classe de validation des tampons de sécurité.</param>
+        /// <param name="tokenLifetimeValidator">La classe de validation du temps restant du jeton d'accès.</param>
         /// <param name="tokenService">Le service de gestion des jetons.</param>
         /// <param name="authenticationService">Le service d'authentification.</param>
         /// <param name="whiteList">Cache mémoire pour les jetons de renouvellement.</param>
@@ -40,6 +44,8 @@ namespace Mercadona.Backend.Areas.Identity
             IServiceScopeFactory scopeFactory,
             IOptions<IdentityOptions> optionsAccessor,
             IHttpContextAccessor contextAccessor,
+            ISecurityStampValidator<TUser> securityStampValidator,
+            ITokenLifetimeValidator tokenLifetimeValidator,
             ITokenService tokenService,
             IAuthenticationService authenticationService,
             WhiteList whiteList
@@ -48,13 +54,15 @@ namespace Mercadona.Backend.Areas.Identity
             _scopeFactory = scopeFactory;
             _options = optionsAccessor.Value;
             _contextAccessor = contextAccessor;
+            _securityStampValidator = securityStampValidator;
+            _tokenLifetimeValidator = tokenLifetimeValidator;
             _tokenService = tokenService;
             _authenticationService = authenticationService;
             _whiteList = whiteList;
         }
 
         /// <inheritdoc />
-        protected override TimeSpan RevalidationInterval => TimeSpan.FromMinutes(10);
+        protected override TimeSpan RevalidationInterval => TimeSpan.FromSeconds(10);
 
         /// <inheritdoc />
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
@@ -74,42 +82,53 @@ namespace Mercadona.Backend.Areas.Identity
                     IdentityUser? user = await _authenticationService.FindUserByNameAsync(
                         principal.Identity?.Name ?? string.Empty
                     );
-                    if (user != null)
+                    if (user == null)
+                        return AnonymousUser;
+
+                    // On vérifie que le refresh token est bien autorisé
+                    if (!_whiteList.TryGetValue(refreshToken, out _))
+                        return AnonymousUser;
+
+                    // On vérifie que le refresh token correspond bien à l'access token
+                    if (
+                        principal.Claims
+                            .FirstOrDefault(_ => _.Type == JwtRegisteredClaimNames.Jti)
+                            ?.Value == refreshToken
+                    )
                     {
-                        // On vérifie que le refresh token est bien autorisé
-                        if (_whiteList.TryGetValue(refreshToken, out _))
-                        {
-                            // On vérifie que le refresh token correspond bien à l'access token
-                            if (
-                                principal.Claims
-                                    .FirstOrDefault(_ => _.Type == JwtRegisteredClaimNames.Jti)
-                                    ?.Value == refreshToken
-                            )
-                            {
-                                // On crée l'identité de l'utilisateur
-                                ClaimsIdentity identity =
-                                    new(
-                                        principal.Claims,
-                                        Microsoft
-                                            .AspNetCore
-                                            .Authentication
-                                            .Cookies
-                                            .CookieAuthenticationDefaults
-                                            .AuthenticationScheme
-                                    );
-                                principal = new ClaimsPrincipal(identity);
-                                // On définit l'utilisateur comme connecté au circuit Blazor
-                                SetAuthenticationState(
-                                    Task.FromResult(new AuthenticationState(principal))
-                                );
-                            }
-                        }
+                        // On crée l'identité de l'utilisateur
+                        ClaimsIdentity identity =
+                            new(
+                                principal.Claims,
+                                Microsoft
+                                    .AspNetCore
+                                    .Authentication
+                                    .Cookies
+                                    .CookieAuthenticationDefaults
+                                    .AuthenticationScheme
+                            );
+                        principal = new ClaimsPrincipal(identity);
+                        // On définit l'utilisateur comme connecté au circuit Blazor
+                        SetAuthenticationState(Task.FromResult(new AuthenticationState(principal)));
+                        return await base.GetAuthenticationStateAsync();
+                    }
+                    else
+                    {
+                        return AnonymousUser;
                     }
                 }
-                catch { }
+                catch
+                {
+                    return AnonymousUser;
+                }
             }
-            return await base.GetAuthenticationStateAsync();
+            return AnonymousUser;
         }
+
+        /// <value>
+        /// Un utilisateur anonyme.
+        /// </value>
+        private AuthenticationState AnonymousUser => new(new ClaimsPrincipal(new ClaimsIdentity()));
 
         /// <inheritdoc />
         protected override async Task<bool> ValidateAuthenticationStateAsync(
@@ -124,7 +143,25 @@ namespace Mercadona.Backend.Areas.Identity
                 UserManager<TUser> userManager = scope.ServiceProvider.GetRequiredService<
                     UserManager<TUser>
                 >();
-                return await ValidateSecurityStampAsync(userManager, authenticationState.User);
+                bool securityStampIsValid =
+                    await _securityStampValidator.ValidateSecurityStampAsync(
+                        userManager,
+                        authenticationState.User,
+                        _options
+                    );
+                if (!securityStampIsValid)
+                    return false;
+                bool tokenLifetimeIsValid =
+                    await _tokenLifetimeValidator.ValidateTokenLifetimeAsync(
+                        authenticationState.User
+                    );
+                if (!tokenLifetimeIsValid)
+                    return false;
+                return true;
+            }
+            catch
+            {
+                return false;
             }
             finally
             {
@@ -136,29 +173,6 @@ namespace Mercadona.Backend.Areas.Identity
                 {
                     scope.Dispose();
                 }
-            }
-        }
-
-        private async Task<bool> ValidateSecurityStampAsync(
-            UserManager<TUser> userManager,
-            ClaimsPrincipal principal
-        )
-        {
-            if (await userManager.GetUserAsync(principal) is not TUser user)
-            {
-                return false;
-            }
-            else if (!userManager.SupportsUserSecurityStamp)
-            {
-                return true;
-            }
-            else
-            {
-                string? principalStamp = principal.FindFirstValue(
-                    _options.ClaimsIdentity.SecurityStampClaimType
-                );
-                string userStamp = await userManager.GetSecurityStampAsync(user);
-                return principalStamp == userStamp;
             }
         }
     }

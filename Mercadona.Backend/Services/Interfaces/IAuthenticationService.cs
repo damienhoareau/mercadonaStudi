@@ -30,6 +30,13 @@ namespace Mercadona.Backend.Services.Interfaces
         Task<(string refreshToken, string accessToken)> LoginAsync(IdentityUser user);
 
         /// <summary>
+        /// Permet de prolonger la session d'un utilisateur
+        /// </summary>
+        /// <param name="refreshToken">Le jeton de renouvellement</param>
+        /// <returns>Le nouveau jeton d'accès</returns>
+        Task<string> RefreshTokenAsync(string refreshToken);
+
+        /// <summary>
         /// Permet d'enregistrer un utilisateur
         /// </summary>
         /// <param name="username">Identitifant de l'utilisateur</param>

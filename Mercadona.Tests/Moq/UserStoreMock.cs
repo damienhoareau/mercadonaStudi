@@ -2,7 +2,10 @@
 
 namespace Mercadona.Tests.Moq
 {
-    public class UserStoreMock : IUserStore<IdentityUser>, IUserPasswordStore<IdentityUser>
+    public class UserStoreMock
+        : IUserStore<IdentityUser>,
+            IUserPasswordStore<IdentityUser>,
+            IUserSecurityStampStore<IdentityUser>
     {
         private readonly bool _creatingUserShouldFail;
         private readonly List<IdentityUser> _users = new();
@@ -11,6 +14,8 @@ namespace Mercadona.Tests.Moq
         {
             _creatingUserShouldFail = creatingUserShouldFail;
         }
+
+        public List<IdentityUser> UsersList => _users;
 
         public Task<IdentityResult> CreateAsync(
             IdentityUser user,
@@ -62,6 +67,14 @@ namespace Mercadona.Tests.Moq
         )
         {
             return Task.FromResult(user.PasswordHash);
+        }
+
+        public Task<string?> GetSecurityStampAsync(
+            IdentityUser user,
+            CancellationToken cancellationToken
+        )
+        {
+            return Task.FromResult(user.SecurityStamp);
         }
 
         public Task<string> GetUserIdAsync(IdentityUser user, CancellationToken cancellationToken)
@@ -117,6 +130,15 @@ namespace Mercadona.Tests.Moq
                 },
                 cancellationToken
             );
+        }
+
+        public Task SetSecurityStampAsync(
+            IdentityUser user,
+            string stamp,
+            CancellationToken cancellationToken
+        )
+        {
+            throw new NotImplementedException();
         }
 
         public Task SetUserNameAsync(

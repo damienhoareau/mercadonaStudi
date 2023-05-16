@@ -1,4 +1,4 @@
-@using Mercadona.Backend.Controllers;
+﻿@using Mercadona.Backend.Controllers;
 @using Mercadona.Backend.Data;
 @using Mercadona.Backend.Models;
 @using FluentValidation;
@@ -58,7 +58,9 @@
     {
         await base.OnAfterRenderAsync(firstRender);
         if (firstRender)
+        {
             await usernameField.FocusAsync();
+        }
     }
 
     UserModel model = new UserModel();

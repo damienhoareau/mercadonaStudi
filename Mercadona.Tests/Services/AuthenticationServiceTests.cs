@@ -17,7 +17,6 @@ namespace Mercadona.Tests.Services
     public class AuthenticationServiceTests : IClassFixture<ServiceProviderFixture>
     {
         private readonly ServiceProviderFixture _fixture;
-        private readonly ITokenService _tokenService;
 
         public AuthenticationServiceTests(ServiceProviderFixture fixture)
         {
@@ -37,18 +36,7 @@ namespace Mercadona.Tests.Services
                     {
                         options.SaveToken = true;
                         options.RequireHttpsMetadata = true;
-                        options.TokenValidationParameters = new TokenValidationParameters()
-                        {
-                            ValidateIssuer = true,
-                            ValidateAudience = true,
-                            ValidAudience = "https://localhost:44387",
-                            ValidIssuer = "https://localhost:44387",
-                            IssuerSigningKey = new SymmetricSecurityKey(
-                                Encoding.UTF8.GetBytes(
-                                    "JWTAuthenticationHIGHsecuredPasswordVVVp1OH7XzyrForTest"
-                                )
-                            )
-                        };
+                        options.TokenValidationParameters = TestsHelper.TokenValidationParameters;
                     });
                 services.AddSingleton<ITokenService, TokenService>();
 
@@ -154,6 +142,29 @@ namespace Mercadona.Tests.Services
             // Assert
             refreshToken.Should().Be(Guid.Empty.ToString());
             accessToken.Should().Be(Guid.Empty.ToString());
+        }
+
+        [Fact]
+        public async Task RefreshTokenAsync_ShouldCall_TokenService_RefreshToken()
+        {
+            // Arrange
+            UserManagerMock userManagerMock = new UserManagerMock(
+                false,
+                new UserModel { Username = "toto@toto.fr", Password = "V@lidPassw0rd" }
+            );
+            Mock<ITokenService> mockTokenService = new();
+            mockTokenService
+                .Setup(_ => _.RefreshToken(It.IsAny<string>()))
+                .Returns("newAccessToken")
+                .Verifiable();
+            AuthenticationService service = new(userManagerMock, mockTokenService.Object);
+
+            // Act
+            string accessToken = await service.RefreshTokenAsync("refreshToken");
+
+            // Assert
+            mockTokenService.Verify();
+            accessToken.Should().Be("newAccessToken");
         }
 
         [Fact]

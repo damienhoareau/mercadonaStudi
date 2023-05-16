@@ -1,8 +1,9 @@
-﻿using Mercadona.Backend.Models;
+using Mercadona.Backend.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
+using System.Security.Claims;
 
 namespace Mercadona.Tests.Moq
 {
@@ -81,5 +82,24 @@ namespace Mercadona.Tests.Moq
                     || result == PasswordVerificationResult.SuccessRehashNeeded
             );
         }
+
+        public List<IdentityUser> UsersList => ((UserStoreMock)Store).UsersList;
+
+        public override Task<IdentityUser?> GetUserAsync(ClaimsPrincipal principal)
+        {
+            string? userName = principal.Identity?.Name;
+            return Task.FromResult(
+                ((UserStoreMock)Store).UsersList.SingleOrDefault(_ => _.UserName == userName)
+            );
+        }
+
+        private bool _supportsUserSecurityStamp;
+
+        public void SetSupportsUserSecurityStamp(bool supportsUserSecurityStamp)
+        {
+            _supportsUserSecurityStamp = supportsUserSecurityStamp;
+        }
+
+        public override bool SupportsUserSecurityStamp => _supportsUserSecurityStamp;
     }
 }

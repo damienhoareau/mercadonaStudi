@@ -4,13 +4,30 @@ using Mercadona.Tests.Extensions;
 using Mercadona.Tests.Moq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.IdentityModel.Tokens;
 using MimeDetective;
 using Moq;
+using System.Text;
 
 namespace Mercadona.Tests
 {
     public static class TestsHelper
     {
+        public static TokenValidationParameters TokenValidationParameters { get; private set; } =
+            new()
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidAudience = "https://localhost:44387",
+                ValidIssuer = "https://localhost:44387",
+                ValidateLifetime = true,
+                IssuerSigningKey = new SymmetricSecurityKey(
+                    Encoding.UTF8.GetBytes(
+                        "JWTAuthenticationHIGHsecuredPasswordVVVp1OH7XzyrForTest"
+                    )
+                )
+            };
+
         public static ProblemDetailsFactory ProblemDetailsFactory { get; private set; } =
             new ProblemDetailsFactoryMock();
 

@@ -48,13 +48,24 @@ namespace Mercadona.Backend.Services.Interfaces
                 List<Claim> authClaims =
                     new()
                     {
+                        new Claim(ClaimTypes.NameIdentifier, user.Id),
                         new Claim(ClaimTypes.Name, user.UserName!),
                         new Claim(JwtRegisteredClaimNames.Jti, refreshToken),
+                        new Claim("AspNet.Identity.SecurityStamp", user.SecurityStamp!)
                     };
 
                 string accessToken = _tokenService.GenerateAccessToken(refreshToken, authClaims);
 
                 return (refreshToken, accessToken);
+            });
+        }
+
+        /// <inheritdoc/>
+        public Task<string> RefreshTokenAsync(string refreshToken)
+        {
+            return Task.Run(() =>
+            {
+                return _tokenService.RefreshToken(refreshToken);
             });
         }
 

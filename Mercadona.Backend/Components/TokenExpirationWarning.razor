@@ -1,0 +1,83 @@
+﻿@using Mercadona.Backend.Data;
+@using Mercadona.Backend.Helpers;
+@implements IDisposable;
+@inject ISnackbar _snackbar;
+
+<MudText>Votre session expirera dans @($"{TimeLeft.ToString("%m")} min et {TimeLeft.ToString("ss")} s").</MudText>
+<MudButton OnClick="ExtendSession" Disabled="@(_processing)">
+    @if (_processing)
+    {
+        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+        <MudText Class="ms-2">En cours</MudText>
+    }
+    else
+    {
+        <MudText>Prolonger</MudText>
+    }
+</MudButton>
+
+@code {
+    [Parameter] public DateTime ValidTo { get; set; }
+    [Parameter] public EventCallback RefreshToken { get; set; }
+
+    public TimeSpan TimeLeft => ValidTo.Subtract(DateTime.UtcNow);
+
+    private Timer? timer;
+
+    protected override Task OnInitializedAsync()
+    {
+        timer = new Timer(stateInfo =>
+        {
+            InvokeAsync(() =>
+            {
+                TimeSpan timeLeft = TimeLeft;
+                if (SnackbarHelper.ShownSnackbars.TryGetValue(MainLayout.TOKEN_WARNING_SNACKBAR_KEY, out Snackbar? snackbar)
+                && snackbar.Severity == Severity.Warning
+                && TimeLeft < TimeSpan.FromMinutes(1))
+                    SetErrorSeverity(snackbar);
+                StateHasChanged();
+            });
+        }, new AutoResetEvent(false), 1000, 1000);
+        return base.OnInitializedAsync();
+    }
+
+    public void Dispose()
+    {
+        if (SnackbarHelper.ShownSnackbars.TryGetValue(MainLayout.TOKEN_WARNING_SNACKBAR_KEY, out Snackbar? snackbar))
+        {
+            SnackbarHelper.ShownSnackbars.Remove(MainLayout.TOKEN_WARNING_SNACKBAR_KEY);
+        }
+        timer?.Dispose();
+        timer = null;
+    }
+
+    void SetErrorSeverity(Snackbar snackbar)
+    {
+        _snackbar.Remove(snackbar);
+        SnackbarHelper.ShownSnackbars.Add(MainLayout.TOKEN_WARNING_SNACKBAR_KEY, _snackbar.Add(@<TokenExpirationWarning ValidTo=ValidTo RefreshToken="RefreshToken" />, Severity.Error, configure: MainLayout.SnackbarConfig, key: MainLayout.TOKEN_WARNING_SNACKBAR_KEY));
+    }
+
+    private bool _processing = false;
+
+    async Task ExtendSession()
+    {
+        _processing = true;
+        try
+        {
+            await RefreshToken.InvokeAsync();
+            if (SnackbarHelper.ShownSnackbars.TryGetValue(MainLayout.TOKEN_WARNING_SNACKBAR_KEY, out Snackbar? snackbar))
+            {
+                _snackbar.Remove(snackbar);
+                SnackbarHelper.ShownSnackbars.Remove(MainLayout.TOKEN_WARNING_SNACKBAR_KEY);
+            }
+        }
+        catch (Exception ex)
+        {
+            _snackbar.Add(ex.Message, MudBlazor.Severity.Error);
+        }
+        finally
+        {
+            _processing = false;
+        }
+    }
+}
