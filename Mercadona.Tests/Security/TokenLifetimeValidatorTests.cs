@@ -79,8 +79,8 @@ namespace Mercadona.Tests.Security
 
             // Act
             bool result = false;
-            RaisedEvent<TokenExpirationWarningEnum> raisedEvent =
-                await RaisesAsync<TokenExpirationWarningEnum>(
+            RaisedEvent<TokenExpirationWarningChangedArgs> raisedEvent =
+                await RaisesAsync<TokenExpirationWarningChangedArgs>(
                     a => _tokenLifetimeValidator.TokenExpirationWarningChanged += a,
                     a => _tokenLifetimeValidator.TokenExpirationWarningChanged -= a,
                     async () =>
@@ -89,7 +89,10 @@ namespace Mercadona.Tests.Security
 
             // Assert
             result.Should().BeFalse();
-            raisedEvent.Arguments.Should().Be(TokenExpirationWarningEnum.LogoutNeeded);
+            raisedEvent.Arguments.TokenExpirationWarningEnum
+                .Should()
+                .Be(TokenExpirationWarningEnum.LogoutNeeded);
+            raisedEvent.Arguments.ValidTo.Should().BeNull();
         }
 
         [Fact]
@@ -109,8 +112,8 @@ namespace Mercadona.Tests.Security
 
             // Act
             bool result = false;
-            RaisedEvent<TokenExpirationWarningEnum> raisedEvent =
-                await RaisesAsync<TokenExpirationWarningEnum>(
+            RaisedEvent<TokenExpirationWarningChangedArgs> raisedEvent =
+                await RaisesAsync<TokenExpirationWarningChangedArgs>(
                     a => _tokenLifetimeValidator.TokenExpirationWarningChanged += a,
                     a => _tokenLifetimeValidator.TokenExpirationWarningChanged -= a,
                     async () =>
@@ -119,7 +122,10 @@ namespace Mercadona.Tests.Security
 
             // Assert
             result.Should().BeFalse();
-            raisedEvent.Arguments.Should().Be(TokenExpirationWarningEnum.LogoutNeeded);
+            raisedEvent.Arguments.TokenExpirationWarningEnum
+                .Should()
+                .Be(TokenExpirationWarningEnum.LogoutNeeded);
+            raisedEvent.Arguments.ValidTo.Should().BeNull();
         }
 
         [Fact]
@@ -139,8 +145,8 @@ namespace Mercadona.Tests.Security
 
             // Act
             bool result = false;
-            RaisedEvent<TokenExpirationWarningEnum> raisedEvent =
-                await RaisesAsync<TokenExpirationWarningEnum>(
+            RaisedEvent<TokenExpirationWarningChangedArgs> raisedEvent =
+                await RaisesAsync<TokenExpirationWarningChangedArgs>(
                     a => _tokenLifetimeValidator.TokenExpirationWarningChanged += a,
                     a => _tokenLifetimeValidator.TokenExpirationWarningChanged -= a,
                     async () =>
@@ -149,7 +155,10 @@ namespace Mercadona.Tests.Security
 
             // Assert
             result.Should().BeFalse();
-            raisedEvent.Arguments.Should().Be(TokenExpirationWarningEnum.LogoutNeeded);
+            raisedEvent.Arguments.TokenExpirationWarningEnum
+                .Should()
+                .Be(TokenExpirationWarningEnum.LogoutNeeded);
+            raisedEvent.Arguments.ValidTo.Should().BeNull();
         }
 
         [Fact]
@@ -168,8 +177,8 @@ namespace Mercadona.Tests.Security
 
             // Act
             bool result = false;
-            RaisedEvent<TokenExpirationWarningEnum> raisedEvent =
-                await RaisesAsync<TokenExpirationWarningEnum>(
+            RaisedEvent<TokenExpirationWarningChangedArgs> raisedEvent =
+                await RaisesAsync<TokenExpirationWarningChangedArgs>(
                     a => _tokenLifetimeValidator.TokenExpirationWarningChanged += a,
                     a => _tokenLifetimeValidator.TokenExpirationWarningChanged -= a,
                     async () =>
@@ -178,7 +187,10 @@ namespace Mercadona.Tests.Security
 
             // Assert
             result.Should().BeTrue();
-            raisedEvent.Arguments.Should().Be(TokenExpirationWarningEnum.OneMinuteLeft);
+            raisedEvent.Arguments.TokenExpirationWarningEnum
+                .Should()
+                .Be(TokenExpirationWarningEnum.OneMinuteLeft);
+            raisedEvent.Arguments.ValidTo.Should().NotBeNull();
         }
 
         [Fact]
@@ -197,8 +209,8 @@ namespace Mercadona.Tests.Security
 
             // Act
             bool result = false;
-            RaisedEvent<TokenExpirationWarningEnum> raisedEvent =
-                await RaisesAsync<TokenExpirationWarningEnum>(
+            RaisedEvent<TokenExpirationWarningChangedArgs> raisedEvent =
+                await RaisesAsync<TokenExpirationWarningChangedArgs>(
                     a => _tokenLifetimeValidator.TokenExpirationWarningChanged += a,
                     a => _tokenLifetimeValidator.TokenExpirationWarningChanged -= a,
                     async () =>
@@ -207,7 +219,10 @@ namespace Mercadona.Tests.Security
 
             // Assert
             result.Should().BeTrue();
-            raisedEvent.Arguments.Should().Be(TokenExpirationWarningEnum.FiveMinutesLeft);
+            raisedEvent.Arguments.TokenExpirationWarningEnum
+                .Should()
+                .Be(TokenExpirationWarningEnum.FiveMinutesLeft);
+            raisedEvent.Arguments.ValidTo.Should().NotBeNull();
         }
 
         [Fact]
@@ -224,7 +239,7 @@ namespace Mercadona.Tests.Security
                 token
             );
             bool eventInvoked = false;
-            void OnTokenExpirationWarningChanged(object? s, TokenExpirationWarningEnum e) =>
+            void OnTokenExpirationWarningChanged(object? s, TokenExpirationWarningChangedArgs e) =>
                 eventInvoked = true;
 
             // Act

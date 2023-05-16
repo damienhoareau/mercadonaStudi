@@ -3,9 +3,7 @@ using FluentValidation.Results;
 using Mercadona.Backend.Models;
 using Mercadona.Backend.Services;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Text;
@@ -26,7 +24,7 @@ namespace Mercadona.Backend.Controllers
         public const string USER_CREATION_FAILED =
             "La création de l'utilisateur a échoué! Veuillez réessayer.";
 
-        public const string TOKEN_NOT_FOUND =
+        public const string REFRESH_TOKEN_NOT_FOUND =
             "Le jeton de renouvellement n'a pas été trouvé dans la session.";
 
         public const string USERNAME_OR_PASSWORD_IS_NOT_VALID =
@@ -85,6 +83,33 @@ namespace Mercadona.Backend.Controllers
                 );
             }
             return Unauthorized(new TextResponse(USERNAME_OR_PASSWORD_IS_NOT_VALID));
+        }
+
+        /// <summary>
+        /// Permet de prolonger la session d'un utilisateur
+        /// </summary>
+        /// <returns></returns>
+        /// <response code="200">Si l'authentification a réussi.</response>
+        /// <response code="500">Si la prolongation de la session de l'utilisateur a échoué.</response>
+        [HttpPost]
+        [Route("account/refreshToken")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> RefreshTokenAsync()
+        {
+            string? refreshToken = HttpContext.Session.GetString(TokenService.REFRESH_TOKEN_NAME);
+            if (refreshToken != null)
+            {
+                string accessToken = await _authenticationService.RefreshTokenAsync(refreshToken);
+
+                HttpContext.Session.SetString(TokenService.ACCESS_TOKEN_NAME, accessToken);
+
+                return Ok();
+            }
+            return Problem(
+                REFRESH_TOKEN_NOT_FOUND,
+                statusCode: StatusCodes.Status500InternalServerError
+            );
         }
 
         /// <summary>
@@ -191,7 +216,7 @@ namespace Mercadona.Backend.Controllers
                 );
                 if (refreshToken == null)
                     return Problem(
-                        TOKEN_NOT_FOUND,
+                        REFRESH_TOKEN_NOT_FOUND,
                         statusCode: StatusCodes.Status500InternalServerError
                     );
                 await _authenticationService.LogoutAsync(refreshToken);

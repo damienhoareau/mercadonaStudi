@@ -61,6 +61,15 @@ namespace Mercadona.Backend.Services.Interfaces
         }
 
         /// <inheritdoc/>
+        public Task<string> RefreshTokenAsync(string refreshToken)
+        {
+            return Task.Run(() =>
+            {
+                return _tokenService.RefreshToken(refreshToken);
+            });
+        }
+
+        /// <inheritdoc/>
         public async Task<bool> RegisterAsync(string username, string password)
         {
             IdentityUser user =

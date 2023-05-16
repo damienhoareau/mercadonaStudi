@@ -110,6 +110,75 @@ namespace Mercadona.Tests.Controllers
         }
 
         [Fact]
+        public async Task RefreshTokenAsync_RefreshTokenNotFound_ShouldReturnProblem_InternalServerError()
+        {
+            // Arrange
+            Mock<IAuthenticationService> mockAuthenticationService =
+                TestsHelper.GetServiceMock<IAuthenticationService>();
+            Mock<IValidator<UserModel>> mockUserModelValidator = TestsHelper.GetServiceMock<
+                IValidator<UserModel>
+            >();
+            AuthenticateController controller =
+                TestsHelper.CreateController<AuthenticateController>(
+                    mockAuthenticationService.Object,
+                    mockUserModelValidator.Object
+                );
+
+            // Act
+            IActionResult result = await controller.RefreshTokenAsync();
+
+            // Assert
+            result
+                .Should()
+                .BeProblemResult(
+                    StatusCodes.Status500InternalServerError,
+                    AuthenticateController.REFRESH_TOKEN_NOT_FOUND
+                );
+        }
+
+        [Fact]
+        public async Task RefreshTokenAsync_ShouldStoreNewAccessToken()
+        {
+            // Arrange
+            Mock<IAuthenticationService> mockAuthenticationService =
+                TestsHelper.GetServiceMock<IAuthenticationService>();
+            mockAuthenticationService
+                .Setup(_ => _.RefreshTokenAsync(It.IsAny<string>()))
+                .ReturnsAsync("newAccessToken");
+            Mock<IValidator<UserModel>> mockUserModelValidator = TestsHelper.GetServiceMock<
+                IValidator<UserModel>
+            >();
+            AuthenticateController controller =
+                TestsHelper.CreateController<AuthenticateController>(
+                    mockAuthenticationService.Object,
+                    mockUserModelValidator.Object
+                );
+            controller.HttpContext.Session.SetString(
+                TokenService.REFRESH_TOKEN_NAME,
+                "refreshToken"
+            );
+            controller.HttpContext.Session.SetString(TokenService.ACCESS_TOKEN_NAME, "accessToken");
+
+            // Act
+            controller.HttpContext.Session
+                .GetString(TokenService.REFRESH_TOKEN_NAME)
+                .Should()
+                .Be("refreshToken");
+            controller.HttpContext.Session
+                .GetString(TokenService.ACCESS_TOKEN_NAME)
+                .Should()
+                .Be("accessToken");
+            IActionResult result = await controller.RefreshTokenAsync();
+
+            // Assert
+            controller.HttpContext.Session
+                .GetString(TokenService.ACCESS_TOKEN_NAME)
+                .Should()
+                .Be("newAccessToken");
+            result.Should().BeActionResult<OkResult>();
+        }
+
+        [Fact]
         public async Task StoreCookieAsync_ShouldSaveCookies()
         {
             // Arrange
@@ -384,7 +453,7 @@ namespace Mercadona.Tests.Controllers
                 .Should()
                 .BeProblemResult(
                     StatusCodes.Status500InternalServerError,
-                    AuthenticateController.TOKEN_NOT_FOUND
+                    AuthenticateController.REFRESH_TOKEN_NOT_FOUND
                 );
         }
 

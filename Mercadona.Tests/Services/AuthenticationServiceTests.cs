@@ -145,6 +145,29 @@ namespace Mercadona.Tests.Services
         }
 
         [Fact]
+        public async Task RefreshTokenAsync_ShouldCall_TokenService_RefreshToken()
+        {
+            // Arrange
+            UserManagerMock userManagerMock = new UserManagerMock(
+                false,
+                new UserModel { Username = "toto@toto.fr", Password = "V@lidPassw0rd" }
+            );
+            Mock<ITokenService> mockTokenService = new();
+            mockTokenService
+                .Setup(_ => _.RefreshToken(It.IsAny<string>()))
+                .Returns("newAccessToken")
+                .Verifiable();
+            AuthenticationService service = new(userManagerMock, mockTokenService.Object);
+
+            // Act
+            string accessToken = await service.RefreshTokenAsync("refreshToken");
+
+            // Assert
+            mockTokenService.Verify();
+            accessToken.Should().Be("newAccessToken");
+        }
+
+        [Fact]
         public async Task RegisterAsync_CreateFailed_ShouldReturnProblem_InternalServerError()
         {
             // Arrange

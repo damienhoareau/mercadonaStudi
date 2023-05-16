@@ -54,11 +54,13 @@ namespace Mercadona.Backend.Services
             SymmetricSecurityKey authSigningKey = (SymmetricSecurityKey)
                 _jwtOptions.TokenValidationParameters.IssuerSigningKey;
 
+            DateTime now = DateTime.Now;
             JwtSecurityToken token =
                 new(
                     issuer: _jwtOptions.TokenValidationParameters.ValidIssuer,
                     audience: _jwtOptions.TokenValidationParameters.ValidAudience,
-                    expires: DateTime.Now.AddMinutes(ACCESS_TOKEN_DURATION),
+                    notBefore: now,
+                    expires: now.AddMinutes(ACCESS_TOKEN_DURATION),
                     claims: claims,
                     signingCredentials: new SigningCredentials(
                         authSigningKey,
@@ -90,6 +92,19 @@ namespace Mercadona.Backend.Services
             using RandomNumberGenerator randomNumberGenerator = RandomNumberGenerator.Create();
             randomNumberGenerator.GetBytes(randomNumber);
             return Convert.ToBase64String(randomNumber);
+        }
+
+        /// <inheritdoc/>
+        public string RefreshToken(string refreshToken)
+        {
+            JwtSecurityToken jwtSecurityToken =
+                _whiteList.Get<JwtSecurityToken>(refreshToken)
+                ?? throw new SecurityTokenException(INVALID_TOKEN);
+            ;
+            ClaimsPrincipal principal = GetPrincipalFromToken(
+                new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken)
+            );
+            return GenerateAccessToken(refreshToken, principal.Claims);
         }
 
         /// <inheritdoc/>

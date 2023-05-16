@@ -42,6 +42,8 @@ namespace Mercadona.Tests.Moq
 
         public void Set(string key, byte[] value)
         {
+            if (_sessionData.ContainsKey(key))
+                _sessionData.TryRemove(key, out _);
             _sessionData.TryAdd(key, value);
         }
 

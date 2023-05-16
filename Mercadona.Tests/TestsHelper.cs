@@ -20,6 +20,7 @@ namespace Mercadona.Tests
                 ValidateAudience = true,
                 ValidAudience = "https://localhost:44387",
                 ValidIssuer = "https://localhost:44387",
+                ValidateLifetime = true,
                 IssuerSigningKey = new SymmetricSecurityKey(
                     Encoding.UTF8.GetBytes(
                         "JWTAuthenticationHIGHsecuredPasswordVVVp1OH7XzyrForTest"

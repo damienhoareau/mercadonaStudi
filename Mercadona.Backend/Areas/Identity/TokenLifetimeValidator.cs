@@ -13,7 +13,7 @@ namespace Mercadona.Backend.Areas.Identity
         /// <summary>
         /// Est levé lorsqu'il reste peu de temps avant que le jeton d'accès soit expiré.
         /// </summary>
-        event EventHandler<TokenExpirationWarningEnum>? TokenExpirationWarningChanged;
+        event EventHandler<TokenExpirationWarningChangedArgs>? TokenExpirationWarningChanged;
 
         /// <summary>
         /// Valide le jeton.
@@ -29,7 +29,7 @@ namespace Mercadona.Backend.Areas.Identity
     public class TokenLifetimeValidator : ITokenLifetimeValidator
     {
         /// <inheritdoc />
-        public event EventHandler<TokenExpirationWarningEnum>? TokenExpirationWarningChanged;
+        public event EventHandler<TokenExpirationWarningChangedArgs>? TokenExpirationWarningChanged;
 
         private readonly WhiteList _whiteList;
 
@@ -58,7 +58,10 @@ namespace Mercadona.Backend.Areas.Identity
                 {
                     TokenExpirationWarningChanged?.Invoke(
                         this,
-                        TokenExpirationWarningEnum.LogoutNeeded
+                        new TokenExpirationWarningChangedArgs(
+                            TokenExpirationWarningEnum.LogoutNeeded,
+                            null
+                        )
                     );
                     return false;
                 }
@@ -66,19 +69,55 @@ namespace Mercadona.Backend.Areas.Identity
                 {
                     TokenExpirationWarningChanged?.Invoke(
                         this,
-                        TokenExpirationWarningEnum.OneMinuteLeft
+                        new TokenExpirationWarningChangedArgs(
+                            TokenExpirationWarningEnum.OneMinuteLeft,
+                            accessToken.ValidTo
+                        )
                     );
                 }
                 else if (accessToken.ValidTo.Subtract(DateTime.UtcNow).TotalMinutes < 5)
                 {
                     TokenExpirationWarningChanged?.Invoke(
                         this,
-                        TokenExpirationWarningEnum.FiveMinutesLeft
+                        new TokenExpirationWarningChangedArgs(
+                            TokenExpirationWarningEnum.FiveMinutesLeft,
+                            accessToken.ValidTo
+                        )
                     );
                 }
 
                 return true;
             });
+        }
+    }
+
+    /// <summary>
+    /// Représente les arguments de l'événement levé lors de l'avertissement d'expiration du jeton d'accès
+    /// </summary>
+    public class TokenExpirationWarningChangedArgs
+    {
+        /// <summary>
+        /// Obtient ou définit l'enum d'expiration du jeton d'accès.
+        /// </summary>
+        public TokenExpirationWarningEnum TokenExpirationWarningEnum { get; private set; }
+
+        /// <summary>
+        /// Obtient ou définit la date d'expiration du jeton d'accès.
+        /// </summary>
+        public DateTime? ValidTo { get; private set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TokenExpirationWarningChangedArgs"/> class.
+        /// </summary>
+        /// <param name="tokenExpirationWarningEnum">L'enum d'expiration du jeton d'accès.</param>
+        /// <param name="validTo">La date d'expiration du jeton d'accès.</param>
+        public TokenExpirationWarningChangedArgs(
+            TokenExpirationWarningEnum tokenExpirationWarningEnum,
+            DateTime? validTo = null
+        )
+        {
+            TokenExpirationWarningEnum = tokenExpirationWarningEnum;
+            ValidTo = validTo;
         }
     }
 

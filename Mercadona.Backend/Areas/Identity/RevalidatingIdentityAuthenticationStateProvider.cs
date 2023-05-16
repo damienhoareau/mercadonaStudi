@@ -62,7 +62,7 @@ namespace Mercadona.Backend.Areas.Identity
         }
 
         /// <inheritdoc />
-        protected override TimeSpan RevalidationInterval => TimeSpan.FromSeconds(10); //TimeSpan.FromMinutes(1);
+        protected override TimeSpan RevalidationInterval => TimeSpan.FromSeconds(10);
 
         /// <inheritdoc />
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()

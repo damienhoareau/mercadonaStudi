@@ -3,8 +3,8 @@
 @using System.Security.Claims;
 @inject NavigationManager _navigationManager;
 @inject IAuthenticationService _authenticationService;
-@inject ConnectedUser ConnectedUser;
-@inject IHostEnvironmentAuthenticationStateProvider HostAuthentication;
+@inject ConnectedUser _connectedUser;
+@inject IHostEnvironmentAuthenticationStateProvider _hostAuthentication;
 @inject IJSRuntime _jsRuntime;
 
 <AuthorizeView>
@@ -24,11 +24,11 @@
 @code {
     async Task Logout()
     {
-        await _authenticationService.LogoutAsync(ConnectedUser.RefreshToken);
-        ConnectedUser.UserName = string.Empty;
-        ConnectedUser.RefreshToken = string.Empty;
-        ConnectedUser.AccessToken = string.Empty;
-        HostAuthentication.SetAuthenticationState(Task.FromResult(new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()))));
+        await _authenticationService.LogoutAsync(_connectedUser.RefreshToken);
+        _connectedUser.UserName = string.Empty;
+        _connectedUser.RefreshToken = string.Empty;
+        _connectedUser.AccessToken = string.Empty;
+        _hostAuthentication.SetAuthenticationState(Task.FromResult(new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()))));
         IJSObjectReference authModule = await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/auth.js");
         await authModule.InvokeVoidAsync("ClearCookie");
         _navigationManager.NavigateTo("/");

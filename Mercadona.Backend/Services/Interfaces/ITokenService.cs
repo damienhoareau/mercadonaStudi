@@ -23,6 +23,13 @@ namespace Mercadona.Backend.Services.Interfaces
         string GenerateRefreshToken();
 
         /// <summary>
+        /// Régénère un jeton d'accès à partir d'un jeton de renouvellement.
+        /// </summary>
+        /// <param name="refreshToken">Le jeton de renouvellement</param>
+        /// <returns>Le nouveau jeton d'accès</returns>
+        string RefreshToken(string refreshToken);
+
+        /// <summary>
         /// Extrait l'identité d'un utilisateur à partir d'un jeton d'accès.
         /// </summary>
         /// <param name="token">Le jeton d'accès.</param>

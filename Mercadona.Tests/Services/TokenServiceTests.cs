@@ -9,13 +9,13 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Shouldly;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
 
 namespace Mercadona.Tests.Services
 {
-    public class TokenServiceTests : IClassFixture<ServiceProviderFixture>
+    public class TokenServiceTests : IClassFixture<ServiceProviderFixture>, IAsyncLifetime
     {
         private readonly ServiceProviderFixture _fixture;
         private readonly ITokenService _tokenService;
@@ -53,6 +53,20 @@ namespace Mercadona.Tests.Services
             });
 
             _tokenService = _fixture.GetRequiredService<ITokenService>();
+        }
+
+        public Task InitializeAsync()
+        {
+            return Task.Run(() =>
+            {
+                WhiteList whitelist = _fixture.GetRequiredService<WhiteList>();
+                whitelist.Clear();
+            });
+        }
+
+        public Task DisposeAsync()
+        {
+            return Task.CompletedTask;
         }
 
         [Fact]
@@ -101,6 +115,68 @@ namespace Mercadona.Tests.Services
 
             // Assert
             refreshToken1.Should().NotBe(refreshToken2);
+        }
+
+        [Fact]
+        public void RefreshToken_RefreshTokenDoesNotExist_ShouldThrowSecurityTokenException()
+        {
+            // Arrange
+
+            // Act
+            Action act = () => _tokenService.RefreshToken("refreshToken");
+
+            // Assert
+            act.Should().Throw<SecurityTokenException>();
+        }
+
+        [Fact]
+        public async Task RefreshToken_ShouldGenerateNewAccessToken()
+        {
+            // Arrange
+            string refreshToken = _tokenService.GenerateRefreshToken();
+            List<Claim> authClaims =
+                new()
+                {
+                    new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),
+                    new Claim(ClaimTypes.Name, "toto@toto.fr"),
+                    new Claim(JwtRegisteredClaimNames.Jti, refreshToken),
+                    new Claim("AspNet.Identity.SecurityStamp", Guid.NewGuid().ToString())
+                };
+            string accessToken = _tokenService.GenerateAccessToken(refreshToken, authClaims);
+            new JwtSecurityTokenHandler().ValidateToken(
+                accessToken,
+                _fixture
+                    .GetRequiredService<IOptionsMonitor<JwtBearerOptions>>()
+                    .Get(JwtBearerDefaults.AuthenticationScheme)
+                    .TokenValidationParameters,
+                out SecurityToken validatedToken
+            );
+
+            // Act
+            await Task.Delay(TimeSpan.FromSeconds(1));
+            string newAccessToken = _tokenService.RefreshToken(refreshToken);
+
+            // Assert
+            newAccessToken.Should().NotBe(accessToken);
+            new JwtSecurityTokenHandler().ValidateToken(
+                newAccessToken,
+                _fixture
+                    .GetRequiredService<IOptionsMonitor<JwtBearerOptions>>()
+                    .Get(JwtBearerDefaults.AuthenticationScheme)
+                    .TokenValidationParameters,
+                out SecurityToken newValidatedToken
+            );
+            newValidatedToken.Should().NotBe(validatedToken);
+            newValidatedToken.Should().BeOfType<JwtSecurityToken>();
+            JwtSecurityToken newValidatedJwtToken = (JwtSecurityToken)newValidatedToken;
+            newValidatedJwtToken.Id.Should().Be(refreshToken);
+            newValidatedToken.ValidFrom.ShouldBeGreaterThan(validatedToken.ValidFrom);
+            newValidatedToken.ValidTo.ShouldBeGreaterThan(validatedToken.ValidTo);
+            JwtSecurityToken? inMemoryJwtToken = _fixture
+                .GetRequiredService<WhiteList>()
+                .Get<JwtSecurityToken>(refreshToken);
+            inMemoryJwtToken.Should().NotBeNull();
+            inMemoryJwtToken.ValidTo.Should().Be(newValidatedToken.ValidTo);
         }
 
         [Fact]

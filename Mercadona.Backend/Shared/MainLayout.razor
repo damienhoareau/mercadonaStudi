@@ -1,8 +1,20 @@
-﻿@using Mercadona.Backend.Components;
+﻿@using Mercadona.Backend.Areas.Identity;
+@using Mercadona.Backend.Components;
+@using Mercadona.Backend.Helpers;
 @using Mercadona.Backend.Models;
+@using Mercadona.Backend.Services.Interfaces;
 @using MudBlazor.Utilities;
+@using System.Security.Claims;
 @inherits LayoutComponentBase;
+@implements IDisposable;
+@inject ITokenLifetimeValidator _tokenLifetimeValidator;
+@inject IAuthenticationService _authenticationService;
+@inject ConnectedUser _connectedUser;
+@inject IHostEnvironmentAuthenticationStateProvider _hostAuthentication;
+@inject IJSRuntime _jsRuntime;
+@inject NavigationManager _navigationManager;
 @inject IDialogService _dialogService;
+@inject ISnackbar _snackbar;
 
 <PageTitle>Mercadona.Backend</PageTitle>
 
@@ -41,6 +53,77 @@
     </MudLayout>
 
 @code{
+    public const string TOKEN_WARNING_SNACKBAR_KEY = "tokenLifetimeWarning";
+
+    protected override Task OnInitializedAsync()
+    {
+        _tokenLifetimeValidator.TokenExpirationWarningChanged += async (s, e) => await OnTokenExpirationWarningChanged(s, e);
+        return base.OnInitializedAsync();
+    }
+
+    #region IDisposable
+
+    public void Dispose()
+    {
+        _tokenLifetimeValidator.TokenExpirationWarningChanged -= async (s, e) => await OnTokenExpirationWarningChanged(s, e);
+    }
+
+    #endregion
+
+    #region AuthenticationState changed
+
+    public static Action<SnackbarOptions> SnackbarConfig = (SnackbarOptions options) =>
+    {
+        options.DuplicatesBehavior = SnackbarDuplicatesBehavior.Prevent;
+        options.HideTransitionDuration = 1000;
+        options.RequireInteraction = true;
+    };
+
+    async Task OnTokenExpirationWarningChanged(object? sender, TokenExpirationWarningChangedArgs eventArgs)
+    {
+        switch(eventArgs.TokenExpirationWarningEnum)
+        {
+            case TokenExpirationWarningEnum.LogoutNeeded:
+                if (SnackbarHelper.ShownSnackbars.TryGetValue(TOKEN_WARNING_SNACKBAR_KEY, out Snackbar? snackbar))
+                {
+                    _snackbar.Remove(snackbar);
+                    SnackbarHelper.ShownSnackbars.Remove(TOKEN_WARNING_SNACKBAR_KEY);
+                }
+                await _authenticationService.LogoutAsync(_connectedUser.RefreshToken);
+                _connectedUser.UserName = string.Empty;
+                _connectedUser.RefreshToken = string.Empty;
+                _connectedUser.AccessToken = string.Empty;
+                _hostAuthentication.SetAuthenticationState(Task.FromResult(new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()))));
+                IJSObjectReference authModule = await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/auth.js");
+                await authModule.InvokeVoidAsync("ClearCookie");
+                _navigationManager.NavigateTo("/");
+                break;
+            case TokenExpirationWarningEnum.OneMinuteLeft:
+                if (!SnackbarHelper.ShownSnackbars.ContainsKey(TOKEN_WARNING_SNACKBAR_KEY))
+                    SnackbarHelper.ShownSnackbars.Add(TOKEN_WARNING_SNACKBAR_KEY, _snackbar.Add(@<TokenExpirationWarning ValidTo=eventArgs.ValidTo!.Value RefreshToken="RefreshToken" />, Severity.Error, configure: SnackbarConfig, key: TOKEN_WARNING_SNACKBAR_KEY));
+                break;
+            case TokenExpirationWarningEnum.FiveMinutesLeft:
+                if (!SnackbarHelper.ShownSnackbars.ContainsKey(TOKEN_WARNING_SNACKBAR_KEY))
+                    SnackbarHelper.ShownSnackbars.Add(TOKEN_WARNING_SNACKBAR_KEY, _snackbar.Add(@<TokenExpirationWarning ValidTo=eventArgs.ValidTo!.Value RefreshToken="RefreshToken" />, Severity.Warning, configure: SnackbarConfig, key: TOKEN_WARNING_SNACKBAR_KEY));
+                break;
+            default:
+                break;
+        }
+    }
+
+    async Task RefreshToken()
+    {
+        IJSObjectReference authModule = await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/auth.js");
+        await authModule.InvokeVoidAsync("RefreshToken");
+        if (SnackbarHelper.ShownSnackbars.TryGetValue(TOKEN_WARNING_SNACKBAR_KEY, out Snackbar? snackbar))
+        {
+            _snackbar.Remove(snackbar);
+            SnackbarHelper.ShownSnackbars.Remove(TOKEN_WARNING_SNACKBAR_KEY);
+        }
+    }
+
+    #endregion
+
     #region Drawer
 
     private bool _drawerOpen = false;

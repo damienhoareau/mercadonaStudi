@@ -23,3 +23,14 @@ export function ClearCookie() {
     // Call API
     xhr.send();
 }
+
+export function RefreshToken() {
+    var url = "/account/refreshToken";
+    var xhr = new XMLHttpRequest();
+
+    // Initialization
+    xhr.open("POST", url);
+
+    // Call API
+    xhr.send();
+}
