@@ -14,14 +14,14 @@ using Shouldly;
 namespace Mercadona.Tests.Services
 {
     public class DiscountedProductServiceTests
-        : IClassFixture<ApplicationDbContextFixture>,
+        : IClassFixture<InMemoryApplicationDbContextFixture>,
             IAsyncLifetime
     {
-        private readonly ApplicationDbContextFixture _fixture;
+        private readonly InMemoryApplicationDbContextFixture _fixture;
         private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
         private readonly IDiscountedProductService _discountedProductService;
 
-        public DiscountedProductServiceTests(ApplicationDbContextFixture fixture)
+        public DiscountedProductServiceTests(InMemoryApplicationDbContextFixture fixture)
         {
             _fixture = fixture;
             _fixture.Reconfigure(services =>

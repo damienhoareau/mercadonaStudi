@@ -11,13 +11,15 @@ using Shouldly;
 
 namespace Mercadona.Tests.Services
 {
-    public class OfferServiceTests : IClassFixture<ApplicationDbContextFixture>, IAsyncLifetime
+    public class OfferServiceTests
+        : IClassFixture<InMemoryApplicationDbContextFixture>,
+            IAsyncLifetime
     {
-        private readonly ApplicationDbContextFixture _fixture;
+        private readonly InMemoryApplicationDbContextFixture _fixture;
         private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
         private readonly IOfferService _offerService;
 
-        public OfferServiceTests(ApplicationDbContextFixture fixture)
+        public OfferServiceTests(InMemoryApplicationDbContextFixture fixture)
         {
             _fixture = fixture;
             _fixture.Reconfigure(services =>
@@ -137,7 +139,8 @@ namespace Mercadona.Tests.Services
 
             // Act
             // Assert
-            await _offerService.AddOfferAsync(offer).ShouldThrowAsync<DbUpdateException>();
+            //await _offerService.AddOfferAsync(offer).ShouldThrowAsync<DbUpdateException>();
+            await _offerService.AddOfferAsync(offer).ShouldThrowAsync<Exception>(); // Exception needed for InMemoryDb
         }
 
         [Fact]
