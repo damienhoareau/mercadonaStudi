@@ -2,10 +2,10 @@ version: "2"         # required to adjust maintainability checks
 checks:
   similar-code:
     config:
-      threshold: # language-specific defaults. an override will affect all languages.
+      threshold: 70
   identical-code:
     config:
-      threshold: # language-specific defaults. an override will affect all languages.
+      threshold: 70
 exclude_patterns:
   - "config/"
   - "db/"
