@@ -20,9 +20,17 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 7.0.x
+    - name: Install dotnet tools to generate test report
+      run: dotnet tool install --global coverlet.console
     - name: Restore dependencies
       run: dotnet restore Mercadona.Backend/Mercadona.Studi.sln
     - name: Build
-      run: dotnet build --no-restore -c Release Mercadona.Backend/Mercadona.Studi.sln
+      run: dotnet build --no-restore Mercadona.Backend/Mercadona.Studi.sln
     - name: Test
-      run: dotnet test --no-build --verbosity normal -c Release Mercadona.Backend/Mercadona.Studi.sln
+      run: dotnet test --no-build --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=lcov /p:CoverletOutput=coverage /p:Exclude="[*]Mercadona.Backend.Data.Migrations.*" Mercadona.Backend/Mercadona.Studi.sln
+    - name: Publish code coverage
+      uses: paambaati/codeclimate-action@v4.0.0
+      env:
+        CC_TEST_REPORTER_ID: ${{ secrets.CODECLIMATE_TEST_REPORTER_ID }}
+      with:
+        coverageLocations: ${{github.workspace}}/Mercadona.Tests/coverage.info:lcov

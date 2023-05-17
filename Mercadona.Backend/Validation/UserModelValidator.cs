@@ -93,16 +93,12 @@ namespace Mercadona.Backend.Validation
             return hasLowercaseCharacters && hasUppercaseCharacters;
         }
 
-        [GeneratedRegex("\\d")]
-        private static partial Regex NumericRegex();
+        private static Regex NumericRegex() => new("\\d");
 
-        [GeneratedRegex("[^0-9a-zA-Z\\s]")]
-        private static partial Regex SpecialCharacterRegex();
+        private static Regex SpecialCharacterRegex() => new("[^0-9a-zA-Z\\s]");
 
-        [GeneratedRegex("[a-z]")]
-        private static partial Regex LowerCaseRegex();
+        private static Regex LowerCaseRegex() => new("[a-z]");
 
-        [GeneratedRegex("[A-Z]")]
-        private static partial Regex UpperCaseRegex();
+        private static Regex UpperCaseRegex() => new("[A-Z]");
     }
 }

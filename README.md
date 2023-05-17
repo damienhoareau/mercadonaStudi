@@ -1,3 +1,5 @@
+[![Maintainability](https://api.codeclimate.com/v1/badges/7ba64b33c0e17d386d82/maintainability)](https://codeclimate.com/github/damienhoareau/mercadonaStudi/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/7ba64b33c0e17d386d82/test_coverage)](https://codeclimate.com/github/damienhoareau/mercadonaStudi/test_coverage)
+
 # mercadonaStudi
 Dépôt pour le projet Mercadona sur Studi
 

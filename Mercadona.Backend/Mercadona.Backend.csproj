@@ -22,7 +22,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.18.1" />
     <PackageReference Include="Mime-Detective" Version="22.12.14" />
-    <PackageReference Include="MudBlazor" Version="6.2.3" />
+    <PackageReference Include="MudBlazor" Version="6.2.4" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.4" />
     <PackageReference Include="NSwag.MSBuild" Version="13.19.0">
@@ -30,10 +30,6 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="ApiClient\" />
   </ItemGroup>
 
   <ItemGroup>
