@@ -1,0 +1,610 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class TokenService
+ </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class TokenService
+ ">
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/damienhoareau/mercadonaStudi/new/main/apiSpec/new?filename=Mercadona_Backend_Services_TokenService.md&amp;value=---%0Auid%3A%20Mercadona.Backend.Services.TokenService%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+  </head>
+
+  <script type="module">
+    import options from './../public/main.js'
+    import { init } from './../public/docfx.min.js'
+    init(options)
+  </script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Mercadona.Backend.Services.TokenService">
+
+
+
+  <h1 id="Mercadona_Backend_Services_TokenService" data-uid="Mercadona.Backend.Services.TokenService" class="text-break">
+    Class TokenService
+  <a class="header-action link-secondary" title="View source" href="https://github.com/damienhoareau/mercadonaStudi/blob/main/Mercadona.Backend/Services/TokenService.cs/#L16"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Mercadona.html">Mercadona</a>.<a class="xref" href="Mercadona.Backend.html">Backend</a>.<a class="xref" href="Mercadona.Backend.Services.html">Services</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Mercadona.Backend.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Service permettant de produire des jetons d'authentification</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class TokenService : ITokenService</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">TokenService</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="Mercadona.Backend.Services.Interfaces.ITokenService.html">ITokenService</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist derived">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="Mercadona_Backend_Services_TokenService__ctor_" data-uid="Mercadona.Backend.Services.TokenService.#ctor*"></a>
+
+  <h3 id="Mercadona_Backend_Services_TokenService__ctor_Mercadona_Backend_Security_WhiteList_Microsoft_Extensions_Options_IOptionsMonitor_Microsoft_AspNetCore_Authentication_JwtBearer_JwtBearerOptions__" data-uid="Mercadona.Backend.Services.TokenService.#ctor(Mercadona.Backend.Security.WhiteList,Microsoft.Extensions.Options.IOptionsMonitor{Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerOptions})">
+  TokenService(WhiteList, IOptionsMonitor&lt;JwtBearerOptions&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/damienhoareau/mercadonaStudi/blob/main/Mercadona.Backend/Services/TokenService.cs/#L42"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initialise une nouvelle instance de la classe <a class="xref" href="Mercadona.Backend.Services.OfferService.html">OfferService</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TokenService(WhiteList whiteList, IOptionsMonitor&lt;JwtBearerOptions&gt; jwtOptionsMonitor)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>whiteList</code> <a class="xref" href="Mercadona.Backend.Security.WhiteList.html">WhiteList</a></dt>
+    <dd><p>Cache mémoire pour les jetons de renouvellement.</p>
+</dd>
+    <dt><code>jwtOptionsMonitor</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.options.ioptionsmonitor-1">IOptionsMonitor</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.authentication.jwtbearer.jwtbeareroptions">JwtBearerOptions</a>&gt;</dt>
+    <dd><p>Options des jetons JWT.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="Mercadona_Backend_Services_TokenService_ACCESS_TOKEN_DURATION" data-uid="Mercadona.Backend.Services.TokenService.ACCESS_TOKEN_DURATION">
+  ACCESS_TOKEN_DURATION
+  <a class="header-action link-secondary" title="View source" href="https://github.com/damienhoareau/mercadonaStudi/blob/main/Mercadona.Backend/Services/TokenService.cs/#L27"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>La durée de vie du jeton d'accès en minutes</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const int ACCESS_TOKEN_DURATION = 15</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Mercadona_Backend_Services_TokenService_ACCESS_TOKEN_NAME" data-uid="Mercadona.Backend.Services.TokenService.ACCESS_TOKEN_NAME">
+  ACCESS_TOKEN_NAME
+  <a class="header-action link-secondary" title="View source" href="https://github.com/damienhoareau/mercadonaStudi/blob/main/Mercadona.Backend/Services/TokenService.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string ACCESS_TOKEN_NAME = &quot;mercadonaAccessToken&quot;</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Mercadona_Backend_Services_TokenService_INVALID_TOKEN" data-uid="Mercadona.Backend.Services.TokenService.INVALID_TOKEN">
+  INVALID_TOKEN
+  <a class="header-action link-secondary" title="View source" href="https://github.com/damienhoareau/mercadonaStudi/blob/main/Mercadona.Backend/Services/TokenService.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string INVALID_TOKEN = &quot;Invalid token&quot;</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Mercadona_Backend_Services_TokenService_REFRESH_TOKEN_DURATION" data-uid="Mercadona.Backend.Services.TokenService.REFRESH_TOKEN_DURATION">
+  REFRESH_TOKEN_DURATION
+  <a class="header-action link-secondary" title="View source" href="https://github.com/damienhoareau/mercadonaStudi/blob/main/Mercadona.Backend/Services/TokenService.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>La durée de vie du jeton de renouvellement en heures</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const int REFRESH_TOKEN_DURATION = 8</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="Mercadona_Backend_Services_TokenService_REFRESH_TOKEN_NAME" data-uid="Mercadona.Backend.Services.TokenService.REFRESH_TOKEN_NAME">
+  REFRESH_TOKEN_NAME
+  <a class="header-action link-secondary" title="View source" href="https://github.com/damienhoareau/mercadonaStudi/blob/main/Mercadona.Backend/Services/TokenService.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string REFRESH_TOKEN_NAME = &quot;mercadonaRefreshToken&quot;</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Mercadona_Backend_Services_TokenService_GenerateAccessToken_" data-uid="Mercadona.Backend.Services.TokenService.GenerateAccessToken*"></a>
+
+  <h3 id="Mercadona_Backend_Services_TokenService_GenerateAccessToken_System_String_System_Collections_Generic_IEnumerable_System_Security_Claims_Claim__" data-uid="Mercadona.Backend.Services.TokenService.GenerateAccessToken(System.String,System.Collections.Generic.IEnumerable{System.Security.Claims.Claim})">
+  GenerateAccessToken(string, IEnumerable&lt;Claim&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/damienhoareau/mercadonaStudi/blob/main/Mercadona.Backend/Services/TokenService.cs/#L52"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Génère un jeton d'accès.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string GenerateAccessToken(string refreshToken, IEnumerable&lt;Claim&gt; claims)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>refreshToken</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>Le jeton de renouvellement.</p>
+</dd>
+    <dt><code>claims</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.claims.claim">Claim</a>&gt;</dt>
+    <dd><p>Les droits.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>Le jeton d'accès</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Mercadona_Backend_Services_TokenService_GenerateRefreshToken_" data-uid="Mercadona.Backend.Services.TokenService.GenerateRefreshToken*"></a>
+
+  <h3 id="Mercadona_Backend_Services_TokenService_GenerateRefreshToken" data-uid="Mercadona.Backend.Services.TokenService.GenerateRefreshToken">
+  GenerateRefreshToken()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/damienhoareau/mercadonaStudi/blob/main/Mercadona.Backend/Services/TokenService.cs/#L89"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Génère un jeton de renouvellement.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string GenerateRefreshToken()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>Le jeton de renouvellement</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Mercadona_Backend_Services_TokenService_GetPrincipalFromToken_" data-uid="Mercadona.Backend.Services.TokenService.GetPrincipalFromToken*"></a>
+
+  <h3 id="Mercadona_Backend_Services_TokenService_GetPrincipalFromToken_System_String_" data-uid="Mercadona.Backend.Services.TokenService.GetPrincipalFromToken(System.String)">
+  GetPrincipalFromToken(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/damienhoareau/mercadonaStudi/blob/main/Mercadona.Backend/Services/TokenService.cs/#L111"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Extrait l'identité d'un utilisateur à partir d'un jeton d'accès.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ClaimsPrincipal GetPrincipalFromToken(string token)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>token</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>Le jeton d'accès.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.claims.claimsprincipal">ClaimsPrincipal</a></dt>
+    <dd><p><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.claims.claimsprincipal">ClaimsPrincipal</a> extrait du jeton d'accès<br><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.identitymodel.tokens.securitytokenexception">SecurityTokenException</a> : Si le jeton d'accès n'est pas valide<br></p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.identitymodel.tokens.securitytokenexception">SecurityTokenException</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+  <a id="Mercadona_Backend_Services_TokenService_RefreshToken_" data-uid="Mercadona.Backend.Services.TokenService.RefreshToken*"></a>
+
+  <h3 id="Mercadona_Backend_Services_TokenService_RefreshToken_System_String_" data-uid="Mercadona.Backend.Services.TokenService.RefreshToken(System.String)">
+  RefreshToken(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/damienhoareau/mercadonaStudi/blob/main/Mercadona.Backend/Services/TokenService.cs/#L98"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Régénère un jeton d'accès à partir d'un jeton de renouvellement.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string RefreshToken(string refreshToken)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>refreshToken</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>Le jeton de renouvellement</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>Le nouveau jeton d'accès</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Mercadona_Backend_Services_TokenService_RevokeRefreshToken_" data-uid="Mercadona.Backend.Services.TokenService.RevokeRefreshToken*"></a>
+
+  <h3 id="Mercadona_Backend_Services_TokenService_RevokeRefreshToken_System_String_" data-uid="Mercadona.Backend.Services.TokenService.RevokeRefreshToken(System.String)">
+  RevokeRefreshToken(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/damienhoareau/mercadonaStudi/blob/main/Mercadona.Backend/Services/TokenService.cs/#L147"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Revoque le jeton de renouvellement.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void RevokeRefreshToken(string refreshToken)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>refreshToken</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>Le jeton de renouvellement.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Mercadona_Backend_Services_TokenService_ValidateToken_" data-uid="Mercadona.Backend.Services.TokenService.ValidateToken*"></a>
+
+  <h3 id="Mercadona_Backend_Services_TokenService_ValidateToken_System_String_System_Boolean_" data-uid="Mercadona.Backend.Services.TokenService.ValidateToken(System.String,System.Boolean)">
+  ValidateToken(string, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/damienhoareau/mercadonaStudi/blob/main/Mercadona.Backend/Services/TokenService.cs/#L117"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Extrait l'identité d'un utilisateur à partir d'un jeton d'accès.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ClaimsPrincipal ValidateToken(string token, bool validateLifetime = true)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>token</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>Le jeton d'accès.</p>
+</dd>
+    <dt><code>validateLifetime</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>Booléen déterminant si on doit valider la date du jeton.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.claims.claimsprincipal">ClaimsPrincipal</a></dt>
+    <dd><p><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.security.claims.claimsprincipal">ClaimsPrincipal</a> extrait du jeton d'accès<br><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.identitymodel.tokens.securitytokenexception">SecurityTokenException</a> : Si le jeton d'accès n'est pas valide<br></p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.identitymodel.tokens.securitytokenexception">SecurityTokenException</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/damienhoareau/mercadonaStudi/blob/main/Mercadona.Backend/Services/TokenService.cs/#L16" class="edit-link">Edit this page</a>
+        </div>
+
+        
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
