@@ -3,6 +3,14 @@
 # mercadonaStudi
 Dépôt pour le projet Mercadona sur Studi
 
+## Documentation
+
+<div align="center">
+
+[![view - Documentation](https://img.shields.io/badge/view-Documentation-blue?style=for-the-badge)](https://damienhoareau.github.io/mercadonaStudi "Aller vers la documentation")
+
+</div>
+
 ## Modèle Conceptuel des Données
 
 [Mocodo](https://www.mocodo.net/) :
