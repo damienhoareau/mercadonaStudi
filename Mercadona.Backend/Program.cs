@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using Mercadona.Backend;
 using Mercadona.Backend.Areas.Identity;
 using Mercadona.Backend.Data;
 using Mercadona.Backend.Models;
@@ -24,7 +23,9 @@ using System.Text;
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+string? connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+if (string.IsNullOrWhiteSpace(connectionString))
+    connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContextFactory<ApplicationDbContext>(
     options => options.UseNpgsql(connectionString)
 );

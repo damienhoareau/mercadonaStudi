@@ -1,3 +1,7 @@
+.mud-appbar .mud-toolbar {
+    flex-wrap: nowrap;
+}
+
 .logoContainer {
     display: grid;
     flex-grow: 1;
