@@ -1,5 +1,13 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/7ba64b33c0e17d386d82/maintainability)](https://codeclimate.com/github/damienhoareau/mercadonaStudi/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/7ba64b33c0e17d386d82/test_coverage)](https://codeclimate.com/github/damienhoareau/mercadonaStudi/test_coverage)
 
+[![SonarCloud](https://sonarcloud.io/images/project_badges/sonarcloud-white.svg)](https://sonarcloud.io/summary/new_code?id=damienhoareau_mercadonaStudi)
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=damienhoareau_mercadonaStudi&metric=alert_status)](https://sonarcloud.io/summary/overall?id=damienhoareau_mercadonaStudi)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=damienhoareau_mercadonaStudi&metric=sqale_rating)](https://sonarcloud.io/summary/overall?id=damienhoareau_mercadonaStudi)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=damienhoareau_mercadonaStudi&metric=coverage)](https://sonarcloud.io/summary/overall?id=damienhoareau_mercadonaStudi)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=damienhoareau_mercadonaStudi&metric=bugs)](https://sonarcloud.io/summary/overall?id=damienhoareau_mercadonaStudi)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=damienhoareau_mercadonaStudi&metric=vulnerabilities)](https://sonarcloud.io/summary/overall?id=damienhoareau_mercadonaStudi)
+
 # mercadonaStudi
 Dépôt pour le projet Mercadona sur Studi
 
