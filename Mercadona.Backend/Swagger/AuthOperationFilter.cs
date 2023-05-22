@@ -53,7 +53,7 @@ namespace Mercadona.Backend.Swagger
                                     Id = JwtBearerDefaults.AuthenticationScheme
                                 }
                             },
-                            new string[] { }
+                            Array.Empty<string>()
                         }
                     }
                 };

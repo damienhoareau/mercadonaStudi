@@ -36,7 +36,10 @@ namespace Mercadona.Tests.Moq
             throw new NotImplementedException();
         }
 
-        public void Dispose() { }
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
+        }
 
         public Task<IdentityUser?> FindByIdAsync(string userId, CancellationToken cancellationToken)
         {

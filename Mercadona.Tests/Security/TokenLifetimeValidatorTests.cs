@@ -38,7 +38,7 @@ namespace Mercadona.Tests.Security
             return Task.CompletedTask;
         }
 
-        private JwtSecurityToken GetJwtSecurityToken(DateTime notBefore, DateTime expires)
+        private static JwtSecurityToken GetJwtSecurityToken(DateTime notBefore, DateTime expires)
         {
             return new(
                 issuer: TestsHelper.TokenValidationParameters.ValidIssuer,
@@ -59,7 +59,7 @@ namespace Mercadona.Tests.Security
             );
         }
 
-        private ClaimsPrincipal GetClaimsPrincipal(JwtSecurityToken token)
+        private static ClaimsPrincipal GetClaimsPrincipal(JwtSecurityToken token)
         {
             TokenValidationParameters tokenValidationParameters =
                 TestsHelper.TokenValidationParameters;

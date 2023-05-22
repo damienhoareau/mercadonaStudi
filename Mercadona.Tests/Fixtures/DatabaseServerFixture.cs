@@ -27,6 +27,7 @@ namespace Mercadona.Tests.Fixtures
         {
             _pgServer.Stop();
             _usedPorts.TryRemove(PgPort, out _);
+            GC.SuppressFinalize(this);
         }
 
         private static int RandomPort

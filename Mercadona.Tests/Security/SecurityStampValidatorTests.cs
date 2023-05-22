@@ -28,7 +28,7 @@ namespace Mercadona.Tests.Security
                 new Backend.Areas.Identity.SecurityStampValidator<IdentityUser>();
         }
 
-        private JwtSecurityToken GetJwtSecurityToken()
+        private static JwtSecurityToken GetJwtSecurityToken()
         {
             return new(
                 issuer: TestsHelper.TokenValidationParameters.ValidIssuer,
@@ -48,7 +48,7 @@ namespace Mercadona.Tests.Security
             );
         }
 
-        private ClaimsPrincipal GetClaimsPrincipal(JwtSecurityToken token)
+        private static ClaimsPrincipal GetClaimsPrincipal(JwtSecurityToken token)
         {
             return new JwtSecurityTokenHandler().ValidateToken(
                 new JwtSecurityTokenHandler().WriteToken(token),
