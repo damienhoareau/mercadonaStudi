@@ -91,7 +91,7 @@ namespace Mercadona.Tests.Security
             result.Should().BeFalse();
             raisedEvent.Arguments.TokenExpirationWarningEnum
                 .Should()
-                .Be(TokenExpirationWarningEnum.LogoutNeeded);
+                .Be(TokenExpirationWarning.LogoutNeeded);
             raisedEvent.Arguments.ValidTo.Should().BeNull();
         }
 
@@ -124,7 +124,7 @@ namespace Mercadona.Tests.Security
             result.Should().BeFalse();
             raisedEvent.Arguments.TokenExpirationWarningEnum
                 .Should()
-                .Be(TokenExpirationWarningEnum.LogoutNeeded);
+                .Be(TokenExpirationWarning.LogoutNeeded);
             raisedEvent.Arguments.ValidTo.Should().BeNull();
         }
 
@@ -157,7 +157,7 @@ namespace Mercadona.Tests.Security
             result.Should().BeFalse();
             raisedEvent.Arguments.TokenExpirationWarningEnum
                 .Should()
-                .Be(TokenExpirationWarningEnum.LogoutNeeded);
+                .Be(TokenExpirationWarning.LogoutNeeded);
             raisedEvent.Arguments.ValidTo.Should().BeNull();
         }
 
@@ -189,7 +189,7 @@ namespace Mercadona.Tests.Security
             result.Should().BeTrue();
             raisedEvent.Arguments.TokenExpirationWarningEnum
                 .Should()
-                .Be(TokenExpirationWarningEnum.OneMinuteLeft);
+                .Be(TokenExpirationWarning.OneMinuteLeft);
             raisedEvent.Arguments.ValidTo.Should().NotBeNull();
         }
 
@@ -221,7 +221,7 @@ namespace Mercadona.Tests.Security
             result.Should().BeTrue();
             raisedEvent.Arguments.TokenExpirationWarningEnum
                 .Should()
-                .Be(TokenExpirationWarningEnum.FiveMinutesLeft);
+                .Be(TokenExpirationWarning.FiveMinutesLeft);
             raisedEvent.Arguments.ValidTo.Should().NotBeNull();
         }
 

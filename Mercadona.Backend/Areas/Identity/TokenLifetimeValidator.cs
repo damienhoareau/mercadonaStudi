@@ -59,7 +59,7 @@ namespace Mercadona.Backend.Areas.Identity
                     TokenExpirationWarningChanged?.Invoke(
                         this,
                         new TokenExpirationWarningChangedArgs(
-                            TokenExpirationWarningEnum.LogoutNeeded,
+                            TokenExpirationWarning.LogoutNeeded,
                             null
                         )
                     );
@@ -70,7 +70,7 @@ namespace Mercadona.Backend.Areas.Identity
                     TokenExpirationWarningChanged?.Invoke(
                         this,
                         new TokenExpirationWarningChangedArgs(
-                            TokenExpirationWarningEnum.OneMinuteLeft,
+                            TokenExpirationWarning.OneMinuteLeft,
                             accessToken.ValidTo
                         )
                     );
@@ -80,7 +80,7 @@ namespace Mercadona.Backend.Areas.Identity
                     TokenExpirationWarningChanged?.Invoke(
                         this,
                         new TokenExpirationWarningChangedArgs(
-                            TokenExpirationWarningEnum.FiveMinutesLeft,
+                            TokenExpirationWarning.FiveMinutesLeft,
                             accessToken.ValidTo
                         )
                     );
@@ -99,7 +99,7 @@ namespace Mercadona.Backend.Areas.Identity
         /// <summary>
         /// Obtient ou définit l'enum d'expiration du jeton d'accès.
         /// </summary>
-        public TokenExpirationWarningEnum TokenExpirationWarningEnum { get; private set; }
+        public TokenExpirationWarning TokenExpirationWarningEnum { get; private set; }
 
         /// <summary>
         /// Obtient ou définit la date d'expiration du jeton d'accès.
@@ -112,7 +112,7 @@ namespace Mercadona.Backend.Areas.Identity
         /// <param name="tokenExpirationWarningEnum">L'enum d'expiration du jeton d'accès.</param>
         /// <param name="validTo">La date d'expiration du jeton d'accès.</param>
         public TokenExpirationWarningChangedArgs(
-            TokenExpirationWarningEnum tokenExpirationWarningEnum,
+            TokenExpirationWarning tokenExpirationWarningEnum,
             DateTime? validTo = null
         )
         {
@@ -124,7 +124,7 @@ namespace Mercadona.Backend.Areas.Identity
     /// <summary>
     /// Représente le temps restant avant expiration du jeton d'accès
     /// </summary>
-    public enum TokenExpirationWarningEnum
+    public enum TokenExpirationWarning
     {
         /// <summary>
         /// Il reste moins de 5 minutes

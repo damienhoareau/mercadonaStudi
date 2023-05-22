@@ -54,7 +54,7 @@
     void SetErrorSeverity(Snackbar snackbar)
     {
         _snackbar.Remove(snackbar);
-        SnackbarHelper.ShownSnackbars.Add(MainLayout.TOKEN_WARNING_SNACKBAR_KEY, _snackbar.Add(@<TokenExpirationWarning ValidTo=ValidTo RefreshToken="RefreshToken" />, Severity.Error, configure: MainLayout.SnackbarConfig, key: MainLayout.TOKEN_WARNING_SNACKBAR_KEY));
+        SnackbarHelper.ShownSnackbars.Add(MainLayout.TOKEN_WARNING_SNACKBAR_KEY, _snackbar.Add(@<TokenExpirationWarningMessage ValidTo=ValidTo RefreshToken="RefreshToken" />, Severity.Error, configure: MainLayout.SnackbarConfig, key: MainLayout.TOKEN_WARNING_SNACKBAR_KEY));
     }
 
     private bool _processing = false;

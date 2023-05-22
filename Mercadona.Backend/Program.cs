@@ -41,7 +41,7 @@ builder.Services
     .AddDefaultTokenProviders();
 
 // Adding Authentication
-builder.Services.Configure<JWTOptions>(builder.Configuration.GetSection("JWT"));
+builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("JWT"));
 builder.Services
     .AddAuthentication(options =>
     {

@@ -100,7 +100,6 @@ namespace Mercadona.Backend.Services
             JwtSecurityToken jwtSecurityToken =
                 _whiteList.Get<JwtSecurityToken>(refreshToken)
                 ?? throw new SecurityTokenException(INVALID_TOKEN);
-            ;
             ClaimsPrincipal principal = GetPrincipalFromToken(
                 new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken)
             );
@@ -120,7 +119,7 @@ namespace Mercadona.Backend.Services
             {
                 TokenValidationParameters tokenValidationParameters =
                     _jwtOptions.TokenValidationParameters;
-                if (validateLifetime == false)
+                if (!validateLifetime)
                     tokenValidationParameters.ValidateLifetime = false;
                 ClaimsPrincipal principal = new JwtSecurityTokenHandler().ValidateToken(
                     token,

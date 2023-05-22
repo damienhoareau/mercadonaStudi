@@ -3,7 +3,7 @@
     /// <summary>
     /// Représente les options pour la génération des JWT
     /// </summary>
-    public class JWTOptions
+    public class JwtOptions
     {
         /// <summary>
         /// Définit le public valide pour le jeton.

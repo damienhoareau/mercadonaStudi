@@ -83,7 +83,7 @@
     {
         switch(eventArgs.TokenExpirationWarningEnum)
         {
-            case TokenExpirationWarningEnum.LogoutNeeded:
+            case TokenExpirationWarning.LogoutNeeded:
                 if (SnackbarHelper.ShownSnackbars.TryGetValue(TOKEN_WARNING_SNACKBAR_KEY, out Snackbar? snackbar))
                 {
                     _snackbar.Remove(snackbar);
@@ -98,13 +98,13 @@
                 await authModule.InvokeVoidAsync("ClearCookie");
                 _navigationManager.NavigateTo("/");
                 break;
-            case TokenExpirationWarningEnum.OneMinuteLeft:
+            case TokenExpirationWarning.OneMinuteLeft:
                 if (!SnackbarHelper.ShownSnackbars.ContainsKey(TOKEN_WARNING_SNACKBAR_KEY))
-                    SnackbarHelper.ShownSnackbars.Add(TOKEN_WARNING_SNACKBAR_KEY, _snackbar.Add(@<TokenExpirationWarning ValidTo=eventArgs.ValidTo!.Value RefreshToken="RefreshToken" />, Severity.Error, configure: SnackbarConfig, key: TOKEN_WARNING_SNACKBAR_KEY));
+                    SnackbarHelper.ShownSnackbars.Add(TOKEN_WARNING_SNACKBAR_KEY, _snackbar.Add(@<TokenExpirationWarningMessage ValidTo=eventArgs.ValidTo!.Value RefreshToken="RefreshToken" />, Severity.Error, configure: SnackbarConfig, key: TOKEN_WARNING_SNACKBAR_KEY));
                 break;
-            case TokenExpirationWarningEnum.FiveMinutesLeft:
+            case TokenExpirationWarning.FiveMinutesLeft:
                 if (!SnackbarHelper.ShownSnackbars.ContainsKey(TOKEN_WARNING_SNACKBAR_KEY))
-                    SnackbarHelper.ShownSnackbars.Add(TOKEN_WARNING_SNACKBAR_KEY, _snackbar.Add(@<TokenExpirationWarning ValidTo=eventArgs.ValidTo!.Value RefreshToken="RefreshToken" />, Severity.Warning, configure: SnackbarConfig, key: TOKEN_WARNING_SNACKBAR_KEY));
+                    SnackbarHelper.ShownSnackbars.Add(TOKEN_WARNING_SNACKBAR_KEY, _snackbar.Add(@<TokenExpirationWarningMessage ValidTo=eventArgs.ValidTo!.Value RefreshToken="RefreshToken" />, Severity.Warning, configure: SnackbarConfig, key: TOKEN_WARNING_SNACKBAR_KEY));
                 break;
             default:
                 break;

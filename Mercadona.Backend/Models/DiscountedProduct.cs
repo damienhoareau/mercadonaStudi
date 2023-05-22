@@ -31,12 +31,12 @@ namespace Mercadona.Backend.Models
         /// <summary>
         /// Libellé du produit
         /// </summary>
-        public string Label { get; private set; } = string.Empty;
+        public string Label { get; private set; }
 
         /// <summary>
         /// Description du produit
         /// </summary>
-        public string Description { get; private set; } = string.Empty;
+        public string Description { get; private set; }
 
         /// <summary>
         /// Prix du produit
@@ -46,7 +46,7 @@ namespace Mercadona.Backend.Models
         /// <summary>
         /// Catégorie du produit
         /// </summary>
-        public string Category { get; private set; } = string.Empty;
+        public string Category { get; private set; }
 
         /// <summary>
         /// Promotion appliquée au produit<br/>
