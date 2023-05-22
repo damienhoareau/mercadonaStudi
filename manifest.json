@@ -45,20 +45,20 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Mercadona.Backend.Areas.Identity.TokenExpirationWarningChangedArgs.yml",
+      "source_relative_path": "api/Mercadona.Backend.Areas.Identity.TokenExpirationWarning.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Mercadona.Backend.Areas.Identity.TokenExpirationWarningChangedArgs.html"
+          "relative_path": "api/Mercadona.Backend.Areas.Identity.TokenExpirationWarning.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Mercadona.Backend.Areas.Identity.TokenExpirationWarningEnum.yml",
+      "source_relative_path": "api/Mercadona.Backend.Areas.Identity.TokenExpirationWarningChangedArgs.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Mercadona.Backend.Areas.Identity.TokenExpirationWarningEnum.html"
+          "relative_path": "api/Mercadona.Backend.Areas.Identity.TokenExpirationWarningChangedArgs.html"
         }
       },
       "version": ""
@@ -275,10 +275,10 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/Mercadona.Backend.Options.JWTOptions.yml",
+      "source_relative_path": "api/Mercadona.Backend.Options.JwtOptions.yml",
       "output": {
         ".html": {
-          "relative_path": "api/Mercadona.Backend.Options.JWTOptions.html"
+          "relative_path": "api/Mercadona.Backend.Options.JwtOptions.html"
         }
       },
       "version": ""

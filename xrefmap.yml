@@ -165,21 +165,45 @@ references:
   fullName.vb: Mercadona.Backend.Areas.Identity.SecurityStampValidator(Of TUser).ValidateSecurityStampAsync
   nameWithType: SecurityStampValidator<TUser>.ValidateSecurityStampAsync
   nameWithType.vb: SecurityStampValidator(Of TUser).ValidateSecurityStampAsync
+- uid: Mercadona.Backend.Areas.Identity.TokenExpirationWarning
+  name: TokenExpirationWarning
+  href: api/Mercadona.Backend.Areas.Identity.TokenExpirationWarning.html
+  commentId: T:Mercadona.Backend.Areas.Identity.TokenExpirationWarning
+  fullName: Mercadona.Backend.Areas.Identity.TokenExpirationWarning
+  nameWithType: TokenExpirationWarning
+- uid: Mercadona.Backend.Areas.Identity.TokenExpirationWarning.FiveMinutesLeft
+  name: FiveMinutesLeft
+  href: api/Mercadona.Backend.Areas.Identity.TokenExpirationWarning.html#Mercadona_Backend_Areas_Identity_TokenExpirationWarning_FiveMinutesLeft
+  commentId: F:Mercadona.Backend.Areas.Identity.TokenExpirationWarning.FiveMinutesLeft
+  fullName: Mercadona.Backend.Areas.Identity.TokenExpirationWarning.FiveMinutesLeft
+  nameWithType: TokenExpirationWarning.FiveMinutesLeft
+- uid: Mercadona.Backend.Areas.Identity.TokenExpirationWarning.LogoutNeeded
+  name: LogoutNeeded
+  href: api/Mercadona.Backend.Areas.Identity.TokenExpirationWarning.html#Mercadona_Backend_Areas_Identity_TokenExpirationWarning_LogoutNeeded
+  commentId: F:Mercadona.Backend.Areas.Identity.TokenExpirationWarning.LogoutNeeded
+  fullName: Mercadona.Backend.Areas.Identity.TokenExpirationWarning.LogoutNeeded
+  nameWithType: TokenExpirationWarning.LogoutNeeded
+- uid: Mercadona.Backend.Areas.Identity.TokenExpirationWarning.OneMinuteLeft
+  name: OneMinuteLeft
+  href: api/Mercadona.Backend.Areas.Identity.TokenExpirationWarning.html#Mercadona_Backend_Areas_Identity_TokenExpirationWarning_OneMinuteLeft
+  commentId: F:Mercadona.Backend.Areas.Identity.TokenExpirationWarning.OneMinuteLeft
+  fullName: Mercadona.Backend.Areas.Identity.TokenExpirationWarning.OneMinuteLeft
+  nameWithType: TokenExpirationWarning.OneMinuteLeft
 - uid: Mercadona.Backend.Areas.Identity.TokenExpirationWarningChangedArgs
   name: TokenExpirationWarningChangedArgs
   href: api/Mercadona.Backend.Areas.Identity.TokenExpirationWarningChangedArgs.html
   commentId: T:Mercadona.Backend.Areas.Identity.TokenExpirationWarningChangedArgs
   fullName: Mercadona.Backend.Areas.Identity.TokenExpirationWarningChangedArgs
   nameWithType: TokenExpirationWarningChangedArgs
-- uid: Mercadona.Backend.Areas.Identity.TokenExpirationWarningChangedArgs.#ctor(Mercadona.Backend.Areas.Identity.TokenExpirationWarningEnum,System.Nullable{System.DateTime})
-  name: TokenExpirationWarningChangedArgs(TokenExpirationWarningEnum, DateTime?)
-  href: api/Mercadona.Backend.Areas.Identity.TokenExpirationWarningChangedArgs.html#Mercadona_Backend_Areas_Identity_TokenExpirationWarningChangedArgs__ctor_Mercadona_Backend_Areas_Identity_TokenExpirationWarningEnum_System_Nullable_System_DateTime__
-  commentId: M:Mercadona.Backend.Areas.Identity.TokenExpirationWarningChangedArgs.#ctor(Mercadona.Backend.Areas.Identity.TokenExpirationWarningEnum,System.Nullable{System.DateTime})
-  name.vb: New(TokenExpirationWarningEnum, Date?)
-  fullName: Mercadona.Backend.Areas.Identity.TokenExpirationWarningChangedArgs.TokenExpirationWarningChangedArgs(Mercadona.Backend.Areas.Identity.TokenExpirationWarningEnum, System.DateTime?)
-  fullName.vb: Mercadona.Backend.Areas.Identity.TokenExpirationWarningChangedArgs.New(Mercadona.Backend.Areas.Identity.TokenExpirationWarningEnum, Date?)
-  nameWithType: TokenExpirationWarningChangedArgs.TokenExpirationWarningChangedArgs(TokenExpirationWarningEnum, DateTime?)
-  nameWithType.vb: TokenExpirationWarningChangedArgs.New(TokenExpirationWarningEnum, Date?)
+- uid: Mercadona.Backend.Areas.Identity.TokenExpirationWarningChangedArgs.#ctor(Mercadona.Backend.Areas.Identity.TokenExpirationWarning,System.Nullable{System.DateTime})
+  name: TokenExpirationWarningChangedArgs(TokenExpirationWarning, DateTime?)
+  href: api/Mercadona.Backend.Areas.Identity.TokenExpirationWarningChangedArgs.html#Mercadona_Backend_Areas_Identity_TokenExpirationWarningChangedArgs__ctor_Mercadona_Backend_Areas_Identity_TokenExpirationWarning_System_Nullable_System_DateTime__
+  commentId: M:Mercadona.Backend.Areas.Identity.TokenExpirationWarningChangedArgs.#ctor(Mercadona.Backend.Areas.Identity.TokenExpirationWarning,System.Nullable{System.DateTime})
+  name.vb: New(TokenExpirationWarning, Date?)
+  fullName: Mercadona.Backend.Areas.Identity.TokenExpirationWarningChangedArgs.TokenExpirationWarningChangedArgs(Mercadona.Backend.Areas.Identity.TokenExpirationWarning, System.DateTime?)
+  fullName.vb: Mercadona.Backend.Areas.Identity.TokenExpirationWarningChangedArgs.New(Mercadona.Backend.Areas.Identity.TokenExpirationWarning, Date?)
+  nameWithType: TokenExpirationWarningChangedArgs.TokenExpirationWarningChangedArgs(TokenExpirationWarning, DateTime?)
+  nameWithType.vb: TokenExpirationWarningChangedArgs.New(TokenExpirationWarning, Date?)
 - uid: Mercadona.Backend.Areas.Identity.TokenExpirationWarningChangedArgs.#ctor*
   name: TokenExpirationWarningChangedArgs
   href: api/Mercadona.Backend.Areas.Identity.TokenExpirationWarningChangedArgs.html#Mercadona_Backend_Areas_Identity_TokenExpirationWarningChangedArgs__ctor_
@@ -216,30 +240,6 @@ references:
   isSpec: "True"
   fullName: Mercadona.Backend.Areas.Identity.TokenExpirationWarningChangedArgs.ValidTo
   nameWithType: TokenExpirationWarningChangedArgs.ValidTo
-- uid: Mercadona.Backend.Areas.Identity.TokenExpirationWarningEnum
-  name: TokenExpirationWarningEnum
-  href: api/Mercadona.Backend.Areas.Identity.TokenExpirationWarningEnum.html
-  commentId: T:Mercadona.Backend.Areas.Identity.TokenExpirationWarningEnum
-  fullName: Mercadona.Backend.Areas.Identity.TokenExpirationWarningEnum
-  nameWithType: TokenExpirationWarningEnum
-- uid: Mercadona.Backend.Areas.Identity.TokenExpirationWarningEnum.FiveMinutesLeft
-  name: FiveMinutesLeft
-  href: api/Mercadona.Backend.Areas.Identity.TokenExpirationWarningEnum.html#Mercadona_Backend_Areas_Identity_TokenExpirationWarningEnum_FiveMinutesLeft
-  commentId: F:Mercadona.Backend.Areas.Identity.TokenExpirationWarningEnum.FiveMinutesLeft
-  fullName: Mercadona.Backend.Areas.Identity.TokenExpirationWarningEnum.FiveMinutesLeft
-  nameWithType: TokenExpirationWarningEnum.FiveMinutesLeft
-- uid: Mercadona.Backend.Areas.Identity.TokenExpirationWarningEnum.LogoutNeeded
-  name: LogoutNeeded
-  href: api/Mercadona.Backend.Areas.Identity.TokenExpirationWarningEnum.html#Mercadona_Backend_Areas_Identity_TokenExpirationWarningEnum_LogoutNeeded
-  commentId: F:Mercadona.Backend.Areas.Identity.TokenExpirationWarningEnum.LogoutNeeded
-  fullName: Mercadona.Backend.Areas.Identity.TokenExpirationWarningEnum.LogoutNeeded
-  nameWithType: TokenExpirationWarningEnum.LogoutNeeded
-- uid: Mercadona.Backend.Areas.Identity.TokenExpirationWarningEnum.OneMinuteLeft
-  name: OneMinuteLeft
-  href: api/Mercadona.Backend.Areas.Identity.TokenExpirationWarningEnum.html#Mercadona_Backend_Areas_Identity_TokenExpirationWarningEnum_OneMinuteLeft
-  commentId: F:Mercadona.Backend.Areas.Identity.TokenExpirationWarningEnum.OneMinuteLeft
-  fullName: Mercadona.Backend.Areas.Identity.TokenExpirationWarningEnum.OneMinuteLeft
-  nameWithType: TokenExpirationWarningEnum.OneMinuteLeft
 - uid: Mercadona.Backend.Areas.Identity.TokenLifetimeValidator
   name: TokenLifetimeValidator
   href: api/Mercadona.Backend.Areas.Identity.TokenLifetimeValidator.html
@@ -1324,51 +1324,51 @@ references:
   commentId: N:Mercadona.Backend.Options
   fullName: Mercadona.Backend.Options
   nameWithType: Mercadona.Backend.Options
-- uid: Mercadona.Backend.Options.JWTOptions
-  name: JWTOptions
-  href: api/Mercadona.Backend.Options.JWTOptions.html
-  commentId: T:Mercadona.Backend.Options.JWTOptions
-  fullName: Mercadona.Backend.Options.JWTOptions
-  nameWithType: JWTOptions
-- uid: Mercadona.Backend.Options.JWTOptions.Secret
+- uid: Mercadona.Backend.Options.JwtOptions
+  name: JwtOptions
+  href: api/Mercadona.Backend.Options.JwtOptions.html
+  commentId: T:Mercadona.Backend.Options.JwtOptions
+  fullName: Mercadona.Backend.Options.JwtOptions
+  nameWithType: JwtOptions
+- uid: Mercadona.Backend.Options.JwtOptions.Secret
   name: Secret
-  href: api/Mercadona.Backend.Options.JWTOptions.html#Mercadona_Backend_Options_JWTOptions_Secret
-  commentId: P:Mercadona.Backend.Options.JWTOptions.Secret
-  fullName: Mercadona.Backend.Options.JWTOptions.Secret
-  nameWithType: JWTOptions.Secret
-- uid: Mercadona.Backend.Options.JWTOptions.Secret*
+  href: api/Mercadona.Backend.Options.JwtOptions.html#Mercadona_Backend_Options_JwtOptions_Secret
+  commentId: P:Mercadona.Backend.Options.JwtOptions.Secret
+  fullName: Mercadona.Backend.Options.JwtOptions.Secret
+  nameWithType: JwtOptions.Secret
+- uid: Mercadona.Backend.Options.JwtOptions.Secret*
   name: Secret
-  href: api/Mercadona.Backend.Options.JWTOptions.html#Mercadona_Backend_Options_JWTOptions_Secret_
-  commentId: Overload:Mercadona.Backend.Options.JWTOptions.Secret
+  href: api/Mercadona.Backend.Options.JwtOptions.html#Mercadona_Backend_Options_JwtOptions_Secret_
+  commentId: Overload:Mercadona.Backend.Options.JwtOptions.Secret
   isSpec: "True"
-  fullName: Mercadona.Backend.Options.JWTOptions.Secret
-  nameWithType: JWTOptions.Secret
-- uid: Mercadona.Backend.Options.JWTOptions.ValidAudience
+  fullName: Mercadona.Backend.Options.JwtOptions.Secret
+  nameWithType: JwtOptions.Secret
+- uid: Mercadona.Backend.Options.JwtOptions.ValidAudience
   name: ValidAudience
-  href: api/Mercadona.Backend.Options.JWTOptions.html#Mercadona_Backend_Options_JWTOptions_ValidAudience
-  commentId: P:Mercadona.Backend.Options.JWTOptions.ValidAudience
-  fullName: Mercadona.Backend.Options.JWTOptions.ValidAudience
-  nameWithType: JWTOptions.ValidAudience
-- uid: Mercadona.Backend.Options.JWTOptions.ValidAudience*
+  href: api/Mercadona.Backend.Options.JwtOptions.html#Mercadona_Backend_Options_JwtOptions_ValidAudience
+  commentId: P:Mercadona.Backend.Options.JwtOptions.ValidAudience
+  fullName: Mercadona.Backend.Options.JwtOptions.ValidAudience
+  nameWithType: JwtOptions.ValidAudience
+- uid: Mercadona.Backend.Options.JwtOptions.ValidAudience*
   name: ValidAudience
-  href: api/Mercadona.Backend.Options.JWTOptions.html#Mercadona_Backend_Options_JWTOptions_ValidAudience_
-  commentId: Overload:Mercadona.Backend.Options.JWTOptions.ValidAudience
+  href: api/Mercadona.Backend.Options.JwtOptions.html#Mercadona_Backend_Options_JwtOptions_ValidAudience_
+  commentId: Overload:Mercadona.Backend.Options.JwtOptions.ValidAudience
   isSpec: "True"
-  fullName: Mercadona.Backend.Options.JWTOptions.ValidAudience
-  nameWithType: JWTOptions.ValidAudience
-- uid: Mercadona.Backend.Options.JWTOptions.ValidIssuer
+  fullName: Mercadona.Backend.Options.JwtOptions.ValidAudience
+  nameWithType: JwtOptions.ValidAudience
+- uid: Mercadona.Backend.Options.JwtOptions.ValidIssuer
   name: ValidIssuer
-  href: api/Mercadona.Backend.Options.JWTOptions.html#Mercadona_Backend_Options_JWTOptions_ValidIssuer
-  commentId: P:Mercadona.Backend.Options.JWTOptions.ValidIssuer
-  fullName: Mercadona.Backend.Options.JWTOptions.ValidIssuer
-  nameWithType: JWTOptions.ValidIssuer
-- uid: Mercadona.Backend.Options.JWTOptions.ValidIssuer*
+  href: api/Mercadona.Backend.Options.JwtOptions.html#Mercadona_Backend_Options_JwtOptions_ValidIssuer
+  commentId: P:Mercadona.Backend.Options.JwtOptions.ValidIssuer
+  fullName: Mercadona.Backend.Options.JwtOptions.ValidIssuer
+  nameWithType: JwtOptions.ValidIssuer
+- uid: Mercadona.Backend.Options.JwtOptions.ValidIssuer*
   name: ValidIssuer
-  href: api/Mercadona.Backend.Options.JWTOptions.html#Mercadona_Backend_Options_JWTOptions_ValidIssuer_
-  commentId: Overload:Mercadona.Backend.Options.JWTOptions.ValidIssuer
+  href: api/Mercadona.Backend.Options.JwtOptions.html#Mercadona_Backend_Options_JwtOptions_ValidIssuer_
+  commentId: Overload:Mercadona.Backend.Options.JwtOptions.ValidIssuer
   isSpec: "True"
-  fullName: Mercadona.Backend.Options.JWTOptions.ValidIssuer
-  nameWithType: JWTOptions.ValidIssuer
+  fullName: Mercadona.Backend.Options.JwtOptions.ValidIssuer
+  nameWithType: JwtOptions.ValidIssuer
 - uid: Mercadona.Backend.Pages
   name: Mercadona.Backend.Pages
   href: api/Mercadona.Backend.Pages.html
