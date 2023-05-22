@@ -72,7 +72,7 @@ namespace Mercadona.Tests.Security
             return mockHttpContextAccessor.Object;
         }
 
-        private JwtSecurityToken GetJwtSecurityToken(bool badToken = false)
+        private static JwtSecurityToken GetJwtSecurityToken(bool badToken = false)
         {
             return new(
                 issuer: TestsHelper.TokenValidationParameters.ValidIssuer,
@@ -380,16 +380,17 @@ namespace Mercadona.Tests.Security
                 );
 
             // Act
-            MethodInfo? methodInfo =
-                typeof(RevalidatingServerAuthenticationStateProvider).GetMethod(
+            Task<bool>? task = (Task<bool>?)
+                typeof(RevalidatingServerAuthenticationStateProvider).InvokeMember(
                     "ValidateAuthenticationStateAsync",
-                    BindingFlags.Instance | BindingFlags.NonPublic
-                );
-            bool result = await (Task<bool>)
-                methodInfo?.Invoke(
+                    BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.NonPublic,
+                    null,
                     authStateProvider,
                     new object?[] { new AuthenticationState(principal), CancellationToken.None }
                 );
+            if (task == null)
+                Assert.Fail("Méthode ValidateAuthenticationStateAsync non trouvée.");
+            bool result = await task;
 
             // Assert
             mockServiceScopeFactory.Verify();
@@ -433,16 +434,17 @@ namespace Mercadona.Tests.Security
                 );
 
             // Act
-            MethodInfo? methodInfo =
-                typeof(RevalidatingServerAuthenticationStateProvider).GetMethod(
+            Task<bool>? task = (Task<bool>?)
+                typeof(RevalidatingServerAuthenticationStateProvider).InvokeMember(
                     "ValidateAuthenticationStateAsync",
-                    BindingFlags.Instance | BindingFlags.NonPublic
-                );
-            bool result = await (Task<bool>)
-                methodInfo?.Invoke(
+                    BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.NonPublic,
+                    null,
                     authStateProvider,
                     new object?[] { new AuthenticationState(principal), CancellationToken.None }
                 );
+            if (task == null)
+                Assert.Fail("Méthode ValidateAuthenticationStateAsync non trouvée.");
+            bool result = await task;
 
             // Assert
             mockServiceScopeFactory.Verify();
@@ -510,16 +512,17 @@ namespace Mercadona.Tests.Security
             );
 
             // Act
-            MethodInfo? methodInfo =
-                typeof(RevalidatingServerAuthenticationStateProvider).GetMethod(
+            Task<bool>? task = (Task<bool>?)
+                typeof(RevalidatingServerAuthenticationStateProvider).InvokeMember(
                     "ValidateAuthenticationStateAsync",
-                    BindingFlags.Instance | BindingFlags.NonPublic
-                );
-            bool result = await (Task<bool>)
-                methodInfo?.Invoke(
+                    BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.NonPublic,
+                    null,
                     authStateProvider,
                     new object?[] { new AuthenticationState(principal), CancellationToken.None }
                 );
+            if (task == null)
+                Assert.Fail("Méthode ValidateAuthenticationStateAsync non trouvée.");
+            bool result = await task;
 
             // Assert
             mockServiceScopeFactory.Verify();
@@ -592,16 +595,17 @@ namespace Mercadona.Tests.Security
             );
 
             // Act
-            MethodInfo? methodInfo =
-                typeof(RevalidatingServerAuthenticationStateProvider).GetMethod(
+            Task<bool>? task = (Task<bool>?)
+                typeof(RevalidatingServerAuthenticationStateProvider).InvokeMember(
                     "ValidateAuthenticationStateAsync",
-                    BindingFlags.Instance | BindingFlags.NonPublic
-                );
-            bool result = await (Task<bool>)
-                methodInfo?.Invoke(
+                    BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.NonPublic,
+                    null,
                     authStateProvider,
                     new object?[] { new AuthenticationState(principal), CancellationToken.None }
                 );
+            if (task == null)
+                Assert.Fail("Méthode ValidateAuthenticationStateAsync non trouvée.");
+            bool result = await task;
 
             // Assert
             mockServiceScopeFactory.Verify();
@@ -674,16 +678,17 @@ namespace Mercadona.Tests.Security
             );
 
             // Act
-            MethodInfo? methodInfo =
-                typeof(RevalidatingServerAuthenticationStateProvider).GetMethod(
+            Task<bool>? task = (Task<bool>?)
+                typeof(RevalidatingServerAuthenticationStateProvider).InvokeMember(
                     "ValidateAuthenticationStateAsync",
-                    BindingFlags.Instance | BindingFlags.NonPublic
-                );
-            bool result = await (Task<bool>)
-                methodInfo?.Invoke(
+                    BindingFlags.InvokeMethod | BindingFlags.Instance | BindingFlags.NonPublic,
+                    null,
                     authStateProvider,
                     new object?[] { new AuthenticationState(principal), CancellationToken.None }
                 );
+            if (task == null)
+                Assert.Fail("Méthode ValidateAuthenticationStateAsync non trouvée.");
+            bool result = await task;
 
             // Assert
             mockServiceScopeFactory.Verify();

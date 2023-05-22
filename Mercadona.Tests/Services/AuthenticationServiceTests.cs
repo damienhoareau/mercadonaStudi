@@ -7,10 +7,8 @@ using Mercadona.Tests.Moq;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
 using Moq;
 using System.Security.Claims;
-using System.Text;
 
 namespace Mercadona.Tests.Services
 {
@@ -84,13 +82,13 @@ namespace Mercadona.Tests.Services
         public async Task CheckPasswordAsync_WrongPassword_ShoudReturnFalse()
         {
             // Arrange
-            UserManagerMock userManagerMock = new UserManagerMock(
-                false,
-                new UserModel { Username = "toto@toto.fr", Password = "V@lidPassw0rd" }
-            );
+            UserManagerMock userManagerMock =
+                new(false, new UserModel { Username = "toto@toto.fr", Password = "V@lidPassw0rd" });
             Mock<ITokenService> mockTokenService = new();
             AuthenticationService service = new(userManagerMock, mockTokenService.Object);
-            IdentityUser user = await userManagerMock.FindByNameAsync("toto@toto.fr");
+            IdentityUser? user = await userManagerMock.FindByNameAsync("toto@toto.fr");
+            if (user == null)
+                Assert.Fail("L'utilisateur toto@toto.fr non trouvé.");
 
             // Act
             bool result = await service.CheckPasswordAsync(user, "badPassword");
@@ -103,13 +101,13 @@ namespace Mercadona.Tests.Services
         public async Task CheckPasswordAsync_SamePassord_ShoudReturnTrue()
         {
             // Arrange
-            UserManagerMock userManagerMock = new UserManagerMock(
-                false,
-                new UserModel { Username = "toto@toto.fr", Password = "V@lidPassw0rd" }
-            );
+            UserManagerMock userManagerMock =
+                new(false, new UserModel { Username = "toto@toto.fr", Password = "V@lidPassw0rd" });
             Mock<ITokenService> mockTokenService = new();
             AuthenticationService service = new(userManagerMock, mockTokenService.Object);
-            IdentityUser user = await userManagerMock.FindByNameAsync("toto@toto.fr");
+            IdentityUser? user = await userManagerMock.FindByNameAsync("toto@toto.fr");
+            if (user == null)
+                Assert.Fail("L'utilisateur toto@toto.fr non trouvé.");
 
             // Act
             bool result = await service.CheckPasswordAsync(user, "V@lidPassw0rd");
@@ -122,10 +120,8 @@ namespace Mercadona.Tests.Services
         public async Task LoginAsync_ValidPassword_ShouldReturnCorrectAccessToken()
         {
             // Arrange
-            UserManagerMock userManagerMock = new UserManagerMock(
-                false,
-                new UserModel { Username = "toto@toto.fr", Password = "V@lidPassw0rd" }
-            );
+            UserManagerMock userManagerMock =
+                new(false, new UserModel { Username = "toto@toto.fr", Password = "V@lidPassw0rd" });
             Mock<ITokenService> mockTokenService = new();
             mockTokenService.Setup(_ => _.GenerateRefreshToken()).Returns(Guid.Empty.ToString());
             mockTokenService
@@ -134,7 +130,9 @@ namespace Mercadona.Tests.Services
                 )
                 .Returns(Guid.Empty.ToString());
             AuthenticationService service = new(userManagerMock, mockTokenService.Object);
-            IdentityUser user = await userManagerMock.FindByNameAsync("toto@toto.fr");
+            IdentityUser? user = await userManagerMock.FindByNameAsync("toto@toto.fr");
+            if (user == null)
+                Assert.Fail("L'utilisateur toto@toto.fr non trouvé.");
 
             // Act
             (string refreshToken, string accessToken) = await service.LoginAsync(user);
@@ -148,10 +146,8 @@ namespace Mercadona.Tests.Services
         public async Task RefreshTokenAsync_ShouldCall_TokenService_RefreshToken()
         {
             // Arrange
-            UserManagerMock userManagerMock = new UserManagerMock(
-                false,
-                new UserModel { Username = "toto@toto.fr", Password = "V@lidPassw0rd" }
-            );
+            UserManagerMock userManagerMock =
+                new(false, new UserModel { Username = "toto@toto.fr", Password = "V@lidPassw0rd" });
             Mock<ITokenService> mockTokenService = new();
             mockTokenService
                 .Setup(_ => _.RefreshToken(It.IsAny<string>()))

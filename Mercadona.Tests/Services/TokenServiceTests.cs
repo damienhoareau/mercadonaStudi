@@ -176,7 +176,7 @@ namespace Mercadona.Tests.Services
                 .GetRequiredService<WhiteList>()
                 .Get<JwtSecurityToken>(refreshToken);
             inMemoryJwtToken.Should().NotBeNull();
-            inMemoryJwtToken.ValidTo.Should().Be(newValidatedToken.ValidTo);
+            inMemoryJwtToken!.ValidTo.Should().Be(newValidatedToken.ValidTo);
         }
 
         [Fact]

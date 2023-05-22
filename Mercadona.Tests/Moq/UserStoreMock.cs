@@ -38,30 +38,30 @@ namespace Mercadona.Tests.Moq
 
         public void Dispose() { }
 
-        public Task<IdentityUser> FindByIdAsync(string userId, CancellationToken cancellationToken)
+        public Task<IdentityUser?> FindByIdAsync(string userId, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
-        public Task<IdentityUser> FindByNameAsync(
+        public Task<IdentityUser?> FindByNameAsync(
             string normalizedUserName,
             CancellationToken cancellationToken
         )
         {
             return Task.FromResult(
-                _users.FirstOrDefault(_ => _.UserName.ToUpperInvariant() == normalizedUserName)
+                _users.FirstOrDefault(_ => _.UserName?.ToUpperInvariant() == normalizedUserName)
             );
         }
 
-        public Task<string> GetNormalizedUserNameAsync(
+        public Task<string?> GetNormalizedUserNameAsync(
             IdentityUser user,
             CancellationToken cancellationToken
         )
         {
-            return Task.FromResult(user.UserName.ToUpperInvariant());
+            return Task.FromResult(user.UserName?.ToUpperInvariant());
         }
 
-        public Task<string> GetPasswordHashAsync(
+        public Task<string?> GetPasswordHashAsync(
             IdentityUser user,
             CancellationToken cancellationToken
         )
@@ -82,7 +82,10 @@ namespace Mercadona.Tests.Moq
             throw new NotImplementedException();
         }
 
-        public Task<string> GetUserNameAsync(IdentityUser user, CancellationToken cancellationToken)
+        public Task<string?> GetUserNameAsync(
+            IdentityUser user,
+            CancellationToken cancellationToken
+        )
         {
             return Task.FromResult(user.UserName);
         }
@@ -94,7 +97,7 @@ namespace Mercadona.Tests.Moq
 
         public Task SetNormalizedUserNameAsync(
             IdentityUser user,
-            string normalizedName,
+            string? normalizedName,
             CancellationToken cancellationToken
         )
         {
@@ -113,7 +116,7 @@ namespace Mercadona.Tests.Moq
 
         public Task SetPasswordHashAsync(
             IdentityUser user,
-            string passwordHash,
+            string? passwordHash,
             CancellationToken cancellationToken
         )
         {
@@ -143,7 +146,7 @@ namespace Mercadona.Tests.Moq
 
         public Task SetUserNameAsync(
             IdentityUser user,
-            string userName,
+            string? userName,
             CancellationToken cancellationToken
         )
         {

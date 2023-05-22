@@ -4,14 +4,33 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Mercadona.Backend.Data
 {
+    /// <summary>
+    /// Contexte de la base de données
+    /// </summary>
+    /// <seealso cref="Microsoft.AspNetCore.Identity.EntityFrameworkCore.IdentityDbContext" />
     public class ApplicationDbContext : IdentityDbContext
     {
+        /// <summary>
+        /// Initialise une nouvelle instance de la classe <see cref="ApplicationDbContext"/>.
+        /// </summary>
+        /// <param name="options">The options.</param>
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         { }
 
+        /// <value>
+        /// Collection de  promotions.
+        /// </value>
         public DbSet<Offer> Offers { get; set; }
+
+        /// <value>
+        /// Collection de produits.
+        /// </value>
         public DbSet<Product> Products { get; set; }
 
+        /// <summary>
+        /// Configure le schéma de la base de données.
+        /// </summary>
+        /// <param name="builder">Le constructeur utilisé pour construire les modèles pour ce contexte.</param>
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

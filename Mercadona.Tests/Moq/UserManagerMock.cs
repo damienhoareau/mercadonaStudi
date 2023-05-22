@@ -1,5 +1,6 @@
 using Mercadona.Backend.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -46,7 +47,7 @@ namespace Mercadona.Tests.Moq
                 },
                 new UpperInvariantLookupNormalizer(),
                 new IdentityErrorDescriber(),
-                null,
+                new ServiceCollection().BuildServiceProvider(),
                 new Mock<ILogger<UserManager<IdentityUser>>>().Object
             )
         {
@@ -74,7 +75,7 @@ namespace Mercadona.Tests.Moq
         {
             PasswordVerificationResult result = PasswordHasher.VerifyHashedPassword(
                 user,
-                user.PasswordHash,
+                user.PasswordHash!,
                 password
             );
             return Task.FromResult(

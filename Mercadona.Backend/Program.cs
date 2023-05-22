@@ -75,20 +75,6 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddMudServices();
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddHttpClient();
-
-/*builder.Services.AddTransient(provider =>
-{
-    HttpClient httpClient = provider.GetRequiredService<IHttpClientFactory>().CreateClient();
-    ConnectedUser connectedUser = provider.GetRequiredService<ConnectedUser>();
-    if (!string.IsNullOrWhiteSpace(connectedUser.AccessToken))
-        httpClient.DefaultRequestHeaders.Authorization =
-            new System.Net.Http.Headers.AuthenticationHeaderValue(
-                JwtBearerDefaults.AuthenticationScheme,
-                connectedUser.AccessToken
-            );
-    return new AuthenticateClient("https://localhost:44387", httpClient);
-});*/
 
 // Informations sur l'utilisateur connecté
 builder.Services.AddScoped<ConnectedUser>();
