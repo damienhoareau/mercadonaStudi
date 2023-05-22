@@ -1,6 +1,6 @@
 ﻿export function StoreCookie(user) {
-    var url = "/account/storeCookie";
-    var xhr = new XMLHttpRequest();
+    let url = "/account/storeCookie";
+    let xhr = new XMLHttpRequest();
 
     // Initialization
     xhr.open("POST", url);
@@ -12,8 +12,8 @@
 }
 
 export function ClearCookie() {
-    var url = "/account/clearCookie";
-    var xhr = new XMLHttpRequest();
+    let url = "/account/clearCookie";
+    let xhr = new XMLHttpRequest();
 
     // Initialization
     xhr.open("POST", url);
@@ -25,8 +25,8 @@ export function ClearCookie() {
 }
 
 export function RefreshToken() {
-    var url = "/account/refreshToken";
-    var xhr = new XMLHttpRequest();
+    let url = "/account/refreshToken";
+    let xhr = new XMLHttpRequest();
 
     // Initialization
     xhr.open("POST", url);
