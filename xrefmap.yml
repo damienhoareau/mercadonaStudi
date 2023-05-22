@@ -1381,15 +1381,15 @@ references:
   commentId: T:Mercadona.Backend.Pages.ErrorModel
   fullName: Mercadona.Backend.Pages.ErrorModel
   nameWithType: ErrorModel
-- uid: Mercadona.Backend.Pages.ErrorModel.#ctor(Microsoft.Extensions.Logging.ILogger{Mercadona.Backend.Pages.ErrorModel})
-  name: ErrorModel(ILogger<ErrorModel>)
-  href: api/Mercadona.Backend.Pages.ErrorModel.html#Mercadona_Backend_Pages_ErrorModel__ctor_Microsoft_Extensions_Logging_ILogger_Mercadona_Backend_Pages_ErrorModel__
-  commentId: M:Mercadona.Backend.Pages.ErrorModel.#ctor(Microsoft.Extensions.Logging.ILogger{Mercadona.Backend.Pages.ErrorModel})
-  name.vb: New(ILogger(Of ErrorModel))
-  fullName: Mercadona.Backend.Pages.ErrorModel.ErrorModel(Microsoft.Extensions.Logging.ILogger<Mercadona.Backend.Pages.ErrorModel>)
-  fullName.vb: Mercadona.Backend.Pages.ErrorModel.New(Microsoft.Extensions.Logging.ILogger(Of Mercadona.Backend.Pages.ErrorModel))
-  nameWithType: ErrorModel.ErrorModel(ILogger<ErrorModel>)
-  nameWithType.vb: ErrorModel.New(ILogger(Of ErrorModel))
+- uid: Mercadona.Backend.Pages.ErrorModel.#ctor
+  name: ErrorModel()
+  href: api/Mercadona.Backend.Pages.ErrorModel.html#Mercadona_Backend_Pages_ErrorModel__ctor
+  commentId: M:Mercadona.Backend.Pages.ErrorModel.#ctor
+  name.vb: New()
+  fullName: Mercadona.Backend.Pages.ErrorModel.ErrorModel()
+  fullName.vb: Mercadona.Backend.Pages.ErrorModel.New()
+  nameWithType: ErrorModel.ErrorModel()
+  nameWithType.vb: ErrorModel.New()
 - uid: Mercadona.Backend.Pages.ErrorModel.#ctor*
   name: ErrorModel
   href: api/Mercadona.Backend.Pages.ErrorModel.html#Mercadona_Backend_Pages_ErrorModel__ctor_
