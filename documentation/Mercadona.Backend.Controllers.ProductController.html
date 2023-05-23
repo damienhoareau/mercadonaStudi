@@ -798,7 +798,7 @@ public Task&lt;IActionResult&gt; GetAllAsync()</code></pre>
     <pre><code class="lang-csharp hljs">[AllowAnonymous]
 [HttpGet]
 [Route(&quot;api/products/image&quot;)]
-[ResponseCache(Duration = 2147483647)]
+[ResponseCache(Duration = 2147483647, VaryByQueryKeys = new string[] { &quot;*&quot; })]
 [ProducesResponseType(200)]
 [ProducesResponseType(404)]
 [ProducesResponseType(500)]
