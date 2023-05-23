@@ -88,10 +88,11 @@ jobs:
         run: echo "${{ steps.meta.outputs.tags }}" | xargs -I {} cosign sign {}@${{ steps.build-and-push.outputs.digest }}
         
       # Copy docker image to Azure Container Registry too
-      - uses: azure/login@v1
+      - name: Push to Azure Container Registry
+      - uses: azure/docker-login@v1
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          login-server: damienhoareau.azurecr.io
+          username: damienhoareau
+          password: ${{ secrets.AZURE_CLIENT_SECRET }}
       - run: |
-          az login
-          az acr login -n damienhoareau.azurecr.io
-          az acr import --name damienhoareau --source ghcr.io/damienhoareau/mercadonastudi:main
+          docker pull ghcr.io/damienhoareau/mercadonastudi:main
