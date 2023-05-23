@@ -89,10 +89,9 @@ jobs:
         
       # Copy docker image to Azure Container Registry too
       - name: Push to Azure Container Registry
-      - uses: azure/docker-login@v1
+        uses: azure/docker-login@v1
         with:
           login-server: damienhoareau.azurecr.io
           username: damienhoareau
           password: ${{ secrets.AZURE_CLIENT_SECRET }}
-      - run: |
-          docker pull ghcr.io/damienhoareau/mercadonastudi:main
+      - run: docker pull ghcr.io/damienhoareau/mercadonastudi:main
