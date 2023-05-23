@@ -55,8 +55,7 @@ jobs:
           password: ${{ github.token }}
 
       - name: Lowercase the repo name and username
-      - run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV}
-      - run: cd ./Mercadona.Backend
+        run: echo "REPO=${GITHUB_REPOSITORY,,}" >>${GITHUB_ENV} | cd ./Mercadona.Backend
 
       - name: Build and push container image to registry
         uses: docker/build-push-action@v2
