@@ -1,5 +1,5 @@
-- name: Articles
-  href: articles/
-- name: Api Documentation
-  href: api/
-  homepage: api/index.md
+- name: Manuel d'utilisation
+  href: userManual/
+- name: Documentation des classes
+  href: documentation/
+  homepage: documentation/index.md
