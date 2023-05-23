@@ -28,7 +28,7 @@ builder.WebHost.UseKestrel(k =>
     IServiceProvider serviceProvider = k.ApplicationServices;
     k.ConfigureHttpsDefaults(h =>
     {
-        h.ClientCertificateMode = ClientCertificateMode.RequireCertificate;
+        //h.ClientCertificateMode = ClientCertificateMode.RequireCertificate;
         h.UseLettuceEncrypt(serviceProvider);
     });
 });
