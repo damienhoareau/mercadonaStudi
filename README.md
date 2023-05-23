@@ -19,7 +19,7 @@ Dépôt pour le projet Mercadona sur Studi
 
 </div>
 
-Vous pouvez aussi voir la documentation de l'API sur [SwaggerUI](https://cosmosdeveloppement.ddns.net/swagger)
+Vous pouvez aussi voir la documentation de l'API sur [SwaggerUI](https://mercadona-studi.ddns.net/swagger)
 
 ## Modèle Conceptuel des Données
 
