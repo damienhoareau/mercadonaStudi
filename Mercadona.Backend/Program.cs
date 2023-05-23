@@ -21,6 +21,7 @@ using System.Reflection;
 using System.Text;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+#if !DEBUG
 builder.Services.AddLettuceEncrypt();
 builder.WebHost.UseKestrel(k =>
 {
@@ -30,12 +31,11 @@ builder.WebHost.UseKestrel(k =>
         h.UseLettuceEncrypt(serviceProvider);
     });
 });
+#endif
 builder.WebHost.UseUrls("https://*:443","http://*:80");
 
 // Add services to the container.
-string? connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
-if (string.IsNullOrWhiteSpace(connectionString))
-    connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContextFactory<ApplicationDbContext>(
     options => options.UseNpgsql(connectionString)
 );
@@ -71,8 +71,8 @@ builder.Services
         {
             ValidateIssuer = true,
             ValidateAudience = true,
-            ValidAudience = builder.Configuration["JWT:ValidAudience"],
-            ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
+            ValidAudience = $"{builder.Configuration["ApplicationUrl"]}:443",
+            ValidIssuer = $"{builder.Configuration["ApplicationUrl"]}:443",
             IssuerSigningKey = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(
                     builder.Configuration["JWT:Secret"]

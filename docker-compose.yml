@@ -24,7 +24,9 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Production
       ASPNETCORE_URLS: https://+:443;http://+:80
-      DB_CONNECTION_STRING: "host=postgres;Port=5432;Database=mercadonadb;User Id=mercadona;Password=mercadonaStudi;"
+      ApplicationUrl: https://cosmosdeveloppement.ddns.com
+      LettuceEncrypt:DomainNames: [cosmosdeveloppement.ddns.com]
+      ConnectionStrings:DefaultConnection: "host=postgres;Port=5432;Database=mercadonadb;User Id=mercadona;Password=mercadonaStudi;"
 volumes:
   db_volume:
   
