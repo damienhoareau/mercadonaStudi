@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Server.Kestrel.Https;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -21,6 +22,16 @@ using System.Reflection;
 using System.Text;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+builder.Services.AddLettuceEncrypt();
+builder.WebHost.UseKestrel(k =>
+{
+    IServiceProvider serviceProvider = k.ApplicationServices;
+    k.ConfigureHttpsDefaults(h =>
+    {
+        h.ClientCertificateMode = ClientCertificateMode.RequireCertificate;
+        h.UseLettuceEncrypt(serviceProvider);
+    });
+});
 builder.WebHost.UseUrls("https://*:443","http://*:80");
 
 // Add services to the container.
