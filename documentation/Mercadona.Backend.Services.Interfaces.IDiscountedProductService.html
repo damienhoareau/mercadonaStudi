@@ -1,0 +1,267 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Interface IDiscountedProductService
+ </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Interface IDiscountedProductService
+ ">
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      
+      
+      
+      
+  </head>
+
+  <script type="module">
+    import options from './../public/main.js'
+    import { init } from './../public/docfx.min.js'
+    init(options)
+  </script>
+
+  <script>
+    const theme = localStorage.getItem('theme') || 'auto'
+    document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+  </script>
+
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="">
+            
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" style="margin-top: -.65em; margin-left: -.8em" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="Mercadona.Backend.Services.Interfaces.IDiscountedProductService">
+
+
+
+  <h1 id="Mercadona_Backend_Services_Interfaces_IDiscountedProductService" data-uid="Mercadona.Backend.Services.Interfaces.IDiscountedProductService" class="text-break">
+    Interface IDiscountedProductService
+  
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="Mercadona.html">Mercadona</a>.<a class="xref" href="Mercadona.Backend.html">Backend</a>.<a class="xref" href="Mercadona.Backend.Services.html">Services</a>.<a class="xref" href="Mercadona.Backend.Services.Interfaces.html">Interfaces</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>Mercadona.Backend.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Interface d'un service permettant d'inter-agir avec des <a class="xref" href="Mercadona.Backend.Models.DiscountedProduct.html">DiscountedProduct</a></p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public interface IDiscountedProductService</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="Mercadona_Backend_Services_Interfaces_IDiscountedProductService_ApplyOfferAsync_" data-uid="Mercadona.Backend.Services.Interfaces.IDiscountedProductService.ApplyOfferAsync*"></a>
+
+  <h3 id="Mercadona_Backend_Services_Interfaces_IDiscountedProductService_ApplyOfferAsync_System_Guid_Mercadona_Backend_Data_Offer_System_Boolean_" data-uid="Mercadona.Backend.Services.Interfaces.IDiscountedProductService.ApplyOfferAsync(System.Guid,Mercadona.Backend.Data.Offer,System.Boolean)">
+  ApplyOfferAsync(Guid, Offer, bool)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Applique une promotion à un produit</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">Task&lt;DiscountedProduct&gt; ApplyOfferAsync(Guid productId, Offer offer, bool forceReplace = false)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>productId</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a></dt>
+    <dd><p>Identifiant du <a class="xref" href="Mercadona.Backend.Data.Product.html">Product</a> à remiser</p>
+</dd>
+    <dt><code>offer</code> <a class="xref" href="Mercadona.Backend.Data.Offer.html">Offer</a></dt>
+    <dd><p><a class="xref" href="Mercadona.Backend.Data.Offer.html">Offer</a> à appliquer</p>
+</dd>
+    <dt><code>forceReplace</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>Force à remplacer la promotion en cours si elle existe</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="Mercadona.Backend.Models.DiscountedProduct.html">DiscountedProduct</a>&gt;</dt>
+    <dd><p><a class="xref" href="Mercadona.Backend.Models.DiscountedProduct.html">DiscountedProduct</a> correspondant au <a class="xref" href="Mercadona.Backend.Data.Product.html">Product</a> remisé<br>
+<span class="xref">FluentValidation.ValidationException</span> : Si l'offre n'est pas valide<br>
+<span class="xref">FluentValidation.ValidationException</span> : Si une offre est à cheval sur celle qu'on veut appliquer</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><span class="xref">ValidationException</span></dt>
+    <dd></dd>
+  </dl>
+
+
+
+  <a id="Mercadona_Backend_Services_Interfaces_IDiscountedProductService_GetAllAsync_" data-uid="Mercadona.Backend.Services.Interfaces.IDiscountedProductService.GetAllAsync*"></a>
+
+  <h3 id="Mercadona_Backend_Services_Interfaces_IDiscountedProductService_GetAllAsync_System_Threading_CancellationToken_" data-uid="Mercadona.Backend.Services.Interfaces.IDiscountedProductService.GetAllAsync(System.Threading.CancellationToken)">
+  GetAllAsync(CancellationToken)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Recupère la liste des produits (sans distinction de promotion en cours)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">Task&lt;IEnumerable&lt;DiscountedProduct&gt;&gt; GetAllAsync(CancellationToken cancellationToken = default)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>cancellationToken</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></dt>
+    <dd><p>Token d'annulation</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Mercadona.Backend.Models.DiscountedProduct.html">DiscountedProduct</a>&gt;&gt;</dt>
+    <dd><p>Liste de <a class="xref" href="Mercadona.Backend.Models.DiscountedProduct.html">DiscountedProduct</a></p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="Mercadona_Backend_Services_Interfaces_IDiscountedProductService_GetAllDiscountedAsync_" data-uid="Mercadona.Backend.Services.Interfaces.IDiscountedProductService.GetAllDiscountedAsync*"></a>
+
+  <h3 id="Mercadona_Backend_Services_Interfaces_IDiscountedProductService_GetAllDiscountedAsync_System_Threading_CancellationToken_" data-uid="Mercadona.Backend.Services.Interfaces.IDiscountedProductService.GetAllDiscountedAsync(System.Threading.CancellationToken)">
+  GetAllDiscountedAsync(CancellationToken)
+  
+  </h3>
+
+  <div class="markdown level1 summary"><p>Recupère la liste des produits avec une promotion en cours</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">Task&lt;IEnumerable&lt;DiscountedProduct&gt;&gt; GetAllDiscountedAsync(CancellationToken cancellationToken = default)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>cancellationToken</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken">CancellationToken</a></dt>
+    <dd><p>Token d'annulation</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="Mercadona.Backend.Models.DiscountedProduct.html">DiscountedProduct</a>&gt;&gt;</dt>
+    <dd><p>Liste de <a class="xref" href="Mercadona.Backend.Models.DiscountedProduct.html">DiscountedProduct</a></p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+        </div>
+
+        
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+
+    <footer class="border-top">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
