@@ -95,3 +95,5 @@ jobs:
           username: damienhoareau
           password: ${{ secrets.AZURE_CLIENT_SECRET }}
       - run: docker pull ghcr.io/damienhoareau/mercadonastudi:main
+      - run: docker tag ghcr.io/damienhoareau/mercadonastudi:main damienhoareau.azurecr.io/mercadonastudi:latest
+      - run: docker push damienhoareau.azurecr.io/mercadonastudi:latest
