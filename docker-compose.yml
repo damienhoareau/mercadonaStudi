@@ -24,7 +24,7 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Production
       ASPNETCORE_URLS: https://+:443;http://+:80
-      ApplicationUrl: https://cosmosdeveloppement.ddns.com
+      ApplicationUrl: https://mercadona-studi.ddns.net
       DB_CONNECTION_STRING: "host=postgres;Port=5432;Database=mercadonadb;User Id=mercadona;Password=mercadonaStudi;"
 volumes:
   db_volume:
