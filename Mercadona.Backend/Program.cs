@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Server.Kestrel.Https;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -28,7 +27,6 @@ builder.WebHost.UseKestrel(k =>
     IServiceProvider serviceProvider = k.ApplicationServices;
     k.ConfigureHttpsDefaults(h =>
     {
-        //h.ClientCertificateMode = ClientCertificateMode.RequireCertificate;
         h.UseLettuceEncrypt(serviceProvider);
     });
 });
@@ -41,7 +39,9 @@ if (string.IsNullOrWhiteSpace(connectionString))
 builder.Services.AddDbContextFactory<ApplicationDbContext>(
     options => options.UseNpgsql(connectionString)
 );
+#if DEBUG
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+#endif
 
 // For Identity
 builder.Services
@@ -205,5 +205,12 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
+
+// On migre la base de données si nécessaire
+using (IServiceScope scope = app.Services.CreateScope())
+{
+    ApplicationDbContext dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    dbContext.Database.Migrate();
+}
 
 app.Run();
