@@ -68,7 +68,7 @@ namespace Mercadona.Backend.Controllers
         [AllowAnonymous]
         [HttpGet]
         [Route("api/products/image")]
-        [ResponseCache(Duration = int.MaxValue)]
+        [ResponseCache(Duration = int.MaxValue, VaryByQueryKeys = new[] { "*" })]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
