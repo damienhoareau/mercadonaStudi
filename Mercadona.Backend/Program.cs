@@ -1,4 +1,4 @@
-﻿using FluentValidation;
+using FluentValidation;
 using Mercadona.Backend.Areas.Identity;
 using Mercadona.Backend.Data;
 using Mercadona.Backend.Models;
@@ -84,6 +84,7 @@ builder.Services
         };
     });
 builder.Services.AddJwtInSession();
+builder.Services.AddLocalization();
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
@@ -195,6 +196,11 @@ app.UseResponseCaching();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+// Localization
+app.UseRequestLocalization(new RequestLocalizationOptions()
+    .AddSupportedCultures(new[] { "fr-FR" })
+    .AddSupportedUICultures(new[] { "fr-FR" }));
 
 // API Documentation (avant le pipeline de sécurité afin de permettre les requêtes publiques)
 app.UseSwagger();
