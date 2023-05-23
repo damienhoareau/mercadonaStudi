@@ -21,7 +21,12 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - postgres
+    ports:
+      - 80:80
+      - 443:443
     environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: https://+:443;http://+:80
       DB_CONNECTION_STRING: "host=postgres;Port=5432;Database=mercadonadb;User Id=mercadona;Password=mercadonaStudi;"
 volumes:
   db_volume:
