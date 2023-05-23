@@ -36,6 +36,8 @@ builder.WebHost.UseUrls("https://*:443","http://*:80");
 
 // Add services to the container.
 string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+if (Environment.GetEnvironmentVariable("DB_CONNECTION_STRING") is string envConnectionString)
+    connectionString = envConnectionString;
 builder.Services.AddDbContextFactory<ApplicationDbContext>(
     options => options.UseNpgsql(connectionString)
 );
