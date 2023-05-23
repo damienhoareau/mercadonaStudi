@@ -21,8 +21,6 @@
       "launchBrowser": true,
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
       "environmentVariables": {
-        "ASPNETCORE_URLS": "https://+:443;http://+:80",
-        "ASPNETCORE_HTTPS_PORT": "443",
         "DB_CONNECTION_STRING": "host=host.docker.internal;Port=5432;Database=mercadonadb;User Id=mercadona;Password=mercadonaStudi;"
       },
       "httpPort": 80,

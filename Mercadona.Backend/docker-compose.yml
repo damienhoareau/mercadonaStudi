@@ -1,0 +1,28 @@
+version: '3.4'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    ports:
+      - "5432"
+    restart: always
+    volumes:
+      - db_volume:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: "mercadona"
+      POSTGRES_PASSWORD: "mercadonaStudi"
+      POSTGRES_DB: "mercadonadb"
+  mercadona.backend:
+    image: ${DOCKER_REGISTRY-}mercadonabackend
+    container_name: mercadona.backend
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - postgres
+    environment:
+      DB_CONNECTION_STRING: "host=postgres;Port=5432;Database=mercadonadb;User Id=mercadona;Password=mercadonaStudi;"
+volumes:
+  db_volume:
+  

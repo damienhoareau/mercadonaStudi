@@ -21,6 +21,7 @@ using System.Reflection;
 using System.Text;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+builder.WebHost.UseUrls("https://*:443","http://*:80");
 
 // Add services to the container.
 string? connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");

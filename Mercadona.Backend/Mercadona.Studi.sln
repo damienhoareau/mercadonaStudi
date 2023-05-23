@@ -5,7 +5,9 @@ VisualStudioVersion = 17.5.33424.131
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mercadona.Backend", "Mercadona.Backend.csproj", "{06BBE547-6096-4D45-97FE-4E04BF452574}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mercadona.Tests", "..\Mercadona.Tests\Mercadona.Tests.csproj", "{511BCACD-8164-4B71-B1DB-A8737DDBA316}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mercadona.Tests", "..\Mercadona.Tests\Mercadona.Tests.csproj", "{511BCACD-8164-4B71-B1DB-A8737DDBA316}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{03932E05-C12B-4A62-8FB1-061B9A6626D3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{511BCACD-8164-4B71-B1DB-A8737DDBA316}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{511BCACD-8164-4B71-B1DB-A8737DDBA316}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{511BCACD-8164-4B71-B1DB-A8737DDBA316}.Release|Any CPU.Build.0 = Release|Any CPU
+		{03932E05-C12B-4A62-8FB1-061B9A6626D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03932E05-C12B-4A62-8FB1-061B9A6626D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03932E05-C12B-4A62-8FB1-061B9A6626D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03932E05-C12B-4A62-8FB1-061B9A6626D3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
