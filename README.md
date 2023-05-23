@@ -19,6 +19,8 @@ Dépôt pour le projet Mercadona sur Studi
 
 </div>
 
+Vous pouvez aussi voir la documentation de l'API sur [SwaggerUI](https://cosmosdeveloppement.ddns.net/swagger)
+
 ## Modèle Conceptuel des Données
 
 [Mocodo](https://www.mocodo.net/) :
@@ -35,3 +37,8 @@ Est remisé, 0N Produit, 0N Promotion<br/>
 
 <br/>
 <img src="./Produits.svg">
+
+## Compte utilisateur de test
+
+Vous pouvez tester l'application avec le compte ayant pour mail : toto@toto.fr
+et commme mot de passe : L@T3t3@T0t0
