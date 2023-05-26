@@ -5,6 +5,16 @@
   "files": [
     {
       "type": "ManagedReference",
+      "source_relative_path": "documentation/Mercadona.Backend.App.yml",
+      "output": {
+        ".html": {
+          "relative_path": "documentation/Mercadona.Backend.App.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "documentation/Mercadona.Backend.Areas.Identity.ISecurityStampValidator-1.yml",
       "output": {
         ".html": {
@@ -79,6 +89,126 @@
       "output": {
         ".html": {
           "relative_path": "documentation/Mercadona.Backend.Areas.Identity.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "documentation/Mercadona.Backend.Components.AddProductDialog.yml",
+      "output": {
+        ".html": {
+          "relative_path": "documentation/Mercadona.Backend.Components.AddProductDialog.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "documentation/Mercadona.Backend.Components.ApplyOfferToProductDialog.yml",
+      "output": {
+        ".html": {
+          "relative_path": "documentation/Mercadona.Backend.Components.ApplyOfferToProductDialog.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "documentation/Mercadona.Backend.Components.ConfirmDialog.DialogType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "documentation/Mercadona.Backend.Components.ConfirmDialog.DialogType.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "documentation/Mercadona.Backend.Components.ConfirmDialog.yml",
+      "output": {
+        ".html": {
+          "relative_path": "documentation/Mercadona.Backend.Components.ConfirmDialog.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "documentation/Mercadona.Backend.Components.ConflictOffers.yml",
+      "output": {
+        ".html": {
+          "relative_path": "documentation/Mercadona.Backend.Components.ConflictOffers.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "documentation/Mercadona.Backend.Components.LoginDialog.yml",
+      "output": {
+        ".html": {
+          "relative_path": "documentation/Mercadona.Backend.Components.LoginDialog.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "documentation/Mercadona.Backend.Components.OfferElement.yml",
+      "output": {
+        ".html": {
+          "relative_path": "documentation/Mercadona.Backend.Components.OfferElement.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "documentation/Mercadona.Backend.Components.ProductCard.yml",
+      "output": {
+        ".html": {
+          "relative_path": "documentation/Mercadona.Backend.Components.ProductCard.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "documentation/Mercadona.Backend.Components.ProductsBase.yml",
+      "output": {
+        ".html": {
+          "relative_path": "documentation/Mercadona.Backend.Components.ProductsBase.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "documentation/Mercadona.Backend.Components.TokenExpirationWarningMessage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "documentation/Mercadona.Backend.Components.TokenExpirationWarningMessage.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "documentation/Mercadona.Backend.Components.UserInfo.yml",
+      "output": {
+        ".html": {
+          "relative_path": "documentation/Mercadona.Backend.Components.UserInfo.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "documentation/Mercadona.Backend.Components.yml",
+      "output": {
+        ".html": {
+          "relative_path": "documentation/Mercadona.Backend.Components.html"
         }
       },
       "version": ""
@@ -295,10 +425,30 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "documentation/Mercadona.Backend.Pages.Catalog.yml",
+      "output": {
+        ".html": {
+          "relative_path": "documentation/Mercadona.Backend.Pages.Catalog.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "documentation/Mercadona.Backend.Pages.ErrorModel.yml",
       "output": {
         ".html": {
           "relative_path": "documentation/Mercadona.Backend.Pages.ErrorModel.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "documentation/Mercadona.Backend.Pages.Products.yml",
+      "output": {
+        ".html": {
+          "relative_path": "documentation/Mercadona.Backend.Pages.Products.html"
         }
       },
       "version": ""
@@ -475,6 +625,36 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "documentation/Mercadona.Backend.Shared.MainLayout.yml",
+      "output": {
+        ".html": {
+          "relative_path": "documentation/Mercadona.Backend.Shared.MainLayout.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "documentation/Mercadona.Backend.Shared.NavMenu.yml",
+      "output": {
+        ".html": {
+          "relative_path": "documentation/Mercadona.Backend.Shared.NavMenu.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "documentation/Mercadona.Backend.Shared.yml",
+      "output": {
+        ".html": {
+          "relative_path": "documentation/Mercadona.Backend.Shared.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "documentation/Mercadona.Backend.Swagger.AuthOperationFilter.yml",
       "output": {
         ".html": {
@@ -549,6 +729,26 @@
       "output": {
         ".html": {
           "relative_path": "documentation/Mercadona.Backend.Validation.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "documentation/Mercadona.Backend._Imports.yml",
+      "output": {
+        ".html": {
+          "relative_path": "documentation/Mercadona.Backend._Imports.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "documentation/Mercadona.Backend.yml",
+      "output": {
+        ".html": {
+          "relative_path": "documentation/Mercadona.Backend.html"
         }
       },
       "version": ""

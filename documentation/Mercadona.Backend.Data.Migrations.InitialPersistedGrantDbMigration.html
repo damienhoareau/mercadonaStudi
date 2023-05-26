@@ -87,7 +87,8 @@
   <dl><dt>Assembly</dt><dd>Mercadona.Backend.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>A base class inherited by each EF Core migration.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -154,6 +155,9 @@ public class InitialPersistedGrantDbMigration : Migration</code></pre>
 
 
 
+  <h2 id="Mercadona_Backend_Data_Migrations_InitialPersistedGrantDbMigration_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>See <a href="https://aka.ms/efcore-docs-migrations">Database migrations</a> for more information and examples.</p>
+</div>
 
 
   <h2 class="section" id="methods">Methods
@@ -167,7 +171,8 @@ public class InitialPersistedGrantDbMigration : Migration</code></pre>
   
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Implemented to build the <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.migrations.migration.targetmodel">TargetModel</a>.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -177,7 +182,8 @@ public class InitialPersistedGrantDbMigration : Migration</code></pre>
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>modelBuilder</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.modelbuilder">ModelBuilder</a></dt>
-    <dd></dd>
+    <dd><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.modelbuilder">ModelBuilder</a> to use to build the model.</p>
+</dd>
   </dl>
 
 
@@ -187,6 +193,9 @@ public class InitialPersistedGrantDbMigration : Migration</code></pre>
 
 
 
+  <h4 class="section" id="Mercadona_Backend_Data_Migrations_InitialPersistedGrantDbMigration_BuildTargetModel_Microsoft_EntityFrameworkCore_ModelBuilder__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>See <a href="https://aka.ms/efcore-docs-migrations">Database migrations</a> for more information and examples.</p>
+</div>
 
 
 
@@ -198,7 +207,8 @@ public class InitialPersistedGrantDbMigration : Migration</code></pre>
   
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Builds the operations that will migrate the database 'down'.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -208,7 +218,8 @@ public class InitialPersistedGrantDbMigration : Migration</code></pre>
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>migrationBuilder</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.migrations.migrationbuilder">MigrationBuilder</a></dt>
-    <dd></dd>
+    <dd><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.migrations.migrationbuilder">MigrationBuilder</a> that will build the operations.</p>
+</dd>
   </dl>
 
 
@@ -218,6 +229,20 @@ public class InitialPersistedGrantDbMigration : Migration</code></pre>
 
 
 
+  <h4 class="section" id="Mercadona_Backend_Data_Migrations_InitialPersistedGrantDbMigration_Down_Microsoft_EntityFrameworkCore_Migrations_MigrationBuilder__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>
+                    That is, builds the operations that will take the database from the state left in by
+                    this migration so that it returns to the state that it was in before this migration was applied.
+                </p>
+<p>
+                    This method must be overridden in each class that inherits from <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.migrations.migration">Migration</a> if
+                    both 'up' and 'down' migrations are to be supported. If it is not overridden, then calling it
+                    will throw and it will not be possible to migrate in the 'down' direction.
+                </p>
+<p>
+                    See <a href="https://aka.ms/efcore-docs-migrations">Database migrations</a> for more information and examples.
+                </p>
+</div>
 
 
 
@@ -229,7 +254,8 @@ public class InitialPersistedGrantDbMigration : Migration</code></pre>
   
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Builds the operations that will migrate the database 'up'.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -239,7 +265,8 @@ public class InitialPersistedGrantDbMigration : Migration</code></pre>
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>migrationBuilder</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.migrations.migrationbuilder">MigrationBuilder</a></dt>
-    <dd></dd>
+    <dd><p>The <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.migrations.migrationbuilder">MigrationBuilder</a> that will build the operations.</p>
+</dd>
   </dl>
 
 
@@ -249,6 +276,18 @@ public class InitialPersistedGrantDbMigration : Migration</code></pre>
 
 
 
+  <h4 class="section" id="Mercadona_Backend_Data_Migrations_InitialPersistedGrantDbMigration_Up_Microsoft_EntityFrameworkCore_Migrations_MigrationBuilder__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>
+                    That is, builds the operations that will take the database from the state left in by the
+                    previous migration so that it is up-to-date with regard to this migration.
+                </p>
+<p>
+                    This method must be overridden in each class that inherits from <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.entityframeworkcore.migrations.migration">Migration</a>.
+                </p>
+<p>
+                    See <a href="https://aka.ms/efcore-docs-migrations">Database migrations</a> for more information and examples.
+                </p>
+</div>
 
 
 
