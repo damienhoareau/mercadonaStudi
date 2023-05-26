@@ -27,7 +27,7 @@ jobs:
     - name: Build
       run: dotnet build --no-restore Mercadona.Backend/Mercadona.Studi.sln
     - name: Test
-      run: dotnet test --no-build --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=lcov /p:CoverletOutput=coverage /p:Exclude="[*]Mercadona.Backend.Data.Migrations.*" Mercadona.Backend/Mercadona.Studi.sln
+      run: dotnet test --no-build --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=lcov /p:CoverletOutput=coverage /p:Exclude="[*]Mercadona.Backend.Data.Migrations.*" /p:ExcludeByFile="**/*.g.cs" Mercadona.Backend/Mercadona.Studi.sln
     - name: Publish code coverage
       uses: paambaati/codeclimate-action@v4.0.0
       env:
