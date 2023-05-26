@@ -21,4 +21,6 @@ exclude_patterns:
   - "**/*_test.go"
   - "**/*.d.ts"
   - "Mercadona.Backend/Data/Migrations/"
+  - "Mercadona.Backend/System.Text.RegularExpressions.Generator/"
   - "Mercadona.Tests/"
+  - "docfx_project/"
