@@ -1598,6 +1598,19 @@ references:
   isSpec: "True"
   fullName: Mercadona.Backend.Data.Product.~Product
   nameWithType: Product.~Product
+- uid: Mercadona.Backend.Data.Product.GetCurrentOffer
+  name: GetCurrentOffer()
+  href: documentation/Mercadona.Backend.Data.Product.html#Mercadona_Backend_Data_Product_GetCurrentOffer
+  commentId: M:Mercadona.Backend.Data.Product.GetCurrentOffer
+  fullName: Mercadona.Backend.Data.Product.GetCurrentOffer()
+  nameWithType: Product.GetCurrentOffer()
+- uid: Mercadona.Backend.Data.Product.GetCurrentOffer*
+  name: GetCurrentOffer
+  href: documentation/Mercadona.Backend.Data.Product.html#Mercadona_Backend_Data_Product_GetCurrentOffer_
+  commentId: Overload:Mercadona.Backend.Data.Product.GetCurrentOffer
+  isSpec: "True"
+  fullName: Mercadona.Backend.Data.Product.GetCurrentOffer
+  nameWithType: Product.GetCurrentOffer
 - uid: Mercadona.Backend.Data.Product.Id
   name: Id
   href: documentation/Mercadona.Backend.Data.Product.html#Mercadona_Backend_Data_Product_Id
@@ -3280,6 +3293,19 @@ references:
   isSpec: "True"
   fullName: Mercadona.Backend.Validation.UserModelValidator.IsNotWeak
   nameWithType: UserModelValidator.IsNotWeak
+- uid: Mercadona.Backend.Validation.UserModelValidator.RequiresUpperAndLowerCaseCharacters
+  name: RequiresUpperAndLowerCaseCharacters
+  href: documentation/Mercadona.Backend.Validation.UserModelValidator.html#Mercadona_Backend_Validation_UserModelValidator_RequiresUpperAndLowerCaseCharacters
+  commentId: P:Mercadona.Backend.Validation.UserModelValidator.RequiresUpperAndLowerCaseCharacters
+  fullName: Mercadona.Backend.Validation.UserModelValidator.RequiresUpperAndLowerCaseCharacters
+  nameWithType: UserModelValidator.RequiresUpperAndLowerCaseCharacters
+- uid: Mercadona.Backend.Validation.UserModelValidator.RequiresUpperAndLowerCaseCharacters*
+  name: RequiresUpperAndLowerCaseCharacters
+  href: documentation/Mercadona.Backend.Validation.UserModelValidator.html#Mercadona_Backend_Validation_UserModelValidator_RequiresUpperAndLowerCaseCharacters_
+  commentId: Overload:Mercadona.Backend.Validation.UserModelValidator.RequiresUpperAndLowerCaseCharacters
+  isSpec: "True"
+  fullName: Mercadona.Backend.Validation.UserModelValidator.RequiresUpperAndLowerCaseCharacters
+  nameWithType: UserModelValidator.RequiresUpperAndLowerCaseCharacters
 - uid: Mercadona.Backend.Validation.UserModelValidator.USERNAME_VALID_EMAIL
   name: USERNAME_VALID_EMAIL
   href: documentation/Mercadona.Backend.Validation.UserModelValidator.html#Mercadona_Backend_Validation_UserModelValidator_USERNAME_VALID_EMAIL
