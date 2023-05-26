@@ -2,94 +2,84 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
-namespace Mercadona.Backend.Services.Interfaces
+namespace Mercadona.Backend.Services.Interfaces;
+
+/// <summary>
+/// Service permettant de gérer l'authentification
+/// </summary>
+public class AuthenticationService : IAuthenticationService
 {
+    private readonly UserManager<IdentityUser> _userManager;
+    private readonly ITokenService _tokenService;
+
     /// <summary>
-    /// Service permettant de gérer l'authentification
+    /// Initialise une nouvelle instance de la classe <see cref="AuthenticationService"/>.
     /// </summary>
-    public class AuthenticationService : IAuthenticationService
+    /// <param name="userManager">Manager des utilisateurs.</param>
+    /// <param name="tokenService">Service de gestion des jetons JWT.</param>
+    public AuthenticationService(UserManager<IdentityUser> userManager, ITokenService tokenService)
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly ITokenService _tokenService;
+        _userManager = userManager;
+        _tokenService = tokenService;
+    }
 
-        /// <summary>
-        /// Initialise une nouvelle instance de la classe <see cref="AuthenticationService"/>.
-        /// </summary>
-        /// <param name="userManager">Manager des utilisateurs.</param>
-        /// <param name="tokenService">Service de gestion des jetons JWT.</param>
-        public AuthenticationService(
-            UserManager<IdentityUser> userManager,
-            ITokenService tokenService
-        )
+    /// <inheritdoc/>
+    public async Task<IdentityUser?> FindUserByNameAsync(string username)
+    {
+        IdentityUser? user = await _userManager.FindByNameAsync(username);
+        return user;
+    }
+
+    /// <inheritdoc/>
+    public Task<bool> CheckPasswordAsync(IdentityUser user, string password)
+    {
+        return _userManager.CheckPasswordAsync(user, password);
+    }
+
+    /// <inheritdoc/>
+    public Task<(string refreshToken, string accessToken)> LoginAsync(IdentityUser user)
+    {
+        return Task.Run(() =>
         {
-            _userManager = userManager;
-            _tokenService = tokenService;
-        }
-
-        /// <inheritdoc/>
-        public async Task<IdentityUser?> FindUserByNameAsync(string username)
-        {
-            IdentityUser? user = await _userManager.FindByNameAsync(username);
-            return user;
-        }
-
-        /// <inheritdoc/>
-        public Task<bool> CheckPasswordAsync(IdentityUser user, string password)
-        {
-            return _userManager.CheckPasswordAsync(user, password);
-        }
-
-        /// <inheritdoc/>
-        public Task<(string refreshToken, string accessToken)> LoginAsync(IdentityUser user)
-        {
-            return Task.Run(() =>
-            {
-                string refreshToken = _tokenService.GenerateRefreshToken();
-                List<Claim> authClaims =
-                    new()
-                    {
-                        new Claim(ClaimTypes.NameIdentifier, user.Id),
-                        new Claim(ClaimTypes.Name, user.UserName!),
-                        new Claim(JwtRegisteredClaimNames.Jti, refreshToken),
-                        new Claim("AspNet.Identity.SecurityStamp", user.SecurityStamp!)
-                    };
-
-                string accessToken = _tokenService.GenerateAccessToken(refreshToken, authClaims);
-
-                return (refreshToken, accessToken);
-            });
-        }
-
-        /// <inheritdoc/>
-        public Task<string> RefreshTokenAsync(string refreshToken)
-        {
-            return Task.Run(() =>
-            {
-                return _tokenService.RefreshToken(refreshToken);
-            });
-        }
-
-        /// <inheritdoc/>
-        public async Task<bool> RegisterAsync(string username, string password)
-        {
-            IdentityUser user =
+            string refreshToken = _tokenService.GenerateRefreshToken();
+            List<Claim> authClaims =
                 new()
                 {
-                    Email = username,
-                    SecurityStamp = Guid.NewGuid().ToString(),
-                    UserName = username
+                    new Claim(ClaimTypes.NameIdentifier, user.Id),
+                    new Claim(ClaimTypes.Name, user.UserName!),
+                    new Claim(JwtRegisteredClaimNames.Jti, refreshToken),
+                    new Claim("AspNet.Identity.SecurityStamp", user.SecurityStamp!)
                 };
-            IdentityResult result = await _userManager.CreateAsync(user, password);
-            return result.Succeeded;
-        }
 
-        /// <inheritdoc/>
-        public Task LogoutAsync(string refreshToken)
-        {
-            return Task.Run(() =>
+            string accessToken = _tokenService.GenerateAccessToken(refreshToken, authClaims);
+
+            return (refreshToken, accessToken);
+        });
+    }
+
+    /// <inheritdoc/>
+    public Task<string> RefreshTokenAsync(string refreshToken)
+    {
+        return Task.Run(() => _tokenService.RefreshToken(refreshToken));
+    }
+
+    /// <inheritdoc/>
+    public async Task<bool> RegisterAsync(string username, string password)
+    {
+        IdentityUser user =
+            new()
             {
-                _tokenService.RevokeRefreshToken(refreshToken);
-            });
-        }
+                Email = username,
+                SecurityStamp = Guid.NewGuid().ToString(),
+                UserName = username
+            };
+        IdentityResult result = await _userManager.CreateAsync(user, password);
+        return result.Succeeded;
+    }
+
+    /// <inheritdoc/>
+    public Task LogoutAsync(string refreshToken)
+    {
+        return Task.Run(() => _tokenService.RevokeRefreshToken(refreshToken));
     }
 }

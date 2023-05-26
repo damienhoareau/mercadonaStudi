@@ -1,37 +1,36 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Mercadona.Tests.Fixtures
+namespace Mercadona.Tests.Fixtures;
+
+public class ServiceProviderFixture : IServiceProvider
 {
-    public class ServiceProviderFixture : IServiceProvider
+    private IServiceCollection? _services;
+    private IServiceProvider? _serviceProvider;
+
+    public ServiceProviderFixture()
     {
-        private IServiceCollection? _services;
-        private IServiceProvider? _serviceProvider;
+        Reconfigure(null);
+    }
 
-        public ServiceProviderFixture()
-        {
-            Reconfigure(null);
-        }
+    public object? GetService(Type serviceType) => _serviceProvider?.GetService(serviceType);
 
-        public object? GetService(Type serviceType) => _serviceProvider?.GetService(serviceType);
+    private IServiceCollection PrivateConfigure()
+    {
+        _services = new ServiceCollection();
 
-        private IServiceCollection PrivateConfigure()
-        {
-            _services = new ServiceCollection();
+        return _services;
+    }
 
-            return _services;
-        }
+    public IServiceProvider Reconfigure(
+        Func<IServiceCollection, IServiceCollection>? additionalConfiguration
+    )
+    {
+        _services = PrivateConfigure();
+        if (additionalConfiguration != null)
+            _services = additionalConfiguration(_services);
 
-        public IServiceProvider Reconfigure(
-            Func<IServiceCollection, IServiceCollection>? additionalConfiguration
-        )
-        {
-            _services = PrivateConfigure();
-            if (additionalConfiguration != null)
-                _services = additionalConfiguration(_services);
+        _serviceProvider = _services.BuildServiceProvider();
 
-            _serviceProvider = _services.BuildServiceProvider();
-
-            return _serviceProvider;
-        }
+        return _serviceProvider;
     }
 }

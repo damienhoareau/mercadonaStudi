@@ -26,11 +26,6 @@ namespace Mercadona.Backend.Pages
         public bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
 
         /// <summary>
-        /// Initialise une nouvelle instance de la classe <see cref="ErrorModel"/>.
-        /// </summary>
-        public ErrorModel() { }
-
-        /// <summary>
         /// Exécutée lors de la récupération de la page.
         /// </summary>
         public void OnGet()

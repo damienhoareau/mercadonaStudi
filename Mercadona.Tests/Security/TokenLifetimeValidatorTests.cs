@@ -10,248 +10,244 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using static Xunit.Assert;
 
-namespace Mercadona.Tests.Security
+namespace Mercadona.Tests.Security;
+
+public class TokenLifetimeValidatorTests : IAsyncLifetime
 {
-    public class TokenLifetimeValidatorTests : IAsyncLifetime
+    private readonly ITokenLifetimeValidator _tokenLifetimeValidator;
+    private readonly MemoryCacheOptions _memoryCacheOptions = new();
+    private readonly WhiteList _whiteList;
+
+    public TokenLifetimeValidatorTests()
     {
-        private readonly ITokenLifetimeValidator _tokenLifetimeValidator;
-        private readonly MemoryCacheOptions _memoryCacheOptions = new();
-        private readonly WhiteList _whiteList;
+        Mock<IOptions<MemoryCacheOptions>> mockMemoryCacheOptions = new();
+        mockMemoryCacheOptions.SetupGet(_ => _.Value).Returns(_memoryCacheOptions);
 
-        public TokenLifetimeValidatorTests()
-        {
-            Mock<IOptions<MemoryCacheOptions>> mockMemoryCacheOptions = new();
-            mockMemoryCacheOptions.SetupGet(_ => _.Value).Returns(_memoryCacheOptions);
+        _whiteList = new(mockMemoryCacheOptions.Object);
 
-            _whiteList = new(mockMemoryCacheOptions.Object);
+        _tokenLifetimeValidator = new TokenLifetimeValidator(_whiteList);
+    }
 
-            _tokenLifetimeValidator = new TokenLifetimeValidator(_whiteList);
-        }
+    public Task InitializeAsync()
+    {
+        return Task.Run(_whiteList.Clear);
+    }
 
-        public Task InitializeAsync()
-        {
-            return Task.Run(_whiteList.Clear);
-        }
+    public Task DisposeAsync()
+    {
+        return Task.CompletedTask;
+    }
 
-        public Task DisposeAsync()
-        {
-            return Task.CompletedTask;
-        }
+    private static JwtSecurityToken GetJwtSecurityToken(DateTime notBefore, DateTime expires)
+    {
+        return new(
+            issuer: TestsHelper.TokenValidationParameters.ValidIssuer,
+            audience: TestsHelper.TokenValidationParameters.ValidAudience,
+            notBefore: notBefore,
+            expires: expires,
+            claims: new List<Claim>()
+            {
+                new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),
+                new Claim(ClaimTypes.Name, "toto@toto.fr"),
+                new Claim(JwtRegisteredClaimNames.Jti, "refreshToken"),
+                new Claim("AspNet.Identity.SecurityStamp", Guid.NewGuid().ToString())
+            },
+            signingCredentials: new SigningCredentials(
+                TestsHelper.TokenValidationParameters.IssuerSigningKey,
+                SecurityAlgorithms.HmacSha256
+            )
+        );
+    }
 
-        private static JwtSecurityToken GetJwtSecurityToken(DateTime notBefore, DateTime expires)
-        {
-            return new(
-                issuer: TestsHelper.TokenValidationParameters.ValidIssuer,
-                audience: TestsHelper.TokenValidationParameters.ValidAudience,
-                notBefore: notBefore,
-                expires: expires,
-                claims: new List<Claim>()
-                {
-                    new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),
-                    new Claim(ClaimTypes.Name, "toto@toto.fr"),
-                    new Claim(JwtRegisteredClaimNames.Jti, "refreshToken"),
-                    new Claim("AspNet.Identity.SecurityStamp", Guid.NewGuid().ToString())
-                },
-                signingCredentials: new SigningCredentials(
-                    TestsHelper.TokenValidationParameters.IssuerSigningKey,
-                    SecurityAlgorithms.HmacSha256
-                )
-            );
-        }
+    private static ClaimsPrincipal GetClaimsPrincipal(JwtSecurityToken token)
+    {
+        TokenValidationParameters tokenValidationParameters = TestsHelper.TokenValidationParameters;
+        tokenValidationParameters.ValidateLifetime = false;
+        return new JwtSecurityTokenHandler().ValidateToken(
+            new JwtSecurityTokenHandler().WriteToken(token),
+            tokenValidationParameters,
+            out _
+        );
+    }
 
-        private static ClaimsPrincipal GetClaimsPrincipal(JwtSecurityToken token)
-        {
-            TokenValidationParameters tokenValidationParameters =
-                TestsHelper.TokenValidationParameters;
-            tokenValidationParameters.ValidateLifetime = false;
-            return new JwtSecurityTokenHandler().ValidateToken(
-                new JwtSecurityTokenHandler().WriteToken(token),
-                tokenValidationParameters,
-                out _
-            );
-        }
+    [Fact]
+    public async Task ValidateTokenLifetimeAsync_RefreshTokenDoesNotExist_ShouldReturnFalseAndRaiseLogoutEvent_Async()
+    {
+        // Arrange
+        ClaimsPrincipal principal = new(new ClaimsIdentity());
 
-        [Fact]
-        public async void ValidateTokenLifetimeAsync_RefreshTokenDoesNotExist_ShouldReturnFalseAndRaiseLogoutEvent()
-        {
-            // Arrange
-            ClaimsPrincipal principal = new(new ClaimsIdentity());
-
-            // Act
-            bool result = false;
-            RaisedEvent<TokenExpirationWarningChangedArgs> raisedEvent =
-                await RaisesAsync<TokenExpirationWarningChangedArgs>(
-                    a => _tokenLifetimeValidator.TokenExpirationWarningChanged += a,
-                    a => _tokenLifetimeValidator.TokenExpirationWarningChanged -= a,
-                    async () =>
-                        result = await _tokenLifetimeValidator.ValidateTokenLifetimeAsync(principal)
-                );
-
-            // Assert
-            result.Should().BeFalse();
-            raisedEvent.Arguments.TokenExpirationWarningEnum
-                .Should()
-                .Be(TokenExpirationWarning.LogoutNeeded);
-            raisedEvent.Arguments.ValidTo.Should().BeNull();
-        }
-
-        [Fact]
-        public async void ValidateTokenLifetimeAsync_RefreshTokenNotInWhitelist_ShouldReturnFalseAndRaiseLogoutEvent()
-        {
-            // Arrange
-            JwtSecurityToken token = GetJwtSecurityToken(
-                DateTime.Now,
-                DateTime.Now.AddMinutes(TokenService.ACCESS_TOKEN_DURATION)
-            );
-            ClaimsPrincipal principal = GetClaimsPrincipal(token);
-            JwtSecurityToken otherToken = GetJwtSecurityToken(
-                DateTime.Now,
-                DateTime.Now.AddMinutes(TokenService.ACCESS_TOKEN_DURATION)
-            );
-            _whiteList.Set(Guid.NewGuid().ToString(), otherToken);
-
-            // Act
-            bool result = false;
-            RaisedEvent<TokenExpirationWarningChangedArgs> raisedEvent =
-                await RaisesAsync<TokenExpirationWarningChangedArgs>(
-                    a => _tokenLifetimeValidator.TokenExpirationWarningChanged += a,
-                    a => _tokenLifetimeValidator.TokenExpirationWarningChanged -= a,
-                    async () =>
-                        result = await _tokenLifetimeValidator.ValidateTokenLifetimeAsync(principal)
-                );
-
-            // Assert
-            result.Should().BeFalse();
-            raisedEvent.Arguments.TokenExpirationWarningEnum
-                .Should()
-                .Be(TokenExpirationWarning.LogoutNeeded);
-            raisedEvent.Arguments.ValidTo.Should().BeNull();
-        }
-
-        [Fact]
-        public async void ValidateTokenLifetimeAsync_AccessTokenExpired_ShouldReturnFalseAndRaiseLogoutEvent()
-        {
-            // Arrange
-            JwtSecurityToken token = GetJwtSecurityToken(
-                DateTime.Now.AddHours(-1),
-                DateTime.Now.AddHours(-1).AddMinutes(TokenService.ACCESS_TOKEN_DURATION)
-            );
-            ClaimsPrincipal principal = GetClaimsPrincipal(token);
-            // Le jeton étant expiré, il ne devrait pas être dans la liste blanche
-            //_whiteList.Set(
-            //    token.Claims.Single(_ => _.Type == JwtRegisteredClaimNames.Jti).Value,
-            //    token
-            //);
-
-            // Act
-            bool result = false;
-            RaisedEvent<TokenExpirationWarningChangedArgs> raisedEvent =
-                await RaisesAsync<TokenExpirationWarningChangedArgs>(
-                    a => _tokenLifetimeValidator.TokenExpirationWarningChanged += a,
-                    a => _tokenLifetimeValidator.TokenExpirationWarningChanged -= a,
-                    async () =>
-                        result = await _tokenLifetimeValidator.ValidateTokenLifetimeAsync(principal)
-                );
-
-            // Assert
-            result.Should().BeFalse();
-            raisedEvent.Arguments.TokenExpirationWarningEnum
-                .Should()
-                .Be(TokenExpirationWarning.LogoutNeeded);
-            raisedEvent.Arguments.ValidTo.Should().BeNull();
-        }
-
-        [Fact]
-        public async void ValidateTokenLifetimeAsync_AccessTokenOneMinuteLeft_ShouldReturnTrueAndRaiseOneMinuteLeftEvent()
-        {
-            // Arrange
-            JwtSecurityToken token = GetJwtSecurityToken(
-                DateTime.Now.AddMinutes(1 - TokenService.ACCESS_TOKEN_DURATION),
-                DateTime.Now.AddMinutes(1)
-            );
-            ClaimsPrincipal principal = GetClaimsPrincipal(token);
-            _whiteList.Set(
-                token.Claims.Single(_ => _.Type == JwtRegisteredClaimNames.Jti).Value,
-                token
+        // Act
+        bool result = false;
+        RaisedEvent<TokenExpirationWarningChangedArgs> raisedEvent =
+            await RaisesAsync<TokenExpirationWarningChangedArgs>(
+                a => _tokenLifetimeValidator.TokenExpirationWarningChanged += a,
+                a => _tokenLifetimeValidator.TokenExpirationWarningChanged -= a,
+                async () =>
+                    result = await _tokenLifetimeValidator.ValidateTokenLifetimeAsync(principal)
             );
 
-            // Act
-            bool result = false;
-            RaisedEvent<TokenExpirationWarningChangedArgs> raisedEvent =
-                await RaisesAsync<TokenExpirationWarningChangedArgs>(
-                    a => _tokenLifetimeValidator.TokenExpirationWarningChanged += a,
-                    a => _tokenLifetimeValidator.TokenExpirationWarningChanged -= a,
-                    async () =>
-                        result = await _tokenLifetimeValidator.ValidateTokenLifetimeAsync(principal)
-                );
+        // Assert
+        result.Should().BeFalse();
+        raisedEvent.Arguments.TokenExpirationWarningEnum
+            .Should()
+            .Be(TokenExpirationWarning.LogoutNeeded);
+        raisedEvent.Arguments.ValidTo.Should().BeNull();
+    }
 
-            // Assert
-            result.Should().BeTrue();
-            raisedEvent.Arguments.TokenExpirationWarningEnum
-                .Should()
-                .Be(TokenExpirationWarning.OneMinuteLeft);
-            raisedEvent.Arguments.ValidTo.Should().NotBeNull();
-        }
+    [Fact]
+    public async Task ValidateTokenLifetimeAsync_RefreshTokenNotInWhitelist_ShouldReturnFalseAndRaiseLogoutEvent_Async()
+    {
+        // Arrange
+        JwtSecurityToken token = GetJwtSecurityToken(
+            DateTime.Now,
+            DateTime.Now.AddMinutes(TokenService.ACCESS_TOKEN_DURATION)
+        );
+        ClaimsPrincipal principal = GetClaimsPrincipal(token);
+        JwtSecurityToken otherToken = GetJwtSecurityToken(
+            DateTime.Now,
+            DateTime.Now.AddMinutes(TokenService.ACCESS_TOKEN_DURATION)
+        );
+        _whiteList.Set(Guid.NewGuid().ToString(), otherToken);
 
-        [Fact]
-        public async void ValidateTokenLifetimeAsync_AccessTokenFiveMinutesLeft_ShouldReturnTrueAndRaiseFiveMinutesLeftEvent()
-        {
-            // Arrange
-            JwtSecurityToken token = GetJwtSecurityToken(
-                DateTime.Now.AddMinutes(5 - TokenService.ACCESS_TOKEN_DURATION),
-                DateTime.Now.AddMinutes(5)
+        // Act
+        bool result = false;
+        RaisedEvent<TokenExpirationWarningChangedArgs> raisedEvent =
+            await RaisesAsync<TokenExpirationWarningChangedArgs>(
+                a => _tokenLifetimeValidator.TokenExpirationWarningChanged += a,
+                a => _tokenLifetimeValidator.TokenExpirationWarningChanged -= a,
+                async () =>
+                    result = await _tokenLifetimeValidator.ValidateTokenLifetimeAsync(principal)
             );
-            ClaimsPrincipal principal = GetClaimsPrincipal(token);
-            _whiteList.Set(
-                token.Claims.Single(_ => _.Type == JwtRegisteredClaimNames.Jti).Value,
-                token
+
+        // Assert
+        result.Should().BeFalse();
+        raisedEvent.Arguments.TokenExpirationWarningEnum
+            .Should()
+            .Be(TokenExpirationWarning.LogoutNeeded);
+        raisedEvent.Arguments.ValidTo.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task ValidateTokenLifetimeAsync_AccessTokenExpired_ShouldReturnFalseAndRaiseLogoutEvent_Async()
+    {
+        // Arrange
+        JwtSecurityToken token = GetJwtSecurityToken(
+            DateTime.Now.AddHours(-1),
+            DateTime.Now.AddHours(-1).AddMinutes(TokenService.ACCESS_TOKEN_DURATION)
+        );
+        ClaimsPrincipal principal = GetClaimsPrincipal(token);
+        // Le jeton étant expiré, il ne devrait pas être dans la liste blanche
+        //_whiteList.Set(
+        //    token.Claims.Single(_ => _.Type == JwtRegisteredClaimNames.Jti).Value,
+        //    token
+        //);
+
+        // Act
+        bool result = false;
+        RaisedEvent<TokenExpirationWarningChangedArgs> raisedEvent =
+            await RaisesAsync<TokenExpirationWarningChangedArgs>(
+                a => _tokenLifetimeValidator.TokenExpirationWarningChanged += a,
+                a => _tokenLifetimeValidator.TokenExpirationWarningChanged -= a,
+                async () =>
+                    result = await _tokenLifetimeValidator.ValidateTokenLifetimeAsync(principal)
             );
 
-            // Act
-            bool result = false;
-            RaisedEvent<TokenExpirationWarningChangedArgs> raisedEvent =
-                await RaisesAsync<TokenExpirationWarningChangedArgs>(
-                    a => _tokenLifetimeValidator.TokenExpirationWarningChanged += a,
-                    a => _tokenLifetimeValidator.TokenExpirationWarningChanged -= a,
-                    async () =>
-                        result = await _tokenLifetimeValidator.ValidateTokenLifetimeAsync(principal)
-                );
+        // Assert
+        result.Should().BeFalse();
+        raisedEvent.Arguments.TokenExpirationWarningEnum
+            .Should()
+            .Be(TokenExpirationWarning.LogoutNeeded);
+        raisedEvent.Arguments.ValidTo.Should().BeNull();
+    }
 
-            // Assert
-            result.Should().BeTrue();
-            raisedEvent.Arguments.TokenExpirationWarningEnum
-                .Should()
-                .Be(TokenExpirationWarning.FiveMinutesLeft);
-            raisedEvent.Arguments.ValidTo.Should().NotBeNull();
-        }
+    [Fact]
+    public async Task ValidateTokenLifetimeAsync_AccessTokenOneMinuteLeft_ShouldReturnTrueAndRaiseOneMinuteLeftEvent_Async()
+    {
+        // Arrange
+        JwtSecurityToken token = GetJwtSecurityToken(
+            DateTime.Now.AddMinutes(1 - TokenService.ACCESS_TOKEN_DURATION),
+            DateTime.Now.AddMinutes(1)
+        );
+        ClaimsPrincipal principal = GetClaimsPrincipal(token);
+        _whiteList.Set(
+            token.Claims.Single(_ => _.Type == JwtRegisteredClaimNames.Jti).Value,
+            token
+        );
 
-        [Fact]
-        public async void ValidateTokenLifetimeAsync_AccessTokenMoreThanFiveMinutesLeft_ShouldReturnTrueAndNotRaiseEvent()
-        {
-            // Arrange
-            JwtSecurityToken token = GetJwtSecurityToken(
-                DateTime.Now,
-                DateTime.Now.AddMinutes(TokenService.ACCESS_TOKEN_DURATION)
+        // Act
+        bool result = false;
+        RaisedEvent<TokenExpirationWarningChangedArgs> raisedEvent =
+            await RaisesAsync<TokenExpirationWarningChangedArgs>(
+                a => _tokenLifetimeValidator.TokenExpirationWarningChanged += a,
+                a => _tokenLifetimeValidator.TokenExpirationWarningChanged -= a,
+                async () =>
+                    result = await _tokenLifetimeValidator.ValidateTokenLifetimeAsync(principal)
             );
-            ClaimsPrincipal principal = GetClaimsPrincipal(token);
-            _whiteList.Set(
-                token.Claims.Single(_ => _.Type == JwtRegisteredClaimNames.Jti).Value,
-                token
+
+        // Assert
+        result.Should().BeTrue();
+        raisedEvent.Arguments.TokenExpirationWarningEnum
+            .Should()
+            .Be(TokenExpirationWarning.OneMinuteLeft);
+        raisedEvent.Arguments.ValidTo.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task ValidateTokenLifetimeAsync_AccessTokenFiveMinutesLeft_ShouldReturnTrueAndRaiseFiveMinutesLeftEvent_Async()
+    {
+        // Arrange
+        JwtSecurityToken token = GetJwtSecurityToken(
+            DateTime.Now.AddMinutes(5 - TokenService.ACCESS_TOKEN_DURATION),
+            DateTime.Now.AddMinutes(5)
+        );
+        ClaimsPrincipal principal = GetClaimsPrincipal(token);
+        _whiteList.Set(
+            token.Claims.Single(_ => _.Type == JwtRegisteredClaimNames.Jti).Value,
+            token
+        );
+
+        // Act
+        bool result = false;
+        RaisedEvent<TokenExpirationWarningChangedArgs> raisedEvent =
+            await RaisesAsync<TokenExpirationWarningChangedArgs>(
+                a => _tokenLifetimeValidator.TokenExpirationWarningChanged += a,
+                a => _tokenLifetimeValidator.TokenExpirationWarningChanged -= a,
+                async () =>
+                    result = await _tokenLifetimeValidator.ValidateTokenLifetimeAsync(principal)
             );
-            bool eventInvoked = false;
-            void OnTokenExpirationWarningChanged(object? s, TokenExpirationWarningChangedArgs e) =>
-                eventInvoked = true;
 
-            // Act
-            _tokenLifetimeValidator.TokenExpirationWarningChanged +=
-                OnTokenExpirationWarningChanged;
-            bool result = await _tokenLifetimeValidator.ValidateTokenLifetimeAsync(principal);
-            _tokenLifetimeValidator.TokenExpirationWarningChanged -=
-                OnTokenExpirationWarningChanged;
+        // Assert
+        result.Should().BeTrue();
+        raisedEvent.Arguments.TokenExpirationWarningEnum
+            .Should()
+            .Be(TokenExpirationWarning.FiveMinutesLeft);
+        raisedEvent.Arguments.ValidTo.Should().NotBeNull();
+    }
 
-            // Assert
-            result.Should().BeTrue();
-            eventInvoked.Should().BeFalse();
-        }
+    [Fact]
+    public async Task ValidateTokenLifetimeAsync_AccessTokenMoreThanFiveMinutesLeft_ShouldReturnTrueAndNotRaiseEvent_Async()
+    {
+        // Arrange
+        JwtSecurityToken token = GetJwtSecurityToken(
+            DateTime.Now,
+            DateTime.Now.AddMinutes(TokenService.ACCESS_TOKEN_DURATION)
+        );
+        ClaimsPrincipal principal = GetClaimsPrincipal(token);
+        _whiteList.Set(
+            token.Claims.Single(_ => _.Type == JwtRegisteredClaimNames.Jti).Value,
+            token
+        );
+        bool eventInvoked = false;
+        void OnTokenExpirationWarningChanged(object? s, TokenExpirationWarningChangedArgs e) =>
+            eventInvoked = true;
+
+        // Act
+        _tokenLifetimeValidator.TokenExpirationWarningChanged += OnTokenExpirationWarningChanged;
+        bool result = await _tokenLifetimeValidator.ValidateTokenLifetimeAsync(principal);
+        _tokenLifetimeValidator.TokenExpirationWarningChanged -= OnTokenExpirationWarningChanged;
+
+        // Assert
+        result.Should().BeTrue();
+        eventInvoked.Should().BeFalse();
     }
 }

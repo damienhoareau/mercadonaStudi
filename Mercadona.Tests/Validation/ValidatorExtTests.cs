@@ -2,54 +2,53 @@ using FluentAssertions;
 using FluentValidation;
 using Mercadona.Backend.Validation;
 
-namespace Mercadona.Tests.Validation
+namespace Mercadona.Tests.Validation;
+
+public class ValidatorExtTests
 {
-    public class ValidatorExtTests
+    class TestClass
     {
-        class TestClass
+        public int Id { get; set; }
+    }
+
+    class TestClassValidator : AbstractValidator<TestClass> { }
+
+    class TestClassWithErrorValidator : AbstractValidator<TestClass>
+    {
+        public TestClassWithErrorValidator()
         {
-            public int Id { get; set; }
+            RuleFor(_ => _.Id).GreaterThan(0).WithMessage("Error");
         }
+    }
 
-        class TestClassValidator : AbstractValidator<TestClass> { }
+    [Fact]
+    public async Task ValidateValue_IsValid_ShouldReturnEmptyArray_Async()
+    {
+        // Arrange
+        TestClassValidator validator = new();
 
-        class TestClassWithErrorValidator : AbstractValidator<TestClass>
-        {
-            public TestClassWithErrorValidator()
-            {
-                RuleFor(_ => _.Id).GreaterThan(0).WithMessage("Error");
-            }
-        }
+        // Act
+        IEnumerable<string> result = await validator
+            .ValidateValue()
+            .Invoke(new TestClass(), nameof(TestClass.Id));
 
-        [Fact]
-        public async Task ValidateValue_IsValid_ShouldReturnEmptyArray()
-        {
-            // Arrange
-            TestClassValidator validator = new();
+        // Assert
+        result.Should().BeEmpty();
+    }
 
-            // Act
-            IEnumerable<string> result = await validator
-                .ValidateValue()
-                .Invoke(new TestClass(), nameof(TestClass.Id));
+    [Fact]
+    public async Task ValidateValue_HasError_ShouldReturnError_Async()
+    {
+        // Arrange
+        TestClassWithErrorValidator validator = new();
 
-            // Assert
-            result.Should().BeEmpty();
-        }
+        // Act
+        IEnumerable<string> result = await validator
+            .ValidateValue()
+            .Invoke(new TestClass(), nameof(TestClass.Id));
 
-        [Fact]
-        public async Task ValidateValue_HasError_ShouldReturnError()
-        {
-            // Arrange
-            TestClassWithErrorValidator validator = new();
-
-            // Act
-            IEnumerable<string> result = await validator
-                .ValidateValue()
-                .Invoke(new TestClass(), nameof(TestClass.Id));
-
-            // Assert
-            result.Should().NotBeEmpty();
-            result.Should().Contain("Error");
-        }
+        // Assert
+        result.Should().NotBeEmpty();
+        result.Should().Contain("Error");
     }
 }

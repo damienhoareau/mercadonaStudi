@@ -1,4 +1,4 @@
-using FluentValidation;
+﻿using FluentValidation;
 using Mercadona.Backend.Areas.Identity;
 using Mercadona.Backend.Data;
 using Mercadona.Backend.Models;
@@ -32,7 +32,7 @@ builder.WebHost.UseKestrel(k =>
     });
 });
 #endif
-builder.WebHost.UseUrls("https://*:443","http://*:80");
+builder.WebHost.UseUrls("https://*:8081","http://*:8080");
 
 // Add services to the container.
 string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -158,7 +158,7 @@ builder.Services.AddSwaggerGen(options =>
             }
         }
     );
-    string xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    string xmlFilename = $"{typeof(AuthOperationFilter).Assembly.GetName().Name}.xml";
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 
     // Définir le schéma de sécurité
