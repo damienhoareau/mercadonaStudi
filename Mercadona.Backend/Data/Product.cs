@@ -111,4 +111,14 @@ public class Product
     /// </summary>
     [JsonIgnore]
     public Stream ImageStream { get; private set; }
+
+    /// <summary>
+    /// Obtient l'offre en cours.
+    /// </summary>
+    /// <returns>L'offre en cours</returns>
+    public Offer? GetCurrentOffer()
+    {
+        DateOnly today = DateOnly.FromDateTime(DateTime.Today);
+        return Offers.SingleOrDefault(o => o.StartDate <= today && o.EndDate >= today);
+    }
 }

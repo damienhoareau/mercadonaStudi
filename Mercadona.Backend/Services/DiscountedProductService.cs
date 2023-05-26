@@ -65,15 +65,7 @@ public class DiscountedProductService : IDiscountedProductService
             )
             .ToListAsync(cancellationToken);
 
-        return products
-            .Select(
-                p =>
-                    new DiscountedProduct(
-                        p,
-                        p.Offers.SingleOrDefault(o => o.StartDate <= today && o.EndDate >= today)
-                    )
-            )
-            .ToList();
+        return products.Select(p => new DiscountedProduct(p, p.GetCurrentOffer())).ToList();
     }
 
     /// <inheritdoc/>
@@ -106,15 +98,7 @@ public class DiscountedProductService : IDiscountedProductService
             )
             .ToListAsync(cancellationToken);
 
-        return products
-            .Select(
-                p =>
-                    new DiscountedProduct(
-                        p,
-                        p.Offers.SingleOrDefault(o => o.StartDate <= today && o.EndDate >= today)
-                    )
-            )
-            .ToList();
+        return products.Select(p => new DiscountedProduct(p, p.GetCurrentOffer())).ToList();
     }
 
     /// <inheritdoc/>

@@ -17,7 +17,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MimeDetective;
 using MudBlazor.Services;
-using System.Reflection;
 using System.Text;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -199,8 +198,8 @@ app.UseRouting();
 
 // Localization
 app.UseRequestLocalization(new RequestLocalizationOptions()
-    .AddSupportedCultures(new[] { "fr-FR" })
-    .AddSupportedUICultures(new[] { "fr-FR" }));
+    .AddSupportedCultures("fr-FR")
+    .AddSupportedUICultures("fr-FR"));
 
 // API Documentation (avant le pipeline de sécurité afin de permettre les requêtes publiques)
 app.UseSwagger();

@@ -18,7 +18,6 @@ public partial class UserModelValidator : AbstractValidator<UserModel>
     private const int MinimumNumericCharacters = 1;
     private const int MinimumSymbolCharacters = 1;
     private const int PreferredPasswordLength = 8;
-    private const bool RequiresUpperAndLowerCaseCharacters = true;
 
     /// <summary>
     /// Initialise une nouvelle instance de la classe <see cref="UserModelValidator"/>.
@@ -28,6 +27,11 @@ public partial class UserModelValidator : AbstractValidator<UserModel>
         RuleFor(_ => _.Username).EmailAddress().WithMessage(USERNAME_VALID_EMAIL);
         RuleFor(_ => _.Password).Must(IsNotWeak).WithMessage(WEAK_PASSWORD);
     }
+
+    /// <summary>
+    /// Obtient ou détermine si un mot de passe doit avoir des caractères en minuscule et en majuscule.
+    /// </summary>
+    public bool RequiresUpperAndLowerCaseCharacters { get; set; } = true;
 
     /// <summary>
     /// Teste si le mot de passe est fort.
@@ -93,11 +97,15 @@ public partial class UserModelValidator : AbstractValidator<UserModel>
         return hasLowercaseCharacters && hasUppercaseCharacters;
     }
 
-    private static Regex NumericRegex() => new("\\d");
+    [GeneratedRegex("\\d")]
+    private static partial Regex NumericRegex();
 
-    private static Regex SpecialCharacterRegex() => new("[^0-9a-zA-Z\\s]");
+    [GeneratedRegex("[^0-9a-zA-Z\\s]")]
+    private static partial Regex SpecialCharacterRegex();
 
-    private static Regex LowerCaseRegex() => new("[a-z]");
+    [GeneratedRegex("[a-z]")]
+    private static partial Regex LowerCaseRegex();
 
-    private static Regex UpperCaseRegex() => new("[A-Z]");
+    [GeneratedRegex("[A-Z]")]
+    private static partial Regex UpperCaseRegex();
 }

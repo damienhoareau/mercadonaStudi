@@ -96,4 +96,80 @@ public class ProductTests
         // Assert
         product.ImageStream.Length.Should().Be(expectedFileSize);
     }
+
+    [Fact]
+    public void Product_GetCurrentOffer_NoOffer_ShouldReturnNull()
+    {
+        // Arrange
+        Product product =
+            new()
+            {
+                Label = "Mon produit",
+                Description = "Un produit",
+                Price = 1M,
+                Category = "Surgelé"
+            };
+
+        // Act
+        Offer? currentOffer = product.GetCurrentOffer();
+
+        // Assert
+        currentOffer.Should().BeNull();
+    }
+
+    [Fact]
+    public void Product_GetCurrentOffer_OfferNotCurrent_ShouldReturnNull()
+    {
+        // Arrange
+        Product product =
+            new()
+            {
+                Label = "Mon produit",
+                Description = "Un produit",
+                Price = 1M,
+                Category = "Surgelé"
+            };
+        product.Offers.Add(
+            new Offer
+            {
+                StartDate = DateOnly.FromDateTime(DateTime.Now).AddDays(1),
+                EndDate = DateOnly.FromDateTime(DateTime.Now).AddDays(1),
+                Percentage = 10,
+            }
+        );
+
+        // Act
+        Offer? currentOffer = product.GetCurrentOffer();
+
+        // Assert
+        currentOffer.Should().BeNull();
+    }
+
+    [Fact]
+    public void Product_GetCurrentOffer_OfferCurrent_ShouldReturnNotNull()
+    {
+        // Arrange
+        Product product =
+            new()
+            {
+                Label = "Mon produit",
+                Description = "Un produit",
+                Price = 1M,
+                Category = "Surgelé"
+            };
+        product.Offers.Add(
+            new Offer
+            {
+                StartDate = DateOnly.FromDateTime(DateTime.Now),
+                EndDate = DateOnly.FromDateTime(DateTime.Now),
+                Percentage = 10,
+            }
+        );
+
+        // Act
+        Offer? currentOffer = product.GetCurrentOffer();
+
+        // Assert
+        currentOffer.Should().NotBeNull();
+    }
 }
