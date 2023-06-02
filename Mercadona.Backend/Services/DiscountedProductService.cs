@@ -138,7 +138,7 @@ public class DiscountedProductService : IDiscountedProductService
             (product, offer)
         );
         if (
-            validationResult.Errors.Any(
+            validationResult.Errors.Exists(
                 _ => _.ErrorMessage == ProductAddOfferValidator.OFFER_ALREADY_EXISTS
             ) && !forceReplace
         )

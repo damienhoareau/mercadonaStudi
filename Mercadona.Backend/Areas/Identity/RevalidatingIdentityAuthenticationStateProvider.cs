@@ -13,12 +13,33 @@ using System.Security.Claims;
 namespace Mercadona.Backend.Areas.Identity;
 
 /// <summary>
+/// Classe de base permettant de gérer l'authentification Blazor
+/// </summary>
+/// <seealso cref="Microsoft.AspNetCore.Components.Server.RevalidatingServerAuthenticationStateProvider" />
+public abstract class RevalidatingServerAuthenticationStateProviderBase
+    : RevalidatingServerAuthenticationStateProvider
+{
+    /// <summary>
+    /// Initialise une nouvelle instance de la classe <see cref="RevalidatingServerAuthenticationStateProviderBase"/>.
+    /// </summary>
+    /// <param name="loggerFactory">La fabrique de logger.</param>
+    protected RevalidatingServerAuthenticationStateProviderBase(ILoggerFactory loggerFactory)
+        : base(loggerFactory) { }
+
+    /// <value>
+    /// Un utilisateur anonyme.
+    /// </value>
+    protected static AuthenticationState AnonymousUser =>
+        new(new ClaimsPrincipal(new ClaimsIdentity()));
+}
+
+/// <summary>
 /// Classe permettant de gérer l'authentification Blazor
 /// </summary>
 /// <typeparam name="TUser">Le type d'utilisateur.</typeparam>
-/// <seealso cref="Microsoft.AspNetCore.Components.Server.RevalidatingServerAuthenticationStateProvider" />
+/// <seealso cref="RevalidatingServerAuthenticationStateProviderBase" />
 public class RevalidatingIdentityAuthenticationStateProvider<TUser>
-    : RevalidatingServerAuthenticationStateProvider where TUser : class
+    : RevalidatingServerAuthenticationStateProviderBase where TUser : class
 {
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly IdentityOptions _options;
@@ -83,7 +104,7 @@ public class RevalidatingIdentityAuthenticationStateProvider<TUser>
             {
                 // On vérifie que le refresh token est bien autorisé
                 if (!_whiteList.TryGetValue(refreshToken, out JwtSecurityToken? jwtSecurityToken))
-                    return RevalidatingIdentityAuthenticationStateProvider<TUser>.AnonymousUser;
+                    return AnonymousUser;
 
                 string accessToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
                 ClaimsPrincipal principal = _tokenService.ValidateToken(accessToken);
@@ -92,7 +113,7 @@ public class RevalidatingIdentityAuthenticationStateProvider<TUser>
                     principal.Identity?.Name ?? string.Empty
                 );
                 if (user == null)
-                    return RevalidatingIdentityAuthenticationStateProvider<TUser>.AnonymousUser;
+                    return AnonymousUser;
 
                 // On vérifie que le refresh token correspond bien à l'access token
                 if (
@@ -123,21 +144,15 @@ public class RevalidatingIdentityAuthenticationStateProvider<TUser>
                     };
                     return await base.GetAuthenticationStateAsync();
                 }
-                return RevalidatingIdentityAuthenticationStateProvider<TUser>.AnonymousUser;
+                return AnonymousUser;
             }
             catch
             {
-                return RevalidatingIdentityAuthenticationStateProvider<TUser>.AnonymousUser;
+                return AnonymousUser;
             }
         }
-        return RevalidatingIdentityAuthenticationStateProvider<TUser>.AnonymousUser;
+        return AnonymousUser;
     }
-
-    /// <value>
-    /// Un utilisateur anonyme.
-    /// </value>
-    private static AuthenticationState AnonymousUser =>
-        new(new ClaimsPrincipal(new ClaimsIdentity()));
 
     /// <inheritdoc />
     protected override async Task<bool> ValidateAuthenticationStateAsync(
