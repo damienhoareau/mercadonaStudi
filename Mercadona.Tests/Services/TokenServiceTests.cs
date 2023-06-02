@@ -26,7 +26,7 @@ public class TokenServiceTests : IClassFixture<ServiceProviderFixture>, IAsyncLi
         _fixture.Reconfigure(services =>
         {
             services.AddMemoryCache();
-            services.AddSingleton<WhiteList>();
+            services.AddSingleton<IWhiteList, WhiteList>();
             services.AddSingleton<IConfiguration>(provider =>
             {
                 ConfigurationBuilder builder = new();
@@ -59,7 +59,7 @@ public class TokenServiceTests : IClassFixture<ServiceProviderFixture>, IAsyncLi
     {
         return Task.Run(() =>
         {
-            WhiteList whitelist = _fixture.GetRequiredService<WhiteList>();
+            IWhiteList whitelist = _fixture.GetRequiredService<IWhiteList>();
             whitelist.Clear();
         });
     }
@@ -99,7 +99,7 @@ public class TokenServiceTests : IClassFixture<ServiceProviderFixture>, IAsyncLi
         JwtSecurityToken validatedJwtToken = (JwtSecurityToken)validatedToken;
         validatedJwtToken.Id.Should().Be(refreshToken);
         JwtSecurityToken? inMemoryJwtToken = _fixture
-            .GetRequiredService<WhiteList>()
+            .GetRequiredService<IWhiteList>()
             .Get<JwtSecurityToken>(validatedJwtToken.Id);
         inMemoryJwtToken.Should().NotBeNull();
     }
@@ -173,7 +173,7 @@ public class TokenServiceTests : IClassFixture<ServiceProviderFixture>, IAsyncLi
         newValidatedToken.ValidFrom.ShouldBeGreaterThan(validatedToken.ValidFrom);
         newValidatedToken.ValidTo.ShouldBeGreaterThan(validatedToken.ValidTo);
         JwtSecurityToken? inMemoryJwtToken = _fixture
-            .GetRequiredService<WhiteList>()
+            .GetRequiredService<IWhiteList>()
             .Get<JwtSecurityToken>(refreshToken);
         inMemoryJwtToken.Should().NotBeNull();
         inMemoryJwtToken!.ValidTo.Should().Be(newValidatedToken.ValidTo);
@@ -266,7 +266,7 @@ public class TokenServiceTests : IClassFixture<ServiceProviderFixture>, IAsyncLi
 
         // Assert (login)
         JwtSecurityToken? inMemoryJwtToken = _fixture
-            .GetRequiredService<WhiteList>()
+            .GetRequiredService<IWhiteList>()
             .Get<JwtSecurityToken>(refreshToken);
         inMemoryJwtToken.Should().NotBeNull();
 
@@ -275,7 +275,7 @@ public class TokenServiceTests : IClassFixture<ServiceProviderFixture>, IAsyncLi
 
         // Assert (logout)
         inMemoryJwtToken = _fixture
-            .GetRequiredService<WhiteList>()
+            .GetRequiredService<IWhiteList>()
             .Get<JwtSecurityToken>(refreshToken);
         inMemoryJwtToken.Should().BeNull();
     }

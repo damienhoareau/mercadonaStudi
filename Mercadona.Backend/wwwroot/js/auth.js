@@ -1,36 +1,55 @@
-﻿export function StoreCookie(user) {
-    let url = "/account/storeCookie";
-    let xhr = new XMLHttpRequest();
-
-    // Initialization
-    xhr.open("POST", url);
-    xhr.setRequestHeader("Accept", "application/json");
-    xhr.setRequestHeader("Content-Type", "application/json");
-
-    // Call API
-    xhr.send(JSON.stringify(user));
+﻿export async function Login(userModel) {
+    const url = "/account/login";
+    const headers = new Headers({
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+    });
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify(userModel)
+    });
+    if (response.ok) {
+        const connectedUser = await response.json();
+        return connectedUser;
+    }
+    else {
+        const errorResponse = await response.json();
+        throw errorResponse.text;
+    }
 }
 
-export function ClearCookie() {
-    let url = "/account/clearCookie";
-    let xhr = new XMLHttpRequest();
-
-    // Initialization
-    xhr.open("POST", url);
-    xhr.setRequestHeader("Accept", "application/json");
-    xhr.setRequestHeader("Content-Type", "application/json");
-
-    // Call API
-    xhr.send();
+export async function Logout(accessToken) {
+    const url = "/account/logout";
+    const headers = new Headers({
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`,
+    });
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: headers
+    });
+    return response.ok;
 }
 
-export function RefreshToken() {
-    let url = "/account/refreshToken";
-    let xhr = new XMLHttpRequest();
-
-    // Initialization
-    xhr.open("POST", url);
-
-    // Call API
-    xhr.send();
+export async function RefreshToken(accessToken) {
+    const url = "/account/refreshToken";
+    const headers = new Headers({
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${accessToken}`,
+    });
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: headers,
+    });
+    if (response.ok) {
+        const newAccessTokenResponse = await response.json();
+        return newAccessTokenResponse.text;
+    }
+    else {
+        const errorResponse = await response.json();
+        throw errorResponse.message;
+    }
 }

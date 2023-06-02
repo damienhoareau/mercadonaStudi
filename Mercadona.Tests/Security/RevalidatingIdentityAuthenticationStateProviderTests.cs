@@ -29,7 +29,7 @@ public class RevalidatingIdentityAuthenticationStateProviderTests : IAsyncLifeti
     private readonly IdentityOptions _identityOptions = new();
     private readonly Mock<IOptions<IdentityOptions>> _mockIdentityOptions;
     private readonly MemoryCacheOptions _memoryCacheOptions = new();
-    private readonly WhiteList _whiteList;
+    private readonly IWhiteList _whiteList;
 
     public RevalidatingIdentityAuthenticationStateProviderTests()
     {
@@ -39,7 +39,7 @@ public class RevalidatingIdentityAuthenticationStateProviderTests : IAsyncLifeti
         Mock<IOptions<MemoryCacheOptions>> mockMemoryCacheOptions = new();
         mockMemoryCacheOptions.SetupGet(_ => _.Value).Returns(_memoryCacheOptions);
 
-        _whiteList = new(mockMemoryCacheOptions.Object);
+        _whiteList = new Mock<WhiteList>(mockMemoryCacheOptions.Object).Object;
     }
 
     public Task InitializeAsync()
@@ -52,9 +52,8 @@ public class RevalidatingIdentityAuthenticationStateProviderTests : IAsyncLifeti
         return Task.CompletedTask;
     }
 
-    private IHttpContextAccessor CreateHttpContextAccessor(
-        bool setRefreshToken = false,
-        bool setAccessToken = false
+    private (Mock<IConnectedUserProvider> mockConnectedUserProvider, IHttpContextAccessor httpContextAccessor) CreateMockConnectedUserProvider(
+        bool setRefreshToken = false
     )
     {
         HttpContextMock httpContext = new HttpContextMock()
@@ -63,13 +62,23 @@ public class RevalidatingIdentityAuthenticationStateProviderTests : IAsyncLifeti
 
         if (setRefreshToken)
             httpContext.Session.SetString(TokenService.REFRESH_TOKEN_NAME, "refreshToken");
-        if (setAccessToken)
-            httpContext.Session.SetString(TokenService.ACCESS_TOKEN_NAME, "accessToken");
 
         Mock<IHttpContextAccessor> mockHttpContextAccessor = new();
         mockHttpContextAccessor.SetupGet(x => x.HttpContext).Returns(httpContext);
+        Mock<IConnectedUserProvider> mockConnectedUserProvider = new();
+        mockConnectedUserProvider
+            .SetupSet(
+                x =>
+                    x.ConnectedUser = new ConnectedUser
+                    {
+                        UserName = "toto@toto.fr",
+                        RefreshToken = "refreshToken",
+                        AccessToken = "accessToken"
+                    }
+            )
+            .Verifiable();
 
-        return mockHttpContextAccessor.Object;
+        return (mockConnectedUserProvider, mockHttpContextAccessor.Object);
     }
 
     private static JwtSecurityToken GetJwtSecurityToken(bool badToken = false)
@@ -99,24 +108,30 @@ public class RevalidatingIdentityAuthenticationStateProviderTests : IAsyncLifeti
     public async Task GetAuthenticationStateAsync_NoRefreshToken_ShouldReturnAnonymous_Async()
     {
         // Arrange
+        (
+            Mock<IConnectedUserProvider> mockConnectedUserProvider,
+            IHttpContextAccessor mockHttpContextAccessor
+        ) = CreateMockConnectedUserProvider();
         Mock<ITokenLifetimeValidator> mockTokenLifetimeValidator = new();
         RevalidatingIdentityAuthenticationStateProvider<IdentityUser> authStateProvider =
             new(
                 new Mock<ILoggerFactory>().Object,
                 new Mock<IServiceScopeFactory>().Object,
                 _mockIdentityOptions.Object,
-                CreateHttpContextAccessor(),
+                mockHttpContextAccessor,
                 new Mock<ISecurityStampValidator<IdentityUser>>().Object,
                 mockTokenLifetimeValidator.Object,
                 new Mock<ITokenService>().Object,
                 new Mock<IAuthenticationService>().Object,
-                _whiteList
+                _whiteList,
+                mockConnectedUserProvider.Object
             );
 
         // Act
         AuthenticationState authState = await authStateProvider.GetAuthenticationStateAsync();
 
         // Assert
+        mockConnectedUserProvider.Invocations.Should().BeEmpty();
         mockTokenLifetimeValidator.Invocations.Should().BeEmpty();
         authState.User.Identity.Should().NotBeNull();
         authState.User.Identity?.IsAuthenticated.Should().BeFalse();
@@ -126,24 +141,30 @@ public class RevalidatingIdentityAuthenticationStateProviderTests : IAsyncLifeti
     public async Task GetAuthenticationStateAsync_NoAccessToken_ShouldReturnAnonymous_Async()
     {
         // Arrange
+        (
+            Mock<IConnectedUserProvider> mockConnectedUserProvider,
+            IHttpContextAccessor mockHttpContextAccessor
+        ) = CreateMockConnectedUserProvider(true);
         Mock<ITokenLifetimeValidator> mockTokenLifetimeValidator = new();
         RevalidatingIdentityAuthenticationStateProvider<IdentityUser> authStateProvider =
             new(
                 new Mock<ILoggerFactory>().Object,
                 new Mock<IServiceScopeFactory>().Object,
                 _mockIdentityOptions.Object,
-                CreateHttpContextAccessor(true),
+                mockHttpContextAccessor,
                 new Mock<ISecurityStampValidator<IdentityUser>>().Object,
                 mockTokenLifetimeValidator.Object,
                 new Mock<ITokenService>().Object,
                 new Mock<IAuthenticationService>().Object,
-                _whiteList
+                _whiteList,
+                mockConnectedUserProvider.Object
             );
 
         // Act
         AuthenticationState authState = await authStateProvider.GetAuthenticationStateAsync();
 
         // Assert
+        mockConnectedUserProvider.Invocations.Should().BeEmpty();
         mockTokenLifetimeValidator.Invocations.Should().BeEmpty();
         authState.User.Identity.Should().NotBeNull();
         authState.User.Identity?.IsAuthenticated.Should().BeFalse();
@@ -153,6 +174,12 @@ public class RevalidatingIdentityAuthenticationStateProviderTests : IAsyncLifeti
     public async Task GetAuthenticationStateAsync_Exception_ShouldReturnAnonymous_Async()
     {
         // Arrange
+        (
+            Mock<IConnectedUserProvider> mockConnectedUserProvider,
+            IHttpContextAccessor mockHttpContextAccessor
+        ) = CreateMockConnectedUserProvider(true);
+        JwtSecurityToken token = GetJwtSecurityToken();
+        _whiteList.Set("refreshToken", token);
         Mock<ITokenLifetimeValidator> mockTokenLifetimeValidator = new();
         Mock<ITokenService> mockTokenService = new();
         mockTokenService
@@ -163,18 +190,20 @@ public class RevalidatingIdentityAuthenticationStateProviderTests : IAsyncLifeti
                 new Mock<ILoggerFactory>().Object,
                 new Mock<IServiceScopeFactory>().Object,
                 _mockIdentityOptions.Object,
-                CreateHttpContextAccessor(true, true),
+                mockHttpContextAccessor,
                 new Mock<ISecurityStampValidator<IdentityUser>>().Object,
                 mockTokenLifetimeValidator.Object,
                 mockTokenService.Object,
                 new Mock<IAuthenticationService>().Object,
-                _whiteList
+                _whiteList,
+                mockConnectedUserProvider.Object
             );
 
         // Act
         AuthenticationState authState = await authStateProvider.GetAuthenticationStateAsync();
 
         // Assert
+        mockConnectedUserProvider.Invocations.Should().BeEmpty();
         mockTokenLifetimeValidator.Invocations.Should().BeEmpty();
         mockTokenService.Verify();
         authState.User.Identity.Should().NotBeNull();
@@ -185,6 +214,12 @@ public class RevalidatingIdentityAuthenticationStateProviderTests : IAsyncLifeti
     public async Task GetAuthenticationStateAsync_UserDoesNotExist_ShouldReturnAnonymous_Async()
     {
         // Arrange
+        (
+            Mock<IConnectedUserProvider> mockConnectedUserProvider,
+            IHttpContextAccessor mockHttpContextAccessor
+        ) = CreateMockConnectedUserProvider(true);
+        JwtSecurityToken token = GetJwtSecurityToken();
+        _whiteList.Set("refreshToken", token);
         Mock<ITokenLifetimeValidator> mockTokenLifetimeValidator = new();
         Mock<ITokenService> mockTokenService = new();
         mockTokenService
@@ -201,18 +236,20 @@ public class RevalidatingIdentityAuthenticationStateProviderTests : IAsyncLifeti
                 new Mock<ILoggerFactory>().Object,
                 new Mock<IServiceScopeFactory>().Object,
                 _mockIdentityOptions.Object,
-                CreateHttpContextAccessor(true, true),
+                mockHttpContextAccessor,
                 new Mock<ISecurityStampValidator<IdentityUser>>().Object,
                 mockTokenLifetimeValidator.Object,
                 mockTokenService.Object,
                 mockAuthenticationService.Object,
-                _whiteList
+                _whiteList,
+                mockConnectedUserProvider.Object
             );
 
         // Act
         AuthenticationState authState = await authStateProvider.GetAuthenticationStateAsync();
 
         // Assert
+        mockConnectedUserProvider.Invocations.Should().BeEmpty();
         mockTokenLifetimeValidator.Invocations.Should().BeEmpty();
         mockTokenService.Verify();
         mockAuthenticationService.Verify();
@@ -224,6 +261,10 @@ public class RevalidatingIdentityAuthenticationStateProviderTests : IAsyncLifeti
     public async Task GetAuthenticationStateAsync_RefreshTokenNotAuthorized_ShouldReturnAnonymous_Async()
     {
         // Arrange
+        (
+            Mock<IConnectedUserProvider> mockConnectedUserProvider,
+            IHttpContextAccessor mockHttpContextAccessor
+        ) = CreateMockConnectedUserProvider(true);
         Mock<ITokenLifetimeValidator> mockTokenLifetimeValidator = new();
         Mock<ITokenService> mockTokenService = new();
         mockTokenService
@@ -240,21 +281,23 @@ public class RevalidatingIdentityAuthenticationStateProviderTests : IAsyncLifeti
                 new Mock<ILoggerFactory>().Object,
                 new Mock<IServiceScopeFactory>().Object,
                 _mockIdentityOptions.Object,
-                CreateHttpContextAccessor(true, true),
+                mockHttpContextAccessor,
                 new Mock<ISecurityStampValidator<IdentityUser>>().Object,
                 mockTokenLifetimeValidator.Object,
                 mockTokenService.Object,
                 mockAuthenticationService.Object,
-                _whiteList
+                _whiteList,
+                mockConnectedUserProvider.Object
             );
 
         // Act
         AuthenticationState authState = await authStateProvider.GetAuthenticationStateAsync();
 
         // Assert
+        mockConnectedUserProvider.Invocations.Should().BeEmpty();
         mockTokenLifetimeValidator.Invocations.Should().BeEmpty();
-        mockTokenService.Verify();
-        mockAuthenticationService.Verify();
+        mockTokenService.Invocations.Should().BeEmpty();
+        mockAuthenticationService.Invocations.Should().BeEmpty();
         authState.User.Identity.Should().NotBeNull();
         authState.User.Identity?.IsAuthenticated.Should().BeFalse();
     }
@@ -263,6 +306,10 @@ public class RevalidatingIdentityAuthenticationStateProviderTests : IAsyncLifeti
     public async Task GetAuthenticationStateAsync_RefreshTokenNotCorrespondToAccessToken_ShouldReturnAnonymous_Async()
     {
         // Arrange
+        (
+            Mock<IConnectedUserProvider> mockConnectedUserProvider,
+            IHttpContextAccessor mockHttpContextAccessor
+        ) = CreateMockConnectedUserProvider(true);
         _whiteList.Set("refreshToken", GetJwtSecurityToken(true));
         Mock<ITokenLifetimeValidator> mockTokenLifetimeValidator = new();
         Mock<ITokenService> mockTokenService = new();
@@ -280,18 +327,20 @@ public class RevalidatingIdentityAuthenticationStateProviderTests : IAsyncLifeti
                 new Mock<ILoggerFactory>().Object,
                 new Mock<IServiceScopeFactory>().Object,
                 _mockIdentityOptions.Object,
-                CreateHttpContextAccessor(true, true),
+                mockHttpContextAccessor,
                 new Mock<ISecurityStampValidator<IdentityUser>>().Object,
                 mockTokenLifetimeValidator.Object,
                 mockTokenService.Object,
                 mockAuthenticationService.Object,
-                _whiteList
+                _whiteList,
+                mockConnectedUserProvider.Object
             );
 
         // Act
         AuthenticationState authState = await authStateProvider.GetAuthenticationStateAsync();
 
         // Assert
+        mockConnectedUserProvider.Invocations.Should().BeEmpty();
         mockTokenLifetimeValidator.Invocations.Should().BeEmpty();
         mockTokenService.Verify();
         mockAuthenticationService.Verify();
@@ -303,6 +352,10 @@ public class RevalidatingIdentityAuthenticationStateProviderTests : IAsyncLifeti
     public async Task GetAuthenticationStateAsync_ShouldReturnAuthenticated_Async()
     {
         // Arrange
+        (
+            Mock<IConnectedUserProvider> mockConnectedUserProvider,
+            IHttpContextAccessor mockHttpContextAccessor
+        ) = CreateMockConnectedUserProvider(true);
         JwtSecurityToken token = GetJwtSecurityToken();
         _whiteList.Set("refreshToken", token);
         Mock<ITokenLifetimeValidator> mockTokenLifetimeValidator = new();
@@ -327,18 +380,20 @@ public class RevalidatingIdentityAuthenticationStateProviderTests : IAsyncLifeti
                 new Mock<ILoggerFactory>().Object,
                 new Mock<IServiceScopeFactory>().Object,
                 _mockIdentityOptions.Object,
-                CreateHttpContextAccessor(true, true),
+                mockHttpContextAccessor,
                 new Mock<ISecurityStampValidator<IdentityUser>>().Object,
                 mockTokenLifetimeValidator.Object,
                 mockTokenService.Object,
                 mockAuthenticationService.Object,
-                _whiteList
+                _whiteList,
+                mockConnectedUserProvider.Object
             );
 
         // Act
         AuthenticationState authState = await authStateProvider.GetAuthenticationStateAsync();
 
         // Assert
+        mockConnectedUserProvider.Invocations.Should().ContainSingle();
         mockTokenLifetimeValidator.Invocations.Should().BeEmpty();
         mockTokenService.Verify();
         mockAuthenticationService.Verify();
@@ -351,6 +406,10 @@ public class RevalidatingIdentityAuthenticationStateProviderTests : IAsyncLifeti
     public async Task ValidateAuthenticationStateAsync_Exception_ShouldReturnFalse_Async()
     {
         // Arrange
+        (
+            Mock<IConnectedUserProvider> mockConnectedUserProvider,
+            IHttpContextAccessor mockHttpContextAccessor
+        ) = CreateMockConnectedUserProvider();
         Mock<IServiceScope> mockSyncScope = new();
         mockSyncScope.Setup(_ => _.Dispose()).Verifiable();
         Mock<IServiceScopeFactory> mockServiceScopeFactory = new();
@@ -371,12 +430,13 @@ public class RevalidatingIdentityAuthenticationStateProviderTests : IAsyncLifeti
                 new Mock<ILoggerFactory>().Object,
                 mockServiceScopeFactory.Object,
                 _mockIdentityOptions.Object,
-                CreateHttpContextAccessor(),
+                mockHttpContextAccessor,
                 mockSecurityStampValidator.Object,
                 mockTokenLifetimeValidator.Object,
                 new Mock<ITokenService>().Object,
                 new Mock<IAuthenticationService>().Object,
-                _whiteList
+                _whiteList,
+                mockConnectedUserProvider.Object
             );
 
         // Act
@@ -405,6 +465,10 @@ public class RevalidatingIdentityAuthenticationStateProviderTests : IAsyncLifeti
     public async Task ValidateAuthenticationStateAsync_ExceptionWithAsyncScope_ShouldReturnFalse_Async()
     {
         // Arrange
+        (
+            Mock<IConnectedUserProvider> mockConnectedUserProvider,
+            IHttpContextAccessor mockHttpContextAccessor
+        ) = CreateMockConnectedUserProvider();
         Mock<IAsyncServiceScope> mockAsyncScope = new();
         mockAsyncScope.Setup(_ => _.DisposeAsync()).Verifiable();
         Mock<IServiceScopeFactory> mockServiceScopeFactory = new();
@@ -425,12 +489,13 @@ public class RevalidatingIdentityAuthenticationStateProviderTests : IAsyncLifeti
                 new Mock<ILoggerFactory>().Object,
                 mockServiceScopeFactory.Object,
                 _mockIdentityOptions.Object,
-                CreateHttpContextAccessor(),
+                mockHttpContextAccessor,
                 mockSecurityStampValidator.Object,
                 mockTokenLifetimeValidator.Object,
                 new Mock<ITokenService>().Object,
                 new Mock<IAuthenticationService>().Object,
-                _whiteList
+                _whiteList,
+                mockConnectedUserProvider.Object
             );
 
         // Act
@@ -457,6 +522,10 @@ public class RevalidatingIdentityAuthenticationStateProviderTests : IAsyncLifeti
     public async Task ValidateAuthenticationStateAsync_ValidateSecurityStampAsyncReturnsFalse_ShouldReturnFalse_Async()
     {
         // Arrange
+        (
+            Mock<IConnectedUserProvider> mockConnectedUserProvider,
+            IHttpContextAccessor mockHttpContextAccessor
+        ) = CreateMockConnectedUserProvider();
         UserManagerMock userManagerMock =
             new(false, new UserModel { Username = "toto@toto.fr", Password = "V@lidPassw0rd" });
         userManagerMock.SetSupportsUserSecurityStamp(true);
@@ -499,12 +568,13 @@ public class RevalidatingIdentityAuthenticationStateProviderTests : IAsyncLifeti
                 new Mock<ILoggerFactory>().Object,
                 mockServiceScopeFactory.Object,
                 _mockIdentityOptions.Object,
-                CreateHttpContextAccessor(),
+                mockHttpContextAccessor,
                 mockSecurityStampValidator.Object,
                 mockTokenLifetimeValidator.Object,
                 new Mock<ITokenService>().Object,
                 new Mock<IAuthenticationService>().Object,
-                _whiteList
+                _whiteList,
+                mockConnectedUserProvider.Object
             );
         List<Claim> principalClaims = principal.Claims.ToList();
         principalClaims.Add(new Claim("AspNet.Identity.SecurityStamp", Guid.NewGuid().ToString()));
@@ -534,6 +604,10 @@ public class RevalidatingIdentityAuthenticationStateProviderTests : IAsyncLifeti
     public async Task ValidateAuthenticationStateAsync_ValidateTokenLifetimeAsyncReturnsFalse_ShouldReturnFalse_Async()
     {
         // Arrange
+        (
+            Mock<IConnectedUserProvider> mockConnectedUserProvider,
+            IHttpContextAccessor mockHttpContextAccessor
+        ) = CreateMockConnectedUserProvider();
         UserManagerMock userManagerMock =
             new(false, new UserModel { Username = "toto@toto.fr", Password = "V@lidPassw0rd" });
         userManagerMock.SetSupportsUserSecurityStamp(true);
@@ -580,12 +654,13 @@ public class RevalidatingIdentityAuthenticationStateProviderTests : IAsyncLifeti
                 new Mock<ILoggerFactory>().Object,
                 mockServiceScopeFactory.Object,
                 _mockIdentityOptions.Object,
-                CreateHttpContextAccessor(),
+                mockHttpContextAccessor,
                 mockSecurityStampValidator.Object,
                 mockTokenLifetimeValidator.Object,
                 new Mock<ITokenService>().Object,
                 new Mock<IAuthenticationService>().Object,
-                _whiteList
+                _whiteList,
+                mockConnectedUserProvider.Object
             );
         List<Claim> principalClaims = principal.Claims.ToList();
         principalClaims.Add(new Claim("AspNet.Identity.SecurityStamp", Guid.NewGuid().ToString()));
@@ -615,6 +690,10 @@ public class RevalidatingIdentityAuthenticationStateProviderTests : IAsyncLifeti
     public async Task ValidateAuthenticationStateAsync_ValidateTokenLifetimeAsyncReturnsTrue_ShouldReturnTrue_Async()
     {
         // Arrange
+        (
+            Mock<IConnectedUserProvider> mockConnectedUserProvider,
+            IHttpContextAccessor mockHttpContextAccessor
+        ) = CreateMockConnectedUserProvider();
         UserManagerMock userManagerMock =
             new(false, new UserModel { Username = "toto@toto.fr", Password = "V@lidPassw0rd" });
         userManagerMock.SetSupportsUserSecurityStamp(true);
@@ -661,12 +740,13 @@ public class RevalidatingIdentityAuthenticationStateProviderTests : IAsyncLifeti
                 new Mock<ILoggerFactory>().Object,
                 mockServiceScopeFactory.Object,
                 _mockIdentityOptions.Object,
-                CreateHttpContextAccessor(),
+                mockHttpContextAccessor,
                 mockSecurityStampValidator.Object,
                 mockTokenLifetimeValidator.Object,
                 new Mock<ITokenService>().Object,
                 new Mock<IAuthenticationService>().Object,
-                _whiteList
+                _whiteList,
+                mockConnectedUserProvider.Object
             );
         List<Claim> principalClaims = principal.Claims.ToList();
         principalClaims.Add(new Claim("AspNet.Identity.SecurityStamp", Guid.NewGuid().ToString()));

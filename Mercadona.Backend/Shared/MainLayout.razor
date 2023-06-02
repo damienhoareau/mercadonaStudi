@@ -9,7 +9,7 @@
 @implements IDisposable;
 @inject ITokenLifetimeValidator _tokenLifetimeValidator;
 @inject IAuthenticationService _authenticationService;
-@inject ConnectedUser _connectedUser;
+@inject IServiceProvider _serviceProvider;
 @inject IHostEnvironmentAuthenticationStateProvider _hostAuthentication;
 @inject IJSRuntime _jsRuntime;
 @inject NavigationManager _navigationManager;
@@ -89,13 +89,11 @@
                     _snackbar.Remove(snackbar);
                     SnackbarHelper.ShownSnackbars.Remove(TOKEN_WARNING_SNACKBAR_KEY);
                 }
-                await _authenticationService.LogoutAsync(_connectedUser.RefreshToken);
-                _connectedUser.UserName = string.Empty;
-                _connectedUser.RefreshToken = string.Empty;
-                _connectedUser.AccessToken = string.Empty;
-                _hostAuthentication.SetAuthenticationState(Task.FromResult(new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()))));
+                IConnectedUserProvider _connectedUserProvider = _serviceProvider.GetRequiredService<IConnectedUserProvider>();
                 IJSObjectReference authModule = await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/auth.js");
-                await authModule.InvokeVoidAsync("ClearCookie");
+                await authModule.InvokeVoidAsync("Logout", _connectedUserProvider.ConnectedUser?.AccessToken);
+                _connectedUserProvider.ConnectedUser = null;
+                _hostAuthentication.SetAuthenticationState(Task.FromResult(new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()))));
                 _navigationManager.NavigateTo("/");
                 break;
             case TokenExpirationWarning.OneMinuteLeft:
@@ -113,12 +111,21 @@
 
     async Task RefreshToken()
     {
-        IJSObjectReference authModule = await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/auth.js");
-        await authModule.InvokeVoidAsync("RefreshToken");
-        if (SnackbarHelper.ShownSnackbars.TryGetValue(TOKEN_WARNING_SNACKBAR_KEY, out Snackbar? snackbar))
+        try
         {
-            _snackbar.Remove(snackbar);
-            SnackbarHelper.ShownSnackbars.Remove(TOKEN_WARNING_SNACKBAR_KEY);
+            IConnectedUserProvider _connectedUserProvider = _serviceProvider.GetRequiredService<IConnectedUserProvider>();
+            IJSObjectReference authModule = await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/auth.js");
+            string newAccessToken = await authModule.InvokeAsync<string>("RefreshToken", _connectedUserProvider.ConnectedUser?.AccessToken);
+            _connectedUserProvider.ConnectedUser!.AccessToken = newAccessToken;
+            if (SnackbarHelper.ShownSnackbars.TryGetValue(TOKEN_WARNING_SNACKBAR_KEY, out Snackbar? snackbar))
+            {
+                _snackbar.Remove(snackbar);
+                SnackbarHelper.ShownSnackbars.Remove(TOKEN_WARNING_SNACKBAR_KEY);
+            }
+        }
+        catch(Exception ex)
+        {
+            _snackbar.Add(ex.Message, MudBlazor.Severity.Error);
         }
     }
 

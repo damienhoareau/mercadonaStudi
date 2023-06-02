@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
 using Mercadona.Backend.Areas.Identity;
 using Mercadona.Backend.Data;
-using Mercadona.Backend.Models;
 using Mercadona.Backend.Options;
 using Mercadona.Backend.Security;
 using Mercadona.Backend.Services;
@@ -82,16 +81,15 @@ builder.Services
             )
         };
     });
-builder.Services.AddJwtInSession();
+builder.Services.AddJwtBlazor();
 builder.Services.AddLocalization();
 
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddMudServices();
-builder.Services.AddHttpContextAccessor();
 
 // Informations sur l'utilisateur connecté
-builder.Services.AddScoped<ConnectedUser>();
+builder.Services.AddScoped<IConnectedUserProvider, ConnectedUserProvider>();
 builder.Services.AddScoped<
     ISecurityStampValidator<IdentityUser>,
     Mercadona.Backend.Areas.Identity.SecurityStampValidator<IdentityUser>
@@ -205,7 +203,7 @@ app.UseRequestLocalization(new RequestLocalizationOptions()
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.UseJwtInSession();
+app.UseJwtBlazor();
 app.UseAuthentication();
 app.UseAuthorization();
 

@@ -1,9 +1,11 @@
+using Mercadona.Backend.Models;
 using Mercadona.Backend.Security;
 using Mercadona.Backend.Services;
 using Mercadona.Backend.Services.Interfaces;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -11,7 +13,7 @@ using System.Security.Claims;
 namespace Mercadona.Backend.Areas.Identity;
 
 /// <summary>
-/// Classe permettant de gÈrer l'authentification Blazor
+/// Classe permettant de g√©rer l'authentification Blazor
 /// </summary>
 /// <typeparam name="TUser">Le type d'utilisateur.</typeparam>
 /// <seealso cref="Microsoft.AspNetCore.Components.Server.RevalidatingServerAuthenticationStateProvider" />
@@ -25,20 +27,22 @@ public class RevalidatingIdentityAuthenticationStateProvider<TUser>
     private readonly ITokenLifetimeValidator _tokenLifetimeValidator;
     private readonly ITokenService _tokenService;
     private readonly IAuthenticationService _authenticationService;
-    private readonly WhiteList _whiteList;
+    private readonly IWhiteList _whiteList;
+    private readonly IConnectedUserProvider _connectedUserProvider;
 
     /// <summary>
     /// Initialise une nouvelle instance de la classe <see cref="RevalidatingIdentityAuthenticationStateProvider{TUser}"/>.
     /// </summary>
     /// <param name="loggerFactory">La fabrique de logger.</param>
-    /// <param name="scopeFactory">La fabrique de pÈrimËtre.</param>
+    /// <param name="scopeFactory">La fabrique de p√©rim√®tre.</param>
     /// <param name="optionsAccessor">Options de <c>IdentityOptions</c>.</param>
     /// <param name="contextAccessor">Accesseur de contexte HTTP.</param>
-    /// <param name="securityStampValidator">La classe de validation des tampons de sÈcuritÈ.</param>
-    /// <param name="tokenLifetimeValidator">La classe de validation du temps restant du jeton d'accËs.</param>
+    /// <param name="securityStampValidator">La classe de validation des tampons de s√©curit√©.</param>
+    /// <param name="tokenLifetimeValidator">La classe de validation du temps restant du jeton d'acc√®s.</param>
     /// <param name="tokenService">Le service de gestion des jetons.</param>
     /// <param name="authenticationService">Le service d'authentification.</param>
-    /// <param name="whiteList">Cache mÈmoire pour les jetons de renouvellement.</param>
+    /// <param name="whiteList">Cache m√©moire pour les jetons de renouvellement.</param>
+    /// <param name="connectedUserProvider">Provider de l'utilisateur connect√©.</param>
     public RevalidatingIdentityAuthenticationStateProvider(
         ILoggerFactory loggerFactory,
         IServiceScopeFactory scopeFactory,
@@ -48,7 +52,8 @@ public class RevalidatingIdentityAuthenticationStateProvider<TUser>
         ITokenLifetimeValidator tokenLifetimeValidator,
         ITokenService tokenService,
         IAuthenticationService authenticationService,
-        WhiteList whiteList
+        IWhiteList whiteList,
+        IConnectedUserProvider connectedUserProvider
     ) : base(loggerFactory)
     {
         _scopeFactory = scopeFactory;
@@ -59,6 +64,7 @@ public class RevalidatingIdentityAuthenticationStateProvider<TUser>
         _tokenService = tokenService;
         _authenticationService = authenticationService;
         _whiteList = whiteList;
+        _connectedUserProvider = connectedUserProvider;
     }
 
     /// <inheritdoc />
@@ -69,34 +75,33 @@ public class RevalidatingIdentityAuthenticationStateProvider<TUser>
     {
         if (
             _contextAccessor.HttpContext?.Session.GetString(TokenService.REFRESH_TOKEN_NAME)
-                is string refreshToken
-            && _contextAccessor.HttpContext?.Session.GetString(TokenService.ACCESS_TOKEN_NAME)
-                is string accessToken
+            is string refreshToken
         )
         {
-            // On rÈcupËre l'identitÈ de l'utilisateur, tout en validant le token d'accËs
+            // On r√©cup√®re l'identit√© de l'utilisateur, tout en validant le token d'acc√®s
             try
             {
+                // On v√©rifie que le refresh token est bien autoris√©
+                if (!_whiteList.TryGetValue(refreshToken, out JwtSecurityToken? jwtSecurityToken))
+                    return RevalidatingIdentityAuthenticationStateProvider<TUser>.AnonymousUser;
+
+                string accessToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
                 ClaimsPrincipal principal = _tokenService.ValidateToken(accessToken);
-                // On vÈrifie que l'utilisateur existe toujours
+                // On v√©rifie que l'utilisateur existe toujours
                 IdentityUser? user = await _authenticationService.FindUserByNameAsync(
                     principal.Identity?.Name ?? string.Empty
                 );
                 if (user == null)
                     return RevalidatingIdentityAuthenticationStateProvider<TUser>.AnonymousUser;
 
-                // On vÈrifie que le refresh token est bien autorisÈ
-                if (!_whiteList.TryGetValue(refreshToken, out _))
-                    return RevalidatingIdentityAuthenticationStateProvider<TUser>.AnonymousUser;
-
-                // On vÈrifie que le refresh token correspond bien ‡ l'access token
+                // On v√©rifie que le refresh token correspond bien √† l'access token
                 if (
                     principal.Claims
                         .FirstOrDefault(_ => _.Type == JwtRegisteredClaimNames.Jti)
                         ?.Value == refreshToken
                 )
                 {
-                    // On crÈe l'identitÈ de l'utilisateur
+                    // On cr√©e l'identit√© de l'utilisateur
                     ClaimsIdentity identity =
                         new(
                             principal.Claims,
@@ -108,8 +113,14 @@ public class RevalidatingIdentityAuthenticationStateProvider<TUser>
                                 .AuthenticationScheme
                         );
                     principal = new ClaimsPrincipal(identity);
-                    // On dÈfinit l'utilisateur comme connectÈ au circuit Blazor
+                    // On d√©finit l'utilisateur comme connect√© au circuit Blazor
                     SetAuthenticationState(Task.FromResult(new AuthenticationState(principal)));
+                    _connectedUserProvider.ConnectedUser = new ConnectedUser
+                    {
+                        UserName = principal.Identity!.Name!,
+                        RefreshToken = refreshToken,
+                        AccessToken = accessToken
+                    };
                     return await base.GetAuthenticationStateAsync();
                 }
                 return RevalidatingIdentityAuthenticationStateProvider<TUser>.AnonymousUser;

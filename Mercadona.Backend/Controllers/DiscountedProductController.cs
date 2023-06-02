@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Mercadona.Backend.Data;
 using Mercadona.Backend.Models;
+using Mercadona.Backend.Security;
 using Mercadona.Backend.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -122,6 +123,7 @@ public class DiscountedProductController : ControllerBase
     /// <response code="400">Si les données ne sont pas valides.</response>
     /// <response code="500">Si une erreur survient au niveau du code.</response>
     [HttpPost]
+    [AuthAutoValidateAntiforgeryToken]
     [Route("api/discountedProducts/{productId}/applyOffer")]
     [ProducesResponseType(typeof(DiscountedProduct), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

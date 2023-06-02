@@ -16,7 +16,7 @@ namespace Mercadona.Tests.Controllers;
 public class AuthenticateControllerTests
 {
     [Fact]
-    public async Task LoginAsync_UserDoesNotExist_ShouldReturnUnauthorized_Async()
+    public async Task LoginAsync_NotValidUserModel_ShouldReturnUnauthorized_Async()
     {
         // Arrange
         Mock<IAuthenticationService> mockAuthenticationService =
@@ -24,6 +24,10 @@ public class AuthenticateControllerTests
         Mock<IValidator<UserModel>> mockUserModelValidator = TestsHelper.GetServiceMock<
             IValidator<UserModel>
         >();
+        mockUserModelValidator
+            .Setup(_ => _.ValidateAsync(It.IsAny<UserModel>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ValidationResult(new[] { new ValidationFailure() }))
+            .Verifiable();
         AuthenticateController controller = TestsHelper.CreateController<AuthenticateController>(
             mockAuthenticationService.Object,
             mockUserModelValidator.Object
@@ -31,22 +35,31 @@ public class AuthenticateControllerTests
 
         // Act
         IActionResult result = await controller.LoginAsync(
-            new UserModel { Username = "toto@toto.fr", Password = "V@lidPassw0rd" }
+            new UserModel { Username = "toto@toto.fr", Password = "notValid" }
         );
 
         // Assert
+        mockUserModelValidator.Verify();
         result.Should().BeActionResult<UnauthorizedObjectResult>();
     }
 
     [Fact]
-    public async Task LoginAsync_WrongPassword_ShouldReturnUnauthorized_Async()
+    public async Task LoginAsync_ServiceNullTokens_ShouldReturnUnauthorized_Async()
     {
         // Arrange
         Mock<IAuthenticationService> mockAuthenticationService =
             TestsHelper.GetServiceMock<IAuthenticationService>();
+        mockAuthenticationService
+            .Setup(_ => _.LoginAsync(It.IsAny<UserModel>()))
+            .ReturnsAsync((null, null))
+            .Verifiable();
         Mock<IValidator<UserModel>> mockUserModelValidator = TestsHelper.GetServiceMock<
             IValidator<UserModel>
         >();
+        mockUserModelValidator
+            .Setup(_ => _.ValidateAsync(It.IsAny<UserModel>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ValidationResult())
+            .Verifiable();
         AuthenticateController controller = TestsHelper.CreateController<AuthenticateController>(
             mockAuthenticationService.Object,
             mockUserModelValidator.Object
@@ -58,30 +71,30 @@ public class AuthenticateControllerTests
         );
 
         // Assert
+        mockAuthenticationService.Verify();
+        mockUserModelValidator.Verify();
         result.Should().BeActionResult<UnauthorizedObjectResult>();
     }
 
     [Fact]
-    public async Task LoginAsync_ValidPassword_ShouldReturnCorrectAccessToken_Async()
+    public async Task LoginAsync_ServiceSendTokens_ShouldReturnCorrectAccessToken_Async()
     {
         // Arrange
         Mock<IAuthenticationService> mockAuthenticationService =
             TestsHelper.GetServiceMock<IAuthenticationService>();
+        string expectedRefreshToken = Guid.NewGuid().ToString();
+        string expectedAccessToken = Guid.NewGuid().ToString();
         mockAuthenticationService
-            .Setup(_ => _.FindUserByNameAsync(It.IsAny<string>()))
-            .ReturnsAsync(new IdentityUser())
-            .Verifiable();
-        mockAuthenticationService
-            .Setup(_ => _.CheckPasswordAsync(It.IsAny<IdentityUser>(), It.IsAny<string>()))
-            .ReturnsAsync(true)
-            .Verifiable();
-        mockAuthenticationService
-            .Setup(_ => _.LoginAsync(It.IsAny<IdentityUser>()))
-            .ReturnsAsync((Guid.Empty.ToString(), Guid.Empty.ToString()))
+            .Setup(_ => _.LoginAsync(It.IsAny<UserModel>()))
+            .ReturnsAsync((expectedRefreshToken, expectedAccessToken))
             .Verifiable();
         Mock<IValidator<UserModel>> mockUserModelValidator = TestsHelper.GetServiceMock<
             IValidator<UserModel>
         >();
+        mockUserModelValidator
+            .Setup(_ => _.ValidateAsync(It.IsAny<UserModel>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new ValidationResult())
+            .Verifiable();
         AuthenticateController controller = TestsHelper.CreateController<AuthenticateController>(
             mockAuthenticationService.Object,
             mockUserModelValidator.Object
@@ -94,11 +107,16 @@ public class AuthenticateControllerTests
 
         // Assert
         mockAuthenticationService.Verify();
+        mockUserModelValidator.Verify();
         result
             .Should()
             .BeActionResult<OkObjectResult>(response =>
             {
                 response.Value.Should().BeOfType<ConnectedUser>();
+                ConnectedUser connectedUser = (ConnectedUser)response.Value!;
+                connectedUser.UserName.Should().Be("toto@toto.fr");
+                connectedUser.RefreshToken.Should().Be(expectedRefreshToken);
+                connectedUser.AccessToken.Should().Be(expectedAccessToken);
             });
     }
 
@@ -163,89 +181,14 @@ public class AuthenticateControllerTests
             .GetString(TokenService.ACCESS_TOKEN_NAME)
             .Should()
             .Be("newAccessToken");
-        result.Should().BeActionResult<OkResult>();
-    }
-
-    [Fact]
-    public async Task StoreCookieAsync_ShouldSaveCookies_Async()
-    {
-        // Arrange
-        Mock<IAuthenticationService> mockAuthenticationService =
-            TestsHelper.GetServiceMock<IAuthenticationService>();
-        Mock<IValidator<UserModel>> mockUserModelValidator = TestsHelper.GetServiceMock<
-            IValidator<UserModel>
-        >();
-        AuthenticateController controller = TestsHelper.CreateController<AuthenticateController>(
-            mockAuthenticationService.Object,
-            mockUserModelValidator.Object
-        );
-        ConnectedUser connectedUser =
-            new()
+        result
+            .Should()
+            .BeActionResult<OkObjectResult>(response =>
             {
-                UserName = "toto@toto.fr",
-                RefreshToken = "refreshToken",
-                AccessToken = "accessToken"
-            };
-
-        // Act
-        IActionResult result = await controller.StoreCookieAsync(connectedUser);
-
-        // Asset
-        result.Should().BeActionResult<OkResult>();
-        controller.HttpContext.Session
-            .GetString(TokenService.REFRESH_TOKEN_NAME)
-            .Should()
-            .NotBeNullOrWhiteSpace();
-        controller.HttpContext.Session
-            .GetString(TokenService.ACCESS_TOKEN_NAME)
-            .Should()
-            .NotBeNullOrWhiteSpace();
-        controller.HttpContext.Session
-            .GetString(TokenService.REFRESH_TOKEN_NAME)
-            .Should()
-            .Be(connectedUser.RefreshToken);
-        controller.HttpContext.Session
-            .GetString(TokenService.ACCESS_TOKEN_NAME)
-            .Should()
-            .Be(connectedUser.AccessToken);
-    }
-
-    [Fact]
-    public async Task ClearCookieAsync_ShouldRemoveCookies_Async()
-    {
-        // Arrange
-        Mock<IAuthenticationService> mockAuthenticationService =
-            TestsHelper.GetServiceMock<IAuthenticationService>();
-        Mock<IValidator<UserModel>> mockUserModelValidator = TestsHelper.GetServiceMock<
-            IValidator<UserModel>
-        >();
-        AuthenticateController controller = TestsHelper.CreateController<AuthenticateController>(
-            mockAuthenticationService.Object,
-            mockUserModelValidator.Object
-        );
-        ConnectedUser connectedUser =
-            new()
-            {
-                UserName = "toto@toto.fr",
-                RefreshToken = "refreshToken",
-                AccessToken = "accessToken"
-            };
-        controller.HttpContext.Session.SetString(
-            TokenService.REFRESH_TOKEN_NAME,
-            connectedUser.RefreshToken
-        );
-        controller.HttpContext.Session.SetString(
-            TokenService.ACCESS_TOKEN_NAME,
-            connectedUser.AccessToken
-        );
-
-        // Act
-        IActionResult result = await controller.ClearCookieAsync();
-
-        // Asset
-        result.Should().BeActionResult<OkResult>();
-        controller.HttpContext.Session.GetString(TokenService.REFRESH_TOKEN_NAME).Should().BeNull();
-        controller.HttpContext.Session.GetString(TokenService.ACCESS_TOKEN_NAME).Should().BeNull();
+                response.Value.Should().BeOfType<TextResponse>();
+                TextResponse textResponse = (TextResponse)response.Value!;
+                textResponse.Text.Should().Be("newAccessToken");
+            });
     }
 
     [Fact]

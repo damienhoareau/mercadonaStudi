@@ -16,14 +16,14 @@ public class TokenLifetimeValidatorTests : IAsyncLifetime
 {
     private readonly ITokenLifetimeValidator _tokenLifetimeValidator;
     private readonly MemoryCacheOptions _memoryCacheOptions = new();
-    private readonly WhiteList _whiteList;
+    private readonly IWhiteList _whiteList;
 
     public TokenLifetimeValidatorTests()
     {
         Mock<IOptions<MemoryCacheOptions>> mockMemoryCacheOptions = new();
         mockMemoryCacheOptions.SetupGet(_ => _.Value).Returns(_memoryCacheOptions);
 
-        _whiteList = new(mockMemoryCacheOptions.Object);
+        _whiteList = new Mock<WhiteList>(mockMemoryCacheOptions.Object).Object;
 
         _tokenLifetimeValidator = new TokenLifetimeValidator(_whiteList);
     }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Mercadona.Backend.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace Mercadona.Backend.Services.Interfaces;
 
@@ -25,9 +26,9 @@ public interface IAuthenticationService
     /// <summary>
     /// Permet de connecter un utilisateur
     /// </summary>
-    /// <param name="user">Utilisateur</param>
+    /// <param name="model">Modèle représentant l'utilisateur</param>
     /// <returns>Les jetons de renouvellement et d'accès</returns>
-    Task<(string refreshToken, string accessToken)> LoginAsync(IdentityUser user);
+    Task<(string? refreshToken, string? accessToken)> LoginAsync(UserModel model);
 
     /// <summary>
     /// Permet de prolonger la session d'un utilisateur

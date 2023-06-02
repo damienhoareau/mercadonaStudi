@@ -8,7 +8,7 @@
 @using Microsoft.AspNetCore.Identity;
 @using System.Security.Claims;
 @inject NavigationManager _navigationManager;
-@inject ConnectedUser _connectedUser;
+@inject IConnectedUserProvider _connectedUserProvider;
 @inject ISnackbar _snackbar;
 @inject IAuthenticationService _authenticationService;
 @inject IHostEnvironmentAuthenticationStateProvider _hostAuthentication;
@@ -107,32 +107,19 @@
         _processing = true;
         try
         {
-            IdentityUser? user = await _authenticationService.FindUserByNameAsync(model.Username);
-            if (
-                user != null
-                && await _authenticationService.CheckPasswordAsync(user, model.Password)
-            )
-            {
-                (string refreshToken, string accessToken) = await _authenticationService.LoginAsync(
-                    user
-                );
+            IJSObjectReference authModule = await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/auth.js");
+            ConnectedUser connectedUser = await authModule.InvokeAsync<ConnectedUser>("Login", model);
 
-                MudDialog.Close(DialogResult.Ok(true));
+            MudDialog.Close(DialogResult.Ok(true));
 
-                _connectedUser.UserName = model.Username;
-                _connectedUser.RefreshToken = refreshToken;
-                _connectedUser.AccessToken = accessToken;
+            _connectedUserProvider.ConnectedUser = connectedUser;
 
-                ClaimsPrincipal principal = _tokenService.GetPrincipalFromToken(_connectedUser.AccessToken);
-                ClaimsIdentity identity = new ClaimsIdentity(principal.Claims, Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme);
-                principal = new ClaimsPrincipal(identity);
-                _hostAuthentication.SetAuthenticationState(Task.FromResult(new AuthenticationState(principal)));
-                IJSObjectReference authModule = await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/auth.js");
-                await authModule.InvokeVoidAsync("StoreCookie", _connectedUser);
-                _navigationManager.NavigateTo("/products");
-                return;
-            }
-            _snackbar.Add(AuthenticateController.USERNAME_OR_PASSWORD_IS_NOT_VALID, MudBlazor.Severity.Error);
+            ClaimsPrincipal principal = _tokenService.GetPrincipalFromToken(connectedUser.AccessToken);
+            ClaimsIdentity identity = new ClaimsIdentity(principal.Claims, Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme);
+            principal = new ClaimsPrincipal(identity);
+            _hostAuthentication.SetAuthenticationState(Task.FromResult(new AuthenticationState(principal)));
+
+            _navigationManager.NavigateTo("/products");
         }
         catch (Exception ex)
         {

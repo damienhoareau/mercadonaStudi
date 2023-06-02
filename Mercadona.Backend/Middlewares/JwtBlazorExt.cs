@@ -10,16 +10,16 @@ using System.Security.Claims;
 namespace Mercadona.Backend.Security;
 
 /// <summary>
-/// Extensions pour le middleware de stockage d'un JWT dans un cookie de session
+/// Extensions pour le middleware d'authentification Blazor avec un JWT
 /// </summary>
-public static class JwtInSessionExt
+public static class JwtBlazorExt
 {
     /// <summary>
-    /// Injecte les éléments du middleware de stockage JWT dans un cookie de session.
+    /// Injecte les éléments du middleware d'authentification Blazor avec un JWT.
     /// </summary>
     /// <param name="services">La collection de services de l'application.</param>
     /// <returns></returns>
-    public static IServiceCollection AddJwtInSession(this IServiceCollection services)
+    public static IServiceCollection AddJwtBlazor(this IServiceCollection services)
     {
         services.Configure<SessionOptions>(options =>
         {
@@ -28,31 +28,44 @@ public static class JwtInSessionExt
             options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
         });
         services.AddSession();
-        services.AddSingleton<WhiteList>();
-        services.AddScoped<JwtInSessionMiddleware>();
+        services.AddHttpContextAccessor();
+        services.AddSingleton<IWhiteList, WhiteList>();
+        services.AddSingleton<AuthAutoValidateAntiforgeryTokenFilter>();
+        services.AddScoped<JwtBlazorMiddleware>();
 
         return services;
     }
 
     /// <summary>
-    /// Ajoute le middleware de stockage JWT dans un cookie de session.
+    /// Ajoute le middleware d'authentification Blazor avec un JWT.
     /// </summary>
     /// <param name="app">Le builder d'application.</param>
     /// <returns></returns>
-    public static IApplicationBuilder UseJwtInSession(this IApplicationBuilder app)
+    public static IApplicationBuilder UseJwtBlazor(this IApplicationBuilder app)
     {
         app.UseSession();
-        app.UseMiddleware<JwtInSessionMiddleware>();
+        app.UseMiddleware<JwtBlazorMiddleware>();
 
         return app;
     }
 }
 
 /// <summary>
-/// Permet de stocker une liste de jetons de renouvellement autorisés.
+/// Interface d'une classe permettant de stocker une liste de jetons de renouvellement autorisés.
+/// </summary>
+public interface IWhiteList : IMemoryCache
+{
+    /// <summary>
+    /// Supprime toutes les clés et valeurs du cache.
+    /// </summary>
+    void Clear();
+}
+
+/// <summary>
+/// Classe permettant de stocker une liste de jetons de renouvellement autorisés.
 /// </summary>
 /// <seealso cref="Microsoft.Extensions.Caching.Memory.MemoryCache" />
-public class WhiteList : MemoryCache
+public class WhiteList : MemoryCache, IWhiteList
 {
     /// <summary>
     /// Initialise une nouvelle instance de la classe <see cref="WhiteList"/>.
@@ -62,10 +75,10 @@ public class WhiteList : MemoryCache
 }
 
 /// <summary>
-/// Middleware de stockage d'un JWT dans un cookie de session
+/// Middleware d'authentification Blazor avec un JWT
 /// </summary>
 /// <seealso cref="Microsoft.AspNetCore.Http.IMiddleware" />
-public class JwtInSessionMiddleware : IMiddleware
+public class JwtBlazorMiddleware : IMiddleware
 {
     /// <summary>
     /// Exécute le middleware.
@@ -74,7 +87,7 @@ public class JwtInSessionMiddleware : IMiddleware
     /// <param name="next">Le délégé qui représente le prochain middleware dans la pile.</param>
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
-        // On récupère le token de l'entête Authorization Bearer (Swagger)
+        // On récupère le token de l'entête Authorization Bearer
         if (
             context.Request.Headers.Authorization.ToString() is string authorization
             && authorization.StartsWith($"{JwtBearerDefaults.AuthenticationScheme} ")
@@ -91,7 +104,7 @@ public class JwtInSessionMiddleware : IMiddleware
                 return;
             }
             // On vérifie que le refresh token est bien autorisé
-            WhiteList whiteList = context.RequestServices.GetRequiredService<WhiteList>();
+            IWhiteList whiteList = context.RequestServices.GetRequiredService<IWhiteList>();
             if (!whiteList.TryGetValue(refreshToken, out _))
             {
                 context.Response.StatusCode = StatusCodes.Status401Unauthorized;

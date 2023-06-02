@@ -1,4 +1,6 @@
 ﻿using FluentAssertions;
+using FluentValidation;
+using Mercadona.Backend.Controllers;
 using Mercadona.Backend.Models;
 using Mercadona.Backend.Services;
 using Mercadona.Backend.Services.Interfaces;
@@ -6,6 +8,7 @@ using Mercadona.Tests.Fixtures;
 using Mercadona.Tests.Moq;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using System.Security.Claims;
@@ -117,27 +120,76 @@ public class AuthenticationServiceTests : IClassFixture<ServiceProviderFixture>
     }
 
     [Fact]
+    public async Task LoginAsync_UserDoesNotExist_ShouldReturnNull_Async()
+    {
+        // Arrange
+        UserModel user = new() { Username = "toto@toto.fr", Password = "V@lidPassw0rd" };
+        UserManagerMock userManagerMock = new(false);
+        Mock<ITokenService> mockTokenService = new();
+        string expectedRefreshToken = Guid.NewGuid().ToString();
+        mockTokenService.Setup(_ => _.GenerateRefreshToken()).Returns(expectedRefreshToken);
+        string expectedAccessToken = Guid.NewGuid().ToString();
+        mockTokenService
+            .Setup(_ => _.GenerateAccessToken(It.IsAny<string>(), It.IsAny<IEnumerable<Claim>>()))
+            .Returns(expectedAccessToken);
+        AuthenticationService service = new(userManagerMock, mockTokenService.Object);
+
+        // Act
+        (string? refreshToken, string? accessToken) = await service.LoginAsync(user);
+
+        // Assert
+        refreshToken.Should().BeNull();
+        accessToken.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task LoginAsync_WrongPassword_ShouldReturnNull_Async()
+    {
+        // Arrange
+        UserModel user = new() { Username = "toto@toto.fr", Password = "V@lidPassw0rd" };
+        UserManagerMock userManagerMock = new(false, user);
+        Mock<ITokenService> mockTokenService = new();
+        string expectedRefreshToken = Guid.NewGuid().ToString();
+        mockTokenService.Setup(_ => _.GenerateRefreshToken()).Returns(expectedRefreshToken);
+        string expectedAccessToken = Guid.NewGuid().ToString();
+        mockTokenService
+            .Setup(_ => _.GenerateAccessToken(It.IsAny<string>(), It.IsAny<IEnumerable<Claim>>()))
+            .Returns(expectedAccessToken);
+        AuthenticationService service = new(userManagerMock, mockTokenService.Object);
+
+        // Act
+        (string? refreshToken, string? accessToken) = await service.LoginAsync(
+            new UserModel { Username = "toto@toto.fr", Password = "WrongPassw0rd" }
+        );
+
+        // Assert
+        refreshToken.Should().BeNull();
+        accessToken.Should().BeNull();
+    }
+
+    [Fact]
     public async Task LoginAsync_ValidPassword_ShouldReturnCorrectAccessToken_Async()
     {
         // Arrange
-        UserManagerMock userManagerMock =
-            new(false, new UserModel { Username = "toto@toto.fr", Password = "V@lidPassw0rd" });
+        UserModel user = new() { Username = "toto@toto.fr", Password = "V@lidPassw0rd" };
+        UserManagerMock userManagerMock = new(false, user);
         Mock<ITokenService> mockTokenService = new();
-        mockTokenService.Setup(_ => _.GenerateRefreshToken()).Returns(Guid.Empty.ToString());
+        string expectedRefreshToken = Guid.NewGuid().ToString();
+        mockTokenService.Setup(_ => _.GenerateRefreshToken()).Returns(expectedRefreshToken);
+        string expectedAccessToken = Guid.NewGuid().ToString();
         mockTokenService
             .Setup(_ => _.GenerateAccessToken(It.IsAny<string>(), It.IsAny<IEnumerable<Claim>>()))
-            .Returns(Guid.Empty.ToString());
+            .Returns(expectedAccessToken);
         AuthenticationService service = new(userManagerMock, mockTokenService.Object);
-        IdentityUser? user = await userManagerMock.FindByNameAsync("toto@toto.fr");
-        if (user == null)
-            Assert.Fail("L'utilisateur toto@toto.fr non trouvé.");
 
         // Act
-        (string refreshToken, string accessToken) = await service.LoginAsync(user);
+        (string? refreshToken, string? accessToken) = await service.LoginAsync(user);
 
         // Assert
-        refreshToken.Should().Be(Guid.Empty.ToString());
-        accessToken.Should().Be(Guid.Empty.ToString());
+        refreshToken.Should().NotBeNull();
+        refreshToken.Should().Be(expectedRefreshToken);
+        accessToken.Should().NotBeNull();
+        accessToken.Should().Be(expectedAccessToken);
     }
 
     [Fact]

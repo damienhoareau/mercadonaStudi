@@ -31,7 +31,7 @@ public class TokenService : ITokenService
     /// </summary>
     public const int REFRESH_TOKEN_DURATION = 8;
 
-    private readonly WhiteList _whiteList;
+    private readonly IWhiteList _whiteList;
     private readonly JwtBearerOptions _jwtOptions;
 
     /// <summary>
@@ -39,7 +39,7 @@ public class TokenService : ITokenService
     /// </summary>
     /// <param name="whiteList">Cache mémoire pour les jetons de renouvellement.</param>
     /// <param name="jwtOptionsMonitor">Options des jetons JWT.</param>
-    public TokenService(WhiteList whiteList, IOptionsMonitor<JwtBearerOptions> jwtOptionsMonitor)
+    public TokenService(IWhiteList whiteList, IOptionsMonitor<JwtBearerOptions> jwtOptionsMonitor)
     {
         _whiteList = whiteList;
         _jwtOptions = jwtOptionsMonitor.Get(JwtBearerDefaults.AuthenticationScheme);

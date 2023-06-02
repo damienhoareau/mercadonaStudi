@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Mercadona.Backend.Models;
+using Mercadona.Backend.Validation;
+using Microsoft.AspNetCore.Identity;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -37,9 +39,10 @@ public class AuthenticationService : IAuthenticationService
     }
 
     /// <inheritdoc/>
-    public Task<(string refreshToken, string accessToken)> LoginAsync(IdentityUser user)
+    public async Task<(string? refreshToken, string? accessToken)> LoginAsync(UserModel model)
     {
-        return Task.Run(() =>
+        IdentityUser? user = await FindUserByNameAsync(model.Username);
+        if (user != null && await CheckPasswordAsync(user, model.Password))
         {
             string refreshToken = _tokenService.GenerateRefreshToken();
             List<Claim> authClaims =
@@ -54,7 +57,8 @@ public class AuthenticationService : IAuthenticationService
             string accessToken = _tokenService.GenerateAccessToken(refreshToken, authClaims);
 
             return (refreshToken, accessToken);
-        });
+        }
+        return (null, null);
     }
 
     /// <inheritdoc/>

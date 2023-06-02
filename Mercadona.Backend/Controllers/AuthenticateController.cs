@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using FluentValidation.Results;
 using Mercadona.Backend.Models;
+using Mercadona.Backend.Security;
 using Mercadona.Backend.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
@@ -56,30 +57,36 @@ public class AuthenticateController : ControllerBase
     /// <response code="200">Si l'authentification a réussi.</response>
     /// <response code="401">Si l'identifiant ou le mot de passe n'est pas correct.</response>
     [HttpPost]
+    [IgnoreAntiforgeryToken]
     [Route("account/login")]
     [ProducesResponseType(typeof(ConnectedUser), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(TextResponse), StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> LoginAsync([FromBody] UserModel model)
     {
-        IdentityUser? user = await _authenticationService.FindUserByNameAsync(model.Username);
-        if (user != null && await _authenticationService.CheckPasswordAsync(user, model.Password))
-        {
-            (string refreshToken, string accessToken) = await _authenticationService.LoginAsync(
-                user
-            );
+        ValidationResult userModelValidationResult = await _userModelValidator.ValidateAsync(
+            model,
+            HttpContext.RequestAborted
+        );
+        if (!userModelValidationResult.IsValid)
+            return Unauthorized(new TextResponse(USERNAME_OR_PASSWORD_IS_NOT_VALID));
 
-            HttpContext.Session.SetString(TokenService.REFRESH_TOKEN_NAME, refreshToken);
+        (string? refreshToken, string? accessToken) = await _authenticationService.LoginAsync(
+            model
+        );
 
-            return Ok(
-                new ConnectedUser
-                {
-                    UserName = model.Username,
-                    RefreshToken = refreshToken,
-                    AccessToken = accessToken
-                }
-            );
-        }
-        return Unauthorized(new TextResponse(USERNAME_OR_PASSWORD_IS_NOT_VALID));
+        if (refreshToken == null || accessToken == null)
+            return Unauthorized(new TextResponse(USERNAME_OR_PASSWORD_IS_NOT_VALID));
+
+        HttpContext.Session.SetString(TokenService.REFRESH_TOKEN_NAME, refreshToken);
+
+        return Ok(
+            new ConnectedUser
+            {
+                UserName = model.Username,
+                RefreshToken = refreshToken,
+                AccessToken = accessToken
+            }
+        );
     }
 
     /// <summary>
@@ -89,8 +96,9 @@ public class AuthenticateController : ControllerBase
     /// <response code="200">Si l'authentification a réussi.</response>
     /// <response code="500">Si la prolongation de la session de l'utilisateur a échoué.</response>
     [HttpPost]
+    [AuthAutoValidateAntiforgeryToken]
     [Route("account/refreshToken")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(TextResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> RefreshTokenAsync()
     {
@@ -101,47 +109,12 @@ public class AuthenticateController : ControllerBase
 
             HttpContext.Session.SetString(TokenService.ACCESS_TOKEN_NAME, accessToken);
 
-            return Ok();
+            return Ok(new TextResponse(accessToken));
         }
         return Problem(
             REFRESH_TOKEN_NOT_FOUND,
             statusCode: StatusCodes.Status500InternalServerError
         );
-    }
-
-    /// <summary>
-    /// Permet de stocker les jetons d'authentification Blazor dans un cookie
-    /// </summary>
-    /// <param name="user">Modèle représentant l'utilisateur connecté</param>
-    /// <returns></returns>
-    /// <response code="200">Si l'action s'est bien déroulée.</response>
-    [HttpPost]
-    [Route("account/storeCookie")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> StoreCookieAsync([FromBody] ConnectedUser user)
-    {
-        await Task.Run(() =>
-        {
-            HttpContext.Session.SetString(TokenService.REFRESH_TOKEN_NAME, user.RefreshToken);
-            HttpContext.Session.SetString(TokenService.ACCESS_TOKEN_NAME, user.AccessToken);
-        });
-
-        return Ok();
-    }
-
-    /// <summary>
-    /// Permet de supprimer les jetons d'authentification Blazor des cookies
-    /// </summary>
-    /// <returns></returns>
-    /// <response code="200">Si l'action s'est bien déroulée.</response>
-    [HttpPost]
-    [Route("account/clearCookie")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> ClearCookieAsync()
-    {
-        await Task.Run(HttpContext.Session.Clear);
-
-        return Ok();
     }
 
     /// <summary>
@@ -153,6 +126,7 @@ public class AuthenticateController : ControllerBase
     /// <response code="400">Si l'UserModel model n'est pas valide.</response>
     /// <response code="500">Si l'utilisateur existe déjà ou que la création de l'utilisateur a échoué.</response>
     [HttpPost]
+    [IgnoreAntiforgeryToken]
     [Route("account/register")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -193,6 +167,7 @@ public class AuthenticateController : ControllerBase
     /// <response code="500">Si la déconnexion de l'utilisateur a échoué.</response>
     [Authorize]
     [HttpPost]
+    [AuthAutoValidateAntiforgeryToken]
     [Route("account/logout")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -208,6 +183,7 @@ public class AuthenticateController : ControllerBase
                 );
             await _authenticationService.LogoutAsync(refreshToken);
             HttpContext.Session.Remove(TokenService.REFRESH_TOKEN_NAME);
+
             return Ok();
         }
         catch (Exception ex)

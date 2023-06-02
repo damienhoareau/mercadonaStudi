@@ -31,13 +31,13 @@ public class TokenLifetimeValidator : ITokenLifetimeValidator
     /// <inheritdoc />
     public event EventHandler<TokenExpirationWarningChangedArgs>? TokenExpirationWarningChanged;
 
-    private readonly WhiteList _whiteList;
+    private readonly IWhiteList _whiteList;
 
     /// <summary>
     /// Initialise une nouvelle instance de la classe <see cref="TokenLifetimeValidator"/>.
     /// </summary>
     /// <param name="whiteList">Cache mémoire pour les jetons de renouvellement.</param>
-    public TokenLifetimeValidator(WhiteList whiteList)
+    public TokenLifetimeValidator(IWhiteList whiteList)
     {
         _whiteList = whiteList;
     }

@@ -1,9 +1,8 @@
 ﻿@using Mercadona.Backend.Models;
 @using Mercadona.Backend.Services.Interfaces;
 @using System.Security.Claims;
+@inject IServiceProvider _serviceProvider;
 @inject NavigationManager _navigationManager;
-@inject IAuthenticationService _authenticationService;
-@inject ConnectedUser _connectedUser;
 @inject IHostEnvironmentAuthenticationStateProvider _hostAuthentication;
 @inject IJSRuntime _jsRuntime;
 
@@ -24,13 +23,13 @@
 @code {
     async Task Logout()
     {
-        await _authenticationService.LogoutAsync(_connectedUser.RefreshToken);
-        _connectedUser.UserName = string.Empty;
-        _connectedUser.RefreshToken = string.Empty;
-        _connectedUser.AccessToken = string.Empty;
-        _hostAuthentication.SetAuthenticationState(Task.FromResult(new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()))));
+        IConnectedUserProvider _connectedUserProvider = _serviceProvider.GetRequiredService<IConnectedUserProvider>();
         IJSObjectReference authModule = await _jsRuntime.InvokeAsync<IJSObjectReference>("import", "./js/auth.js");
-        await authModule.InvokeVoidAsync("ClearCookie");
+        await authModule.InvokeVoidAsync("Logout", _connectedUserProvider.ConnectedUser?.AccessToken);
+
+        _connectedUserProvider.ConnectedUser = null;
+        _hostAuthentication.SetAuthenticationState(Task.FromResult(new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()))));
+
         _navigationManager.NavigateTo("/");
     }
 }

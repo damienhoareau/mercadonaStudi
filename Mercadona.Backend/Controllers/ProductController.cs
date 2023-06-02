@@ -1,4 +1,5 @@
 ﻿using Mercadona.Backend.Data;
+using Mercadona.Backend.Security;
 using Mercadona.Backend.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -100,6 +101,7 @@ public class ProductController : ControllerBase
     /// <response code="400">Si les données ne sont pas valides.</response>
     /// <response code="500">Si une erreur survient au niveau du code.</response>
     [HttpPost]
+    [AuthAutoValidateAntiforgeryToken]
     [Route("api/products")]
     [ProducesResponseType(typeof(Product), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

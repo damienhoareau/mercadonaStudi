@@ -20,17 +20,17 @@ using System.Text;
 
 namespace Mercadona.Tests.Security;
 
-public class JwtInSessionExtTests
+public class JwtBlazorExtTests
 {
     [Fact]
-    public void AddJwtInSession_ShouldRegisterAllRequiredServices()
+    public void AddJwtBlazor_ShouldRegisterAllRequiredServices()
     {
         // Arrange
         ServiceCollection services = new();
         SessionOptions sessionOptions = new();
 
         // Act
-        services.AddJwtInSession();
+        services.AddJwtBlazor();
         ServiceProvider provider = services.BuildServiceProvider();
         IConfigureOptions<SessionOptions> configureOptions = provider.GetRequiredService<
             IConfigureOptions<SessionOptions>
@@ -40,30 +40,34 @@ public class JwtInSessionExtTests
         // Assert
         services.Should().Contain(_ => _.ServiceType == typeof(IConfigureOptions<SessionOptions>));
         services.Should().Contain(_ => _.ServiceType == typeof(ISessionStore));
-        services.Should().Contain(_ => _.ServiceType == typeof(WhiteList));
+        services.Should().Contain(_ => _.ServiceType == typeof(IHttpContextAccessor));
+        services.Should().Contain(_ => _.ServiceType == typeof(IWhiteList));
+        services
+            .Should()
+            .Contain(_ => _.ServiceType == typeof(AuthAutoValidateAntiforgeryTokenFilter));
         sessionOptions.Cookie.HttpOnly.Should().BeTrue();
         sessionOptions.Cookie.SameSite.Should().Be(SameSiteMode.Strict);
         sessionOptions.Cookie.SecurePolicy.Should().Be(CookieSecurePolicy.SameAsRequest);
     }
 
     [Fact]
-    public void UseJwtInSession_ShouldUseAllMiddleware()
+    public void UseJwtBlazor_ShouldUseAllMiddleware()
     {
         // Arrange
         Mock<IApplicationBuilder> mockAppBuilder = new();
 
         // Act
-        mockAppBuilder.Object.UseJwtInSession();
+        mockAppBuilder.Object.UseJwtBlazor();
 
         // Assert
         mockAppBuilder.Verify();
     }
 
     [Fact]
-    public async Task JwtInSessionMiddleware_NoHeaderAuthorization_ShouldExecuteNext_Async()
+    public async Task JwtBlazorMiddleware_NoHeaderAuthorization_ShouldExecuteNext_Async()
     {
         // Arrange
-        JwtInSessionMiddleware middleware = new();
+        JwtBlazorMiddleware middleware = new();
         HttpContextMock httpContext = new();
         Mock<RequestDelegate> mockRequestDelegate = new();
         mockRequestDelegate.Setup(_ => _.Invoke(It.IsAny<HttpContext>())).Verifiable();
@@ -76,10 +80,10 @@ public class JwtInSessionExtTests
     }
 
     [Fact]
-    public async Task JwtInSessionMiddleware_NotBearerAuthorization_ShouldExecuteNext_Async()
+    public async Task JwtBlazorMiddleware_NotBearerAuthorization_ShouldExecuteNext_Async()
     {
         // Arrange
-        JwtInSessionMiddleware middleware = new();
+        JwtBlazorMiddleware middleware = new();
         HttpContextMock httpContext = new HttpContextMock().SetupRequestHeaders(
             new Dictionary<string, StringValues>() { { "Authorization", "Basic accessToken" } }
         );
@@ -94,10 +98,10 @@ public class JwtInSessionExtTests
     }
 
     [Fact]
-    public async Task JwtInSessionMiddleware_RefreshTokenIsNull_ShouldReturnStatus401Unauthorized_Async()
+    public async Task JwtBlazorMiddleware_RefreshTokenIsNull_ShouldReturnStatus401Unauthorized_Async()
     {
         // Arrange
-        JwtInSessionMiddleware middleware = new();
+        JwtBlazorMiddleware middleware = new();
         HttpContextMock httpContext = new HttpContextMock()
             .SetupRequestHeaders(
                 new Dictionary<string, StringValues>() { { "Authorization", "Bearer accessToken" } }
@@ -117,16 +121,16 @@ public class JwtInSessionExtTests
     }
 
     [Fact]
-    public async Task JwtInSessionMiddleware_RefreshTokenNotAuthorized_ShouldReturnStatus401Unauthorized_Async()
+    public async Task JwtBlazorMiddleware_RefreshTokenNotAuthorized_ShouldReturnStatus401Unauthorized_Async()
     {
         // Arrange
-        JwtInSessionMiddleware middleware = new();
+        JwtBlazorMiddleware middleware = new();
         Mock<IOptions<MemoryCacheOptions>> mockMemoryCacheOptions = new();
         mockMemoryCacheOptions
             .SetupGet(_ => _.Value)
             .Returns(new MemoryCacheOptions())
             .Verifiable();
-        WhiteList whiteList = new(mockMemoryCacheOptions.Object);
+        IWhiteList whiteList = new Mock<WhiteList>(mockMemoryCacheOptions.Object).Object;
         HttpContextMock httpContext = new HttpContextMock()
             .SetupRequestHeaders(
                 new Dictionary<string, StringValues>() { { "Authorization", "Bearer accessToken" } }
@@ -149,10 +153,10 @@ public class JwtInSessionExtTests
     }
 
     [Fact]
-    public async Task JwtInSessionMiddleware_RefreshTokenNotCorrespond_ShouldReturnStatus401Unauthorized_Async()
+    public async Task JwtBlazorMiddleware_RefreshTokenNotCorrespond_ShouldReturnStatus401Unauthorized_Async()
     {
         // Arrange
-        JwtInSessionMiddleware middleware = new();
+        JwtBlazorMiddleware middleware = new();
         JwtSecurityToken token =
             new(
                 issuer: "https://localhost:44387",
@@ -179,7 +183,7 @@ public class JwtInSessionExtTests
             .SetupGet(_ => _.Value)
             .Returns(new MemoryCacheOptions())
             .Verifiable();
-        WhiteList whiteList = new(mockMemoryCacheOptions.Object);
+        IWhiteList whiteList = new Mock<WhiteList>(mockMemoryCacheOptions.Object).Object;
         whiteList.Set("refreshToken", token);
         Mock<ITokenService> mockTokenService = new();
         mockTokenService
@@ -222,10 +226,10 @@ public class JwtInSessionExtTests
     }
 
     [Fact]
-    public async Task JwtInSessionMiddleware_RefreshTokenCorresponds_ShouldExecuteNext_Async()
+    public async Task JwtBlazorMiddleware_RefreshTokenCorresponds_ShouldExecuteNext_Async()
     {
         // Arrange
-        JwtInSessionMiddleware middleware = new();
+        JwtBlazorMiddleware middleware = new();
         JwtSecurityToken token =
             new(
                 issuer: "https://localhost:44387",
@@ -252,7 +256,7 @@ public class JwtInSessionExtTests
             .SetupGet(_ => _.Value)
             .Returns(new MemoryCacheOptions())
             .Verifiable();
-        WhiteList whiteList = new(mockMemoryCacheOptions.Object);
+        IWhiteList whiteList = new Mock<WhiteList>(mockMemoryCacheOptions.Object).Object;
         whiteList.Set("refreshToken", token);
         Mock<ITokenService> mockTokenService = new();
         mockTokenService
