@@ -45,6 +45,16 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "documentation/Mercadona.Backend.Areas.Identity.RevalidatingServerAuthenticationStateProviderBase.yml",
+      "output": {
+        ".html": {
+          "relative_path": "documentation/Mercadona.Backend.Areas.Identity.RevalidatingServerAuthenticationStateProviderBase.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "documentation/Mercadona.Backend.Areas.Identity.SecurityStampValidator-1.yml",
       "output": {
         ".html": {

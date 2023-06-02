@@ -182,6 +182,44 @@ references:
   fullName.vb: Mercadona.Backend.Areas.Identity.RevalidatingIdentityAuthenticationStateProvider(Of TUser).ValidateAuthenticationStateAsync
   nameWithType: RevalidatingIdentityAuthenticationStateProvider<TUser>.ValidateAuthenticationStateAsync
   nameWithType.vb: RevalidatingIdentityAuthenticationStateProvider(Of TUser).ValidateAuthenticationStateAsync
+- uid: Mercadona.Backend.Areas.Identity.RevalidatingServerAuthenticationStateProviderBase
+  name: RevalidatingServerAuthenticationStateProviderBase
+  href: documentation/Mercadona.Backend.Areas.Identity.RevalidatingServerAuthenticationStateProviderBase.html
+  commentId: T:Mercadona.Backend.Areas.Identity.RevalidatingServerAuthenticationStateProviderBase
+  fullName: Mercadona.Backend.Areas.Identity.RevalidatingServerAuthenticationStateProviderBase
+  nameWithType: RevalidatingServerAuthenticationStateProviderBase
+- uid: Mercadona.Backend.Areas.Identity.RevalidatingServerAuthenticationStateProviderBase.#ctor(Microsoft.Extensions.Logging.ILoggerFactory)
+  name: RevalidatingServerAuthenticationStateProviderBase(ILoggerFactory)
+  href: documentation/Mercadona.Backend.Areas.Identity.RevalidatingServerAuthenticationStateProviderBase.html#Mercadona_Backend_Areas_Identity_RevalidatingServerAuthenticationStateProviderBase__ctor_Microsoft_Extensions_Logging_ILoggerFactory_
+  commentId: M:Mercadona.Backend.Areas.Identity.RevalidatingServerAuthenticationStateProviderBase.#ctor(Microsoft.Extensions.Logging.ILoggerFactory)
+  name.vb: New(ILoggerFactory)
+  fullName: Mercadona.Backend.Areas.Identity.RevalidatingServerAuthenticationStateProviderBase.RevalidatingServerAuthenticationStateProviderBase(Microsoft.Extensions.Logging.ILoggerFactory)
+  fullName.vb: Mercadona.Backend.Areas.Identity.RevalidatingServerAuthenticationStateProviderBase.New(Microsoft.Extensions.Logging.ILoggerFactory)
+  nameWithType: RevalidatingServerAuthenticationStateProviderBase.RevalidatingServerAuthenticationStateProviderBase(ILoggerFactory)
+  nameWithType.vb: RevalidatingServerAuthenticationStateProviderBase.New(ILoggerFactory)
+- uid: Mercadona.Backend.Areas.Identity.RevalidatingServerAuthenticationStateProviderBase.#ctor*
+  name: RevalidatingServerAuthenticationStateProviderBase
+  href: documentation/Mercadona.Backend.Areas.Identity.RevalidatingServerAuthenticationStateProviderBase.html#Mercadona_Backend_Areas_Identity_RevalidatingServerAuthenticationStateProviderBase__ctor_
+  commentId: Overload:Mercadona.Backend.Areas.Identity.RevalidatingServerAuthenticationStateProviderBase.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: Mercadona.Backend.Areas.Identity.RevalidatingServerAuthenticationStateProviderBase.RevalidatingServerAuthenticationStateProviderBase
+  fullName.vb: Mercadona.Backend.Areas.Identity.RevalidatingServerAuthenticationStateProviderBase.New
+  nameWithType: RevalidatingServerAuthenticationStateProviderBase.RevalidatingServerAuthenticationStateProviderBase
+  nameWithType.vb: RevalidatingServerAuthenticationStateProviderBase.New
+- uid: Mercadona.Backend.Areas.Identity.RevalidatingServerAuthenticationStateProviderBase.AnonymousUser
+  name: AnonymousUser
+  href: documentation/Mercadona.Backend.Areas.Identity.RevalidatingServerAuthenticationStateProviderBase.html#Mercadona_Backend_Areas_Identity_RevalidatingServerAuthenticationStateProviderBase_AnonymousUser
+  commentId: P:Mercadona.Backend.Areas.Identity.RevalidatingServerAuthenticationStateProviderBase.AnonymousUser
+  fullName: Mercadona.Backend.Areas.Identity.RevalidatingServerAuthenticationStateProviderBase.AnonymousUser
+  nameWithType: RevalidatingServerAuthenticationStateProviderBase.AnonymousUser
+- uid: Mercadona.Backend.Areas.Identity.RevalidatingServerAuthenticationStateProviderBase.AnonymousUser*
+  name: AnonymousUser
+  href: documentation/Mercadona.Backend.Areas.Identity.RevalidatingServerAuthenticationStateProviderBase.html#Mercadona_Backend_Areas_Identity_RevalidatingServerAuthenticationStateProviderBase_AnonymousUser_
+  commentId: Overload:Mercadona.Backend.Areas.Identity.RevalidatingServerAuthenticationStateProviderBase.AnonymousUser
+  isSpec: "True"
+  fullName: Mercadona.Backend.Areas.Identity.RevalidatingServerAuthenticationStateProviderBase.AnonymousUser
+  nameWithType: RevalidatingServerAuthenticationStateProviderBase.AnonymousUser
 - uid: Mercadona.Backend.Areas.Identity.SecurityStampValidator`1
   name: SecurityStampValidator<TUser>
   href: documentation/Mercadona.Backend.Areas.Identity.SecurityStampValidator-1.html
