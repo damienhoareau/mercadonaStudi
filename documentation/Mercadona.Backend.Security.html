@@ -85,18 +85,38 @@
 Classes
 </h3>
     <dl class="jumplist">
-      <dt><a class="xref" href="Mercadona.Backend.Security.JwtInSessionExt.html">JwtInSessionExt</a></dt>
-      <dd><p>Extensions pour le middleware de stockage d'un JWT dans un cookie de session</p>
+      <dt><a class="xref" href="Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenAttribute.html">AuthAutoValidateAntiforgeryTokenAttribute</a></dt>
+      <dd><p>Spécifie que la classe ou la méthode sur laquelle l'attribut est appliqué valide un jeton anti-falsification.
+Si le jeton anti-falsification n'est pas disponible, ou s'il n'est pas valide, la validation échoue
+et la méthode n'est pas exécutée.</p>
 </dd>
     </dl>
     <dl class="jumplist">
-      <dt><a class="xref" href="Mercadona.Backend.Security.JwtInSessionMiddleware.html">JwtInSessionMiddleware</a></dt>
-      <dd><p>Middleware de stockage d'un JWT dans un cookie de session</p>
+      <dt><a class="xref" href="Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenFilter.html">AuthAutoValidateAntiforgeryTokenFilter</a></dt>
+      <dd><p>Filtre ne validant le jeton anti-falsification que s'il n'y a pas de jeton d'accès</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Mercadona.Backend.Security.JwtBlazorExt.html">JwtBlazorExt</a></dt>
+      <dd><p>Extensions pour le middleware d'authentification Blazor avec un JWT</p>
+</dd>
+    </dl>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Mercadona.Backend.Security.JwtBlazorMiddleware.html">JwtBlazorMiddleware</a></dt>
+      <dd><p>Middleware d'authentification Blazor avec un JWT</p>
 </dd>
     </dl>
     <dl class="jumplist">
       <dt><a class="xref" href="Mercadona.Backend.Security.WhiteList.html">WhiteList</a></dt>
-      <dd><p>Permet de stocker une liste de jetons de renouvellement autorisés.</p>
+      <dd><p>Classe permettant de stocker une liste de jetons de renouvellement autorisés.</p>
+</dd>
+    </dl>
+    <h3 id="interfaces">
+Interfaces
+</h3>
+    <dl class="jumplist">
+      <dt><a class="xref" href="Mercadona.Backend.Security.IWhiteList.html">IWhiteList</a></dt>
+      <dd><p>Interface d'une classe permettant de stocker une liste de jetons de renouvellement autorisés.</p>
 </dd>
     </dl>
 

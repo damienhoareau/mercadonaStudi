@@ -87,7 +87,7 @@
   <dl><dt>Assembly</dt><dd>Mercadona.Backend.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>Classe permettant de g�rer l'authentification Blazor</p>
+  <div class="markdown summary"><p>Classe permettant de gérer l'authentification Blazor</p>
 </div>
   <div class="markdown conceptual"></div>
 
@@ -173,8 +173,8 @@
 
   <a id="Mercadona_Backend_Areas_Identity_RevalidatingIdentityAuthenticationStateProvider_1__ctor_" data-uid="Mercadona.Backend.Areas.Identity.RevalidatingIdentityAuthenticationStateProvider`1.#ctor*"></a>
 
-  <h3 id="Mercadona_Backend_Areas_Identity_RevalidatingIdentityAuthenticationStateProvider_1__ctor_Microsoft_Extensions_Logging_ILoggerFactory_Microsoft_Extensions_DependencyInjection_IServiceScopeFactory_Microsoft_Extensions_Options_IOptions_Microsoft_AspNetCore_Identity_IdentityOptions__Microsoft_AspNetCore_Http_IHttpContextAccessor_Mercadona_Backend_Areas_Identity_ISecurityStampValidator__0__Mercadona_Backend_Areas_Identity_ITokenLifetimeValidator_Mercadona_Backend_Services_Interfaces_ITokenService_Mercadona_Backend_Services_Interfaces_IAuthenticationService_Mercadona_Backend_Security_WhiteList_" data-uid="Mercadona.Backend.Areas.Identity.RevalidatingIdentityAuthenticationStateProvider`1.#ctor(Microsoft.Extensions.Logging.ILoggerFactory,Microsoft.Extensions.DependencyInjection.IServiceScopeFactory,Microsoft.Extensions.Options.IOptions{Microsoft.AspNetCore.Identity.IdentityOptions},Microsoft.AspNetCore.Http.IHttpContextAccessor,Mercadona.Backend.Areas.Identity.ISecurityStampValidator{`0},Mercadona.Backend.Areas.Identity.ITokenLifetimeValidator,Mercadona.Backend.Services.Interfaces.ITokenService,Mercadona.Backend.Services.Interfaces.IAuthenticationService,Mercadona.Backend.Security.WhiteList)">
-  RevalidatingIdentityAuthenticationStateProvider(ILoggerFactory, IServiceScopeFactory, IOptions&lt;IdentityOptions&gt;, IHttpContextAccessor, ISecurityStampValidator&lt;TUser&gt;, ITokenLifetimeValidator, ITokenService, IAuthenticationService, WhiteList)
+  <h3 id="Mercadona_Backend_Areas_Identity_RevalidatingIdentityAuthenticationStateProvider_1__ctor_Microsoft_Extensions_Logging_ILoggerFactory_Microsoft_Extensions_DependencyInjection_IServiceScopeFactory_Microsoft_Extensions_Options_IOptions_Microsoft_AspNetCore_Identity_IdentityOptions__Microsoft_AspNetCore_Http_IHttpContextAccessor_Mercadona_Backend_Areas_Identity_ISecurityStampValidator__0__Mercadona_Backend_Areas_Identity_ITokenLifetimeValidator_Mercadona_Backend_Services_Interfaces_ITokenService_Mercadona_Backend_Services_Interfaces_IAuthenticationService_Mercadona_Backend_Security_IWhiteList_Mercadona_Backend_Services_Interfaces_IConnectedUserProvider_" data-uid="Mercadona.Backend.Areas.Identity.RevalidatingIdentityAuthenticationStateProvider`1.#ctor(Microsoft.Extensions.Logging.ILoggerFactory,Microsoft.Extensions.DependencyInjection.IServiceScopeFactory,Microsoft.Extensions.Options.IOptions{Microsoft.AspNetCore.Identity.IdentityOptions},Microsoft.AspNetCore.Http.IHttpContextAccessor,Mercadona.Backend.Areas.Identity.ISecurityStampValidator{`0},Mercadona.Backend.Areas.Identity.ITokenLifetimeValidator,Mercadona.Backend.Services.Interfaces.ITokenService,Mercadona.Backend.Services.Interfaces.IAuthenticationService,Mercadona.Backend.Security.IWhiteList,Mercadona.Backend.Services.Interfaces.IConnectedUserProvider)">
+  RevalidatingIdentityAuthenticationStateProvider(ILoggerFactory, IServiceScopeFactory, IOptions&lt;IdentityOptions&gt;, IHttpContextAccessor, ISecurityStampValidator&lt;TUser&gt;, ITokenLifetimeValidator, ITokenService, IAuthenticationService, IWhiteList, IConnectedUserProvider)
   
   </h3>
 
@@ -183,7 +183,7 @@
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public RevalidatingIdentityAuthenticationStateProvider(ILoggerFactory loggerFactory, IServiceScopeFactory scopeFactory, IOptions&lt;IdentityOptions&gt; optionsAccessor, IHttpContextAccessor contextAccessor, ISecurityStampValidator&lt;TUser&gt; securityStampValidator, ITokenLifetimeValidator tokenLifetimeValidator, ITokenService tokenService, IAuthenticationService authenticationService, WhiteList whiteList)</code></pre>
+    <pre><code class="lang-csharp hljs">public RevalidatingIdentityAuthenticationStateProvider(ILoggerFactory loggerFactory, IServiceScopeFactory scopeFactory, IOptions&lt;IdentityOptions&gt; optionsAccessor, IHttpContextAccessor contextAccessor, ISecurityStampValidator&lt;TUser&gt; securityStampValidator, ITokenLifetimeValidator tokenLifetimeValidator, ITokenService tokenService, IAuthenticationService authenticationService, IWhiteList whiteList, IConnectedUserProvider connectedUserProvider)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -192,7 +192,7 @@
     <dd><p>La fabrique de logger.</p>
 </dd>
     <dt><code>scopeFactory</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.dependencyinjection.iservicescopefactory">IServiceScopeFactory</a></dt>
-    <dd><p>La fabrique de p�rim�tre.</p>
+    <dd><p>La fabrique de périmètre.</p>
 </dd>
     <dt><code>optionsAccessor</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.options.ioptions-1">IOptions</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.identity.identityoptions">IdentityOptions</a>&gt;</dt>
     <dd><p>Options de <code>IdentityOptions</code>.</p>
@@ -201,10 +201,10 @@
     <dd><p>Accesseur de contexte HTTP.</p>
 </dd>
     <dt><code>securityStampValidator</code> <a class="xref" href="Mercadona.Backend.Areas.Identity.ISecurityStampValidator-1.html">ISecurityStampValidator</a>&lt;TUser&gt;</dt>
-    <dd><p>La classe de validation des tampons de s�curit�.</p>
+    <dd><p>La classe de validation des tampons de sécurité.</p>
 </dd>
     <dt><code>tokenLifetimeValidator</code> <a class="xref" href="Mercadona.Backend.Areas.Identity.ITokenLifetimeValidator.html">ITokenLifetimeValidator</a></dt>
-    <dd><p>La classe de validation du temps restant du jeton d'acc�s.</p>
+    <dd><p>La classe de validation du temps restant du jeton d'accès.</p>
 </dd>
     <dt><code>tokenService</code> <a class="xref" href="Mercadona.Backend.Services.Interfaces.ITokenService.html">ITokenService</a></dt>
     <dd><p>Le service de gestion des jetons.</p>
@@ -212,8 +212,11 @@
     <dt><code>authenticationService</code> <a class="xref" href="Mercadona.Backend.Services.Interfaces.IAuthenticationService.html">IAuthenticationService</a></dt>
     <dd><p>Le service d'authentification.</p>
 </dd>
-    <dt><code>whiteList</code> <a class="xref" href="Mercadona.Backend.Security.WhiteList.html">WhiteList</a></dt>
-    <dd><p>Cache m�moire pour les jetons de renouvellement.</p>
+    <dt><code>whiteList</code> <a class="xref" href="Mercadona.Backend.Security.IWhiteList.html">IWhiteList</a></dt>
+    <dd><p>Cache mémoire pour les jetons de renouvellement.</p>
+</dd>
+    <dt><code>connectedUserProvider</code> <a class="xref" href="Mercadona.Backend.Services.Interfaces.IConnectedUserProvider.html">IConnectedUserProvider</a></dt>
+    <dd><p>Provider de l'utilisateur connecté.</p>
 </dd>
   </dl>
 

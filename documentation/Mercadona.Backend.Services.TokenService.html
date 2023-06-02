@@ -151,8 +151,8 @@
 
   <a id="Mercadona_Backend_Services_TokenService__ctor_" data-uid="Mercadona.Backend.Services.TokenService.#ctor*"></a>
 
-  <h3 id="Mercadona_Backend_Services_TokenService__ctor_Mercadona_Backend_Security_WhiteList_Microsoft_Extensions_Options_IOptionsMonitor_Microsoft_AspNetCore_Authentication_JwtBearer_JwtBearerOptions__" data-uid="Mercadona.Backend.Services.TokenService.#ctor(Mercadona.Backend.Security.WhiteList,Microsoft.Extensions.Options.IOptionsMonitor{Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerOptions})">
-  TokenService(WhiteList, IOptionsMonitor&lt;JwtBearerOptions&gt;)
+  <h3 id="Mercadona_Backend_Services_TokenService__ctor_Mercadona_Backend_Security_IWhiteList_Microsoft_Extensions_Options_IOptionsMonitor_Microsoft_AspNetCore_Authentication_JwtBearer_JwtBearerOptions__" data-uid="Mercadona.Backend.Services.TokenService.#ctor(Mercadona.Backend.Security.IWhiteList,Microsoft.Extensions.Options.IOptionsMonitor{Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerOptions})">
+  TokenService(IWhiteList, IOptionsMonitor&lt;JwtBearerOptions&gt;)
   
   </h3>
 
@@ -161,12 +161,12 @@
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public TokenService(WhiteList whiteList, IOptionsMonitor&lt;JwtBearerOptions&gt; jwtOptionsMonitor)</code></pre>
+    <pre><code class="lang-csharp hljs">public TokenService(IWhiteList whiteList, IOptionsMonitor&lt;JwtBearerOptions&gt; jwtOptionsMonitor)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>whiteList</code> <a class="xref" href="Mercadona.Backend.Security.WhiteList.html">WhiteList</a></dt>
+    <dt><code>whiteList</code> <a class="xref" href="Mercadona.Backend.Security.IWhiteList.html">IWhiteList</a></dt>
     <dd><p>Cache mémoire pour les jetons de renouvellement.</p>
 </dd>
     <dt><code>jwtOptionsMonitor</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.options.ioptionsmonitor-1">IOptionsMonitor</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.authentication.jwtbearer.jwtbeareroptions">JwtBearerOptions</a>&gt;</dt>

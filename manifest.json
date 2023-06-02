@@ -465,20 +465,50 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "documentation/Mercadona.Backend.Security.JwtInSessionExt.yml",
+      "source_relative_path": "documentation/Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenAttribute.yml",
       "output": {
         ".html": {
-          "relative_path": "documentation/Mercadona.Backend.Security.JwtInSessionExt.html"
+          "relative_path": "documentation/Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenAttribute.html"
         }
       },
       "version": ""
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "documentation/Mercadona.Backend.Security.JwtInSessionMiddleware.yml",
+      "source_relative_path": "documentation/Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenFilter.yml",
       "output": {
         ".html": {
-          "relative_path": "documentation/Mercadona.Backend.Security.JwtInSessionMiddleware.html"
+          "relative_path": "documentation/Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenFilter.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "documentation/Mercadona.Backend.Security.IWhiteList.yml",
+      "output": {
+        ".html": {
+          "relative_path": "documentation/Mercadona.Backend.Security.IWhiteList.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "documentation/Mercadona.Backend.Security.JwtBlazorExt.yml",
+      "output": {
+        ".html": {
+          "relative_path": "documentation/Mercadona.Backend.Security.JwtBlazorExt.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "documentation/Mercadona.Backend.Security.JwtBlazorMiddleware.yml",
+      "output": {
+        ".html": {
+          "relative_path": "documentation/Mercadona.Backend.Security.JwtBlazorMiddleware.html"
         }
       },
       "version": ""
@@ -525,10 +555,30 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "documentation/Mercadona.Backend.Services.Interfaces.ConnectedUserProvider.yml",
+      "output": {
+        ".html": {
+          "relative_path": "documentation/Mercadona.Backend.Services.Interfaces.ConnectedUserProvider.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "documentation/Mercadona.Backend.Services.Interfaces.IAuthenticationService.yml",
       "output": {
         ".html": {
           "relative_path": "documentation/Mercadona.Backend.Services.Interfaces.IAuthenticationService.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "documentation/Mercadona.Backend.Services.Interfaces.IConnectedUserProvider.yml",
+      "output": {
+        ".html": {
+          "relative_path": "documentation/Mercadona.Backend.Services.Interfaces.IConnectedUserProvider.html"
         }
       },
       "version": ""

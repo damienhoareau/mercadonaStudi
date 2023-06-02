@@ -112,15 +112,15 @@ references:
   fullName.vb: Mercadona.Backend.Areas.Identity.RevalidatingIdentityAuthenticationStateProvider(Of TUser)
   nameWithType: RevalidatingIdentityAuthenticationStateProvider<TUser>
   nameWithType.vb: RevalidatingIdentityAuthenticationStateProvider(Of TUser)
-- uid: Mercadona.Backend.Areas.Identity.RevalidatingIdentityAuthenticationStateProvider`1.#ctor(Microsoft.Extensions.Logging.ILoggerFactory,Microsoft.Extensions.DependencyInjection.IServiceScopeFactory,Microsoft.Extensions.Options.IOptions{Microsoft.AspNetCore.Identity.IdentityOptions},Microsoft.AspNetCore.Http.IHttpContextAccessor,Mercadona.Backend.Areas.Identity.ISecurityStampValidator{`0},Mercadona.Backend.Areas.Identity.ITokenLifetimeValidator,Mercadona.Backend.Services.Interfaces.ITokenService,Mercadona.Backend.Services.Interfaces.IAuthenticationService,Mercadona.Backend.Security.WhiteList)
-  name: RevalidatingIdentityAuthenticationStateProvider(ILoggerFactory, IServiceScopeFactory, IOptions<IdentityOptions>, IHttpContextAccessor, ISecurityStampValidator<TUser>, ITokenLifetimeValidator, ITokenService, IAuthenticationService, WhiteList)
-  href: documentation/Mercadona.Backend.Areas.Identity.RevalidatingIdentityAuthenticationStateProvider-1.html#Mercadona_Backend_Areas_Identity_RevalidatingIdentityAuthenticationStateProvider_1__ctor_Microsoft_Extensions_Logging_ILoggerFactory_Microsoft_Extensions_DependencyInjection_IServiceScopeFactory_Microsoft_Extensions_Options_IOptions_Microsoft_AspNetCore_Identity_IdentityOptions__Microsoft_AspNetCore_Http_IHttpContextAccessor_Mercadona_Backend_Areas_Identity_ISecurityStampValidator__0__Mercadona_Backend_Areas_Identity_ITokenLifetimeValidator_Mercadona_Backend_Services_Interfaces_ITokenService_Mercadona_Backend_Services_Interfaces_IAuthenticationService_Mercadona_Backend_Security_WhiteList_
-  commentId: M:Mercadona.Backend.Areas.Identity.RevalidatingIdentityAuthenticationStateProvider`1.#ctor(Microsoft.Extensions.Logging.ILoggerFactory,Microsoft.Extensions.DependencyInjection.IServiceScopeFactory,Microsoft.Extensions.Options.IOptions{Microsoft.AspNetCore.Identity.IdentityOptions},Microsoft.AspNetCore.Http.IHttpContextAccessor,Mercadona.Backend.Areas.Identity.ISecurityStampValidator{`0},Mercadona.Backend.Areas.Identity.ITokenLifetimeValidator,Mercadona.Backend.Services.Interfaces.ITokenService,Mercadona.Backend.Services.Interfaces.IAuthenticationService,Mercadona.Backend.Security.WhiteList)
-  name.vb: New(ILoggerFactory, IServiceScopeFactory, IOptions(Of IdentityOptions), IHttpContextAccessor, ISecurityStampValidator(Of TUser), ITokenLifetimeValidator, ITokenService, IAuthenticationService, WhiteList)
-  fullName: Mercadona.Backend.Areas.Identity.RevalidatingIdentityAuthenticationStateProvider<TUser>.RevalidatingIdentityAuthenticationStateProvider(Microsoft.Extensions.Logging.ILoggerFactory, Microsoft.Extensions.DependencyInjection.IServiceScopeFactory, Microsoft.Extensions.Options.IOptions<Microsoft.AspNetCore.Identity.IdentityOptions>, Microsoft.AspNetCore.Http.IHttpContextAccessor, Mercadona.Backend.Areas.Identity.ISecurityStampValidator<TUser>, Mercadona.Backend.Areas.Identity.ITokenLifetimeValidator, Mercadona.Backend.Services.Interfaces.ITokenService, Mercadona.Backend.Services.Interfaces.IAuthenticationService, Mercadona.Backend.Security.WhiteList)
-  fullName.vb: Mercadona.Backend.Areas.Identity.RevalidatingIdentityAuthenticationStateProvider(Of TUser).New(Microsoft.Extensions.Logging.ILoggerFactory, Microsoft.Extensions.DependencyInjection.IServiceScopeFactory, Microsoft.Extensions.Options.IOptions(Of Microsoft.AspNetCore.Identity.IdentityOptions), Microsoft.AspNetCore.Http.IHttpContextAccessor, Mercadona.Backend.Areas.Identity.ISecurityStampValidator(Of TUser), Mercadona.Backend.Areas.Identity.ITokenLifetimeValidator, Mercadona.Backend.Services.Interfaces.ITokenService, Mercadona.Backend.Services.Interfaces.IAuthenticationService, Mercadona.Backend.Security.WhiteList)
-  nameWithType: RevalidatingIdentityAuthenticationStateProvider<TUser>.RevalidatingIdentityAuthenticationStateProvider(ILoggerFactory, IServiceScopeFactory, IOptions<IdentityOptions>, IHttpContextAccessor, ISecurityStampValidator<TUser>, ITokenLifetimeValidator, ITokenService, IAuthenticationService, WhiteList)
-  nameWithType.vb: RevalidatingIdentityAuthenticationStateProvider(Of TUser).New(ILoggerFactory, IServiceScopeFactory, IOptions(Of IdentityOptions), IHttpContextAccessor, ISecurityStampValidator(Of TUser), ITokenLifetimeValidator, ITokenService, IAuthenticationService, WhiteList)
+- uid: Mercadona.Backend.Areas.Identity.RevalidatingIdentityAuthenticationStateProvider`1.#ctor(Microsoft.Extensions.Logging.ILoggerFactory,Microsoft.Extensions.DependencyInjection.IServiceScopeFactory,Microsoft.Extensions.Options.IOptions{Microsoft.AspNetCore.Identity.IdentityOptions},Microsoft.AspNetCore.Http.IHttpContextAccessor,Mercadona.Backend.Areas.Identity.ISecurityStampValidator{`0},Mercadona.Backend.Areas.Identity.ITokenLifetimeValidator,Mercadona.Backend.Services.Interfaces.ITokenService,Mercadona.Backend.Services.Interfaces.IAuthenticationService,Mercadona.Backend.Security.IWhiteList,Mercadona.Backend.Services.Interfaces.IConnectedUserProvider)
+  name: RevalidatingIdentityAuthenticationStateProvider(ILoggerFactory, IServiceScopeFactory, IOptions<IdentityOptions>, IHttpContextAccessor, ISecurityStampValidator<TUser>, ITokenLifetimeValidator, ITokenService, IAuthenticationService, IWhiteList, IConnectedUserProvider)
+  href: documentation/Mercadona.Backend.Areas.Identity.RevalidatingIdentityAuthenticationStateProvider-1.html#Mercadona_Backend_Areas_Identity_RevalidatingIdentityAuthenticationStateProvider_1__ctor_Microsoft_Extensions_Logging_ILoggerFactory_Microsoft_Extensions_DependencyInjection_IServiceScopeFactory_Microsoft_Extensions_Options_IOptions_Microsoft_AspNetCore_Identity_IdentityOptions__Microsoft_AspNetCore_Http_IHttpContextAccessor_Mercadona_Backend_Areas_Identity_ISecurityStampValidator__0__Mercadona_Backend_Areas_Identity_ITokenLifetimeValidator_Mercadona_Backend_Services_Interfaces_ITokenService_Mercadona_Backend_Services_Interfaces_IAuthenticationService_Mercadona_Backend_Security_IWhiteList_Mercadona_Backend_Services_Interfaces_IConnectedUserProvider_
+  commentId: M:Mercadona.Backend.Areas.Identity.RevalidatingIdentityAuthenticationStateProvider`1.#ctor(Microsoft.Extensions.Logging.ILoggerFactory,Microsoft.Extensions.DependencyInjection.IServiceScopeFactory,Microsoft.Extensions.Options.IOptions{Microsoft.AspNetCore.Identity.IdentityOptions},Microsoft.AspNetCore.Http.IHttpContextAccessor,Mercadona.Backend.Areas.Identity.ISecurityStampValidator{`0},Mercadona.Backend.Areas.Identity.ITokenLifetimeValidator,Mercadona.Backend.Services.Interfaces.ITokenService,Mercadona.Backend.Services.Interfaces.IAuthenticationService,Mercadona.Backend.Security.IWhiteList,Mercadona.Backend.Services.Interfaces.IConnectedUserProvider)
+  name.vb: New(ILoggerFactory, IServiceScopeFactory, IOptions(Of IdentityOptions), IHttpContextAccessor, ISecurityStampValidator(Of TUser), ITokenLifetimeValidator, ITokenService, IAuthenticationService, IWhiteList, IConnectedUserProvider)
+  fullName: Mercadona.Backend.Areas.Identity.RevalidatingIdentityAuthenticationStateProvider<TUser>.RevalidatingIdentityAuthenticationStateProvider(Microsoft.Extensions.Logging.ILoggerFactory, Microsoft.Extensions.DependencyInjection.IServiceScopeFactory, Microsoft.Extensions.Options.IOptions<Microsoft.AspNetCore.Identity.IdentityOptions>, Microsoft.AspNetCore.Http.IHttpContextAccessor, Mercadona.Backend.Areas.Identity.ISecurityStampValidator<TUser>, Mercadona.Backend.Areas.Identity.ITokenLifetimeValidator, Mercadona.Backend.Services.Interfaces.ITokenService, Mercadona.Backend.Services.Interfaces.IAuthenticationService, Mercadona.Backend.Security.IWhiteList, Mercadona.Backend.Services.Interfaces.IConnectedUserProvider)
+  fullName.vb: Mercadona.Backend.Areas.Identity.RevalidatingIdentityAuthenticationStateProvider(Of TUser).New(Microsoft.Extensions.Logging.ILoggerFactory, Microsoft.Extensions.DependencyInjection.IServiceScopeFactory, Microsoft.Extensions.Options.IOptions(Of Microsoft.AspNetCore.Identity.IdentityOptions), Microsoft.AspNetCore.Http.IHttpContextAccessor, Mercadona.Backend.Areas.Identity.ISecurityStampValidator(Of TUser), Mercadona.Backend.Areas.Identity.ITokenLifetimeValidator, Mercadona.Backend.Services.Interfaces.ITokenService, Mercadona.Backend.Services.Interfaces.IAuthenticationService, Mercadona.Backend.Security.IWhiteList, Mercadona.Backend.Services.Interfaces.IConnectedUserProvider)
+  nameWithType: RevalidatingIdentityAuthenticationStateProvider<TUser>.RevalidatingIdentityAuthenticationStateProvider(ILoggerFactory, IServiceScopeFactory, IOptions<IdentityOptions>, IHttpContextAccessor, ISecurityStampValidator<TUser>, ITokenLifetimeValidator, ITokenService, IAuthenticationService, IWhiteList, IConnectedUserProvider)
+  nameWithType.vb: RevalidatingIdentityAuthenticationStateProvider(Of TUser).New(ILoggerFactory, IServiceScopeFactory, IOptions(Of IdentityOptions), IHttpContextAccessor, ISecurityStampValidator(Of TUser), ITokenLifetimeValidator, ITokenService, IAuthenticationService, IWhiteList, IConnectedUserProvider)
 - uid: Mercadona.Backend.Areas.Identity.RevalidatingIdentityAuthenticationStateProvider`1.#ctor*
   name: RevalidatingIdentityAuthenticationStateProvider
   href: documentation/Mercadona.Backend.Areas.Identity.RevalidatingIdentityAuthenticationStateProvider-1.html#Mercadona_Backend_Areas_Identity_RevalidatingIdentityAuthenticationStateProvider_1__ctor_
@@ -290,15 +290,15 @@ references:
   commentId: T:Mercadona.Backend.Areas.Identity.TokenLifetimeValidator
   fullName: Mercadona.Backend.Areas.Identity.TokenLifetimeValidator
   nameWithType: TokenLifetimeValidator
-- uid: Mercadona.Backend.Areas.Identity.TokenLifetimeValidator.#ctor(Mercadona.Backend.Security.WhiteList)
-  name: TokenLifetimeValidator(WhiteList)
-  href: documentation/Mercadona.Backend.Areas.Identity.TokenLifetimeValidator.html#Mercadona_Backend_Areas_Identity_TokenLifetimeValidator__ctor_Mercadona_Backend_Security_WhiteList_
-  commentId: M:Mercadona.Backend.Areas.Identity.TokenLifetimeValidator.#ctor(Mercadona.Backend.Security.WhiteList)
-  name.vb: New(WhiteList)
-  fullName: Mercadona.Backend.Areas.Identity.TokenLifetimeValidator.TokenLifetimeValidator(Mercadona.Backend.Security.WhiteList)
-  fullName.vb: Mercadona.Backend.Areas.Identity.TokenLifetimeValidator.New(Mercadona.Backend.Security.WhiteList)
-  nameWithType: TokenLifetimeValidator.TokenLifetimeValidator(WhiteList)
-  nameWithType.vb: TokenLifetimeValidator.New(WhiteList)
+- uid: Mercadona.Backend.Areas.Identity.TokenLifetimeValidator.#ctor(Mercadona.Backend.Security.IWhiteList)
+  name: TokenLifetimeValidator(IWhiteList)
+  href: documentation/Mercadona.Backend.Areas.Identity.TokenLifetimeValidator.html#Mercadona_Backend_Areas_Identity_TokenLifetimeValidator__ctor_Mercadona_Backend_Security_IWhiteList_
+  commentId: M:Mercadona.Backend.Areas.Identity.TokenLifetimeValidator.#ctor(Mercadona.Backend.Security.IWhiteList)
+  name.vb: New(IWhiteList)
+  fullName: Mercadona.Backend.Areas.Identity.TokenLifetimeValidator.TokenLifetimeValidator(Mercadona.Backend.Security.IWhiteList)
+  fullName.vb: Mercadona.Backend.Areas.Identity.TokenLifetimeValidator.New(Mercadona.Backend.Security.IWhiteList)
+  nameWithType: TokenLifetimeValidator.TokenLifetimeValidator(IWhiteList)
+  nameWithType.vb: TokenLifetimeValidator.New(IWhiteList)
 - uid: Mercadona.Backend.Areas.Identity.TokenLifetimeValidator.#ctor*
   name: TokenLifetimeValidator
   href: documentation/Mercadona.Backend.Areas.Identity.TokenLifetimeValidator.html#Mercadona_Backend_Areas_Identity_TokenLifetimeValidator__ctor_
@@ -941,19 +941,6 @@ references:
   fullName.vb: Mercadona.Backend.Controllers.AuthenticateController.New
   nameWithType: AuthenticateController.AuthenticateController
   nameWithType.vb: AuthenticateController.New
-- uid: Mercadona.Backend.Controllers.AuthenticateController.ClearCookieAsync
-  name: ClearCookieAsync()
-  href: documentation/Mercadona.Backend.Controllers.AuthenticateController.html#Mercadona_Backend_Controllers_AuthenticateController_ClearCookieAsync
-  commentId: M:Mercadona.Backend.Controllers.AuthenticateController.ClearCookieAsync
-  fullName: Mercadona.Backend.Controllers.AuthenticateController.ClearCookieAsync()
-  nameWithType: AuthenticateController.ClearCookieAsync()
-- uid: Mercadona.Backend.Controllers.AuthenticateController.ClearCookieAsync*
-  name: ClearCookieAsync
-  href: documentation/Mercadona.Backend.Controllers.AuthenticateController.html#Mercadona_Backend_Controllers_AuthenticateController_ClearCookieAsync_
-  commentId: Overload:Mercadona.Backend.Controllers.AuthenticateController.ClearCookieAsync
-  isSpec: "True"
-  fullName: Mercadona.Backend.Controllers.AuthenticateController.ClearCookieAsync
-  nameWithType: AuthenticateController.ClearCookieAsync
 - uid: Mercadona.Backend.Controllers.AuthenticateController.LoginAsync(Mercadona.Backend.Models.UserModel)
   name: LoginAsync(UserModel)
   href: documentation/Mercadona.Backend.Controllers.AuthenticateController.html#Mercadona_Backend_Controllers_AuthenticateController_LoginAsync_Mercadona_Backend_Models_UserModel_
@@ -1012,19 +999,6 @@ references:
   isSpec: "True"
   fullName: Mercadona.Backend.Controllers.AuthenticateController.RegisterAsync
   nameWithType: AuthenticateController.RegisterAsync
-- uid: Mercadona.Backend.Controllers.AuthenticateController.StoreCookieAsync(Mercadona.Backend.Models.ConnectedUser)
-  name: StoreCookieAsync(ConnectedUser)
-  href: documentation/Mercadona.Backend.Controllers.AuthenticateController.html#Mercadona_Backend_Controllers_AuthenticateController_StoreCookieAsync_Mercadona_Backend_Models_ConnectedUser_
-  commentId: M:Mercadona.Backend.Controllers.AuthenticateController.StoreCookieAsync(Mercadona.Backend.Models.ConnectedUser)
-  fullName: Mercadona.Backend.Controllers.AuthenticateController.StoreCookieAsync(Mercadona.Backend.Models.ConnectedUser)
-  nameWithType: AuthenticateController.StoreCookieAsync(ConnectedUser)
-- uid: Mercadona.Backend.Controllers.AuthenticateController.StoreCookieAsync*
-  name: StoreCookieAsync
-  href: documentation/Mercadona.Backend.Controllers.AuthenticateController.html#Mercadona_Backend_Controllers_AuthenticateController_StoreCookieAsync_
-  commentId: Overload:Mercadona.Backend.Controllers.AuthenticateController.StoreCookieAsync
-  isSpec: "True"
-  fullName: Mercadona.Backend.Controllers.AuthenticateController.StoreCookieAsync
-  nameWithType: AuthenticateController.StoreCookieAsync
 - uid: Mercadona.Backend.Controllers.AuthenticateController.USER_ALREADY_EXISTS(System.String)
   name: USER_ALREADY_EXISTS(string)
   href: documentation/Mercadona.Backend.Controllers.AuthenticateController.html#Mercadona_Backend_Controllers_AuthenticateController_USER_ALREADY_EXISTS_System_String_
@@ -2103,57 +2077,172 @@ references:
   commentId: N:Mercadona.Backend.Security
   fullName: Mercadona.Backend.Security
   nameWithType: Mercadona.Backend.Security
-- uid: Mercadona.Backend.Security.JwtInSessionExt
-  name: JwtInSessionExt
-  href: documentation/Mercadona.Backend.Security.JwtInSessionExt.html
-  commentId: T:Mercadona.Backend.Security.JwtInSessionExt
-  fullName: Mercadona.Backend.Security.JwtInSessionExt
-  nameWithType: JwtInSessionExt
-- uid: Mercadona.Backend.Security.JwtInSessionExt.AddJwtInSession(Microsoft.Extensions.DependencyInjection.IServiceCollection)
-  name: AddJwtInSession(IServiceCollection)
-  href: documentation/Mercadona.Backend.Security.JwtInSessionExt.html#Mercadona_Backend_Security_JwtInSessionExt_AddJwtInSession_Microsoft_Extensions_DependencyInjection_IServiceCollection_
-  commentId: M:Mercadona.Backend.Security.JwtInSessionExt.AddJwtInSession(Microsoft.Extensions.DependencyInjection.IServiceCollection)
-  fullName: Mercadona.Backend.Security.JwtInSessionExt.AddJwtInSession(Microsoft.Extensions.DependencyInjection.IServiceCollection)
-  nameWithType: JwtInSessionExt.AddJwtInSession(IServiceCollection)
-- uid: Mercadona.Backend.Security.JwtInSessionExt.AddJwtInSession*
-  name: AddJwtInSession
-  href: documentation/Mercadona.Backend.Security.JwtInSessionExt.html#Mercadona_Backend_Security_JwtInSessionExt_AddJwtInSession_
-  commentId: Overload:Mercadona.Backend.Security.JwtInSessionExt.AddJwtInSession
+- uid: Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenAttribute
+  name: AuthAutoValidateAntiforgeryTokenAttribute
+  href: documentation/Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenAttribute.html
+  commentId: T:Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenAttribute
+  fullName: Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenAttribute
+  nameWithType: AuthAutoValidateAntiforgeryTokenAttribute
+- uid: Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenAttribute.CreateInstance(System.IServiceProvider)
+  name: CreateInstance(IServiceProvider)
+  href: documentation/Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenAttribute.html#Mercadona_Backend_Security_AuthAutoValidateAntiforgeryTokenAttribute_CreateInstance_System_IServiceProvider_
+  commentId: M:Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenAttribute.CreateInstance(System.IServiceProvider)
+  fullName: Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenAttribute.CreateInstance(System.IServiceProvider)
+  nameWithType: AuthAutoValidateAntiforgeryTokenAttribute.CreateInstance(IServiceProvider)
+- uid: Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenAttribute.CreateInstance*
+  name: CreateInstance
+  href: documentation/Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenAttribute.html#Mercadona_Backend_Security_AuthAutoValidateAntiforgeryTokenAttribute_CreateInstance_
+  commentId: Overload:Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenAttribute.CreateInstance
   isSpec: "True"
-  fullName: Mercadona.Backend.Security.JwtInSessionExt.AddJwtInSession
-  nameWithType: JwtInSessionExt.AddJwtInSession
-- uid: Mercadona.Backend.Security.JwtInSessionExt.UseJwtInSession(Microsoft.AspNetCore.Builder.IApplicationBuilder)
-  name: UseJwtInSession(IApplicationBuilder)
-  href: documentation/Mercadona.Backend.Security.JwtInSessionExt.html#Mercadona_Backend_Security_JwtInSessionExt_UseJwtInSession_Microsoft_AspNetCore_Builder_IApplicationBuilder_
-  commentId: M:Mercadona.Backend.Security.JwtInSessionExt.UseJwtInSession(Microsoft.AspNetCore.Builder.IApplicationBuilder)
-  fullName: Mercadona.Backend.Security.JwtInSessionExt.UseJwtInSession(Microsoft.AspNetCore.Builder.IApplicationBuilder)
-  nameWithType: JwtInSessionExt.UseJwtInSession(IApplicationBuilder)
-- uid: Mercadona.Backend.Security.JwtInSessionExt.UseJwtInSession*
-  name: UseJwtInSession
-  href: documentation/Mercadona.Backend.Security.JwtInSessionExt.html#Mercadona_Backend_Security_JwtInSessionExt_UseJwtInSession_
-  commentId: Overload:Mercadona.Backend.Security.JwtInSessionExt.UseJwtInSession
+  fullName: Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenAttribute.CreateInstance
+  nameWithType: AuthAutoValidateAntiforgeryTokenAttribute.CreateInstance
+- uid: Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenAttribute.IsReusable
+  name: IsReusable
+  href: documentation/Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenAttribute.html#Mercadona_Backend_Security_AuthAutoValidateAntiforgeryTokenAttribute_IsReusable
+  commentId: P:Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenAttribute.IsReusable
+  fullName: Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenAttribute.IsReusable
+  nameWithType: AuthAutoValidateAntiforgeryTokenAttribute.IsReusable
+- uid: Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenAttribute.IsReusable*
+  name: IsReusable
+  href: documentation/Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenAttribute.html#Mercadona_Backend_Security_AuthAutoValidateAntiforgeryTokenAttribute_IsReusable_
+  commentId: Overload:Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenAttribute.IsReusable
   isSpec: "True"
-  fullName: Mercadona.Backend.Security.JwtInSessionExt.UseJwtInSession
-  nameWithType: JwtInSessionExt.UseJwtInSession
-- uid: Mercadona.Backend.Security.JwtInSessionMiddleware
-  name: JwtInSessionMiddleware
-  href: documentation/Mercadona.Backend.Security.JwtInSessionMiddleware.html
-  commentId: T:Mercadona.Backend.Security.JwtInSessionMiddleware
-  fullName: Mercadona.Backend.Security.JwtInSessionMiddleware
-  nameWithType: JwtInSessionMiddleware
-- uid: Mercadona.Backend.Security.JwtInSessionMiddleware.InvokeAsync(Microsoft.AspNetCore.Http.HttpContext,Microsoft.AspNetCore.Http.RequestDelegate)
+  fullName: Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenAttribute.IsReusable
+  nameWithType: AuthAutoValidateAntiforgeryTokenAttribute.IsReusable
+- uid: Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenAttribute.Order
+  name: Order
+  href: documentation/Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenAttribute.html#Mercadona_Backend_Security_AuthAutoValidateAntiforgeryTokenAttribute_Order
+  commentId: P:Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenAttribute.Order
+  fullName: Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenAttribute.Order
+  nameWithType: AuthAutoValidateAntiforgeryTokenAttribute.Order
+- uid: Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenAttribute.Order*
+  name: Order
+  href: documentation/Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenAttribute.html#Mercadona_Backend_Security_AuthAutoValidateAntiforgeryTokenAttribute_Order_
+  commentId: Overload:Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenAttribute.Order
+  isSpec: "True"
+  fullName: Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenAttribute.Order
+  nameWithType: AuthAutoValidateAntiforgeryTokenAttribute.Order
+- uid: Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenFilter
+  name: AuthAutoValidateAntiforgeryTokenFilter
+  href: documentation/Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenFilter.html
+  commentId: T:Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenFilter
+  fullName: Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenFilter
+  nameWithType: AuthAutoValidateAntiforgeryTokenFilter
+- uid: Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenFilter.#ctor(Microsoft.AspNetCore.Antiforgery.IAntiforgery)
+  name: AuthAutoValidateAntiforgeryTokenFilter(IAntiforgery)
+  href: documentation/Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenFilter.html#Mercadona_Backend_Security_AuthAutoValidateAntiforgeryTokenFilter__ctor_Microsoft_AspNetCore_Antiforgery_IAntiforgery_
+  commentId: M:Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenFilter.#ctor(Microsoft.AspNetCore.Antiforgery.IAntiforgery)
+  name.vb: New(IAntiforgery)
+  fullName: Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenFilter.AuthAutoValidateAntiforgeryTokenFilter(Microsoft.AspNetCore.Antiforgery.IAntiforgery)
+  fullName.vb: Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenFilter.New(Microsoft.AspNetCore.Antiforgery.IAntiforgery)
+  nameWithType: AuthAutoValidateAntiforgeryTokenFilter.AuthAutoValidateAntiforgeryTokenFilter(IAntiforgery)
+  nameWithType.vb: AuthAutoValidateAntiforgeryTokenFilter.New(IAntiforgery)
+- uid: Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenFilter.#ctor*
+  name: AuthAutoValidateAntiforgeryTokenFilter
+  href: documentation/Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenFilter.html#Mercadona_Backend_Security_AuthAutoValidateAntiforgeryTokenFilter__ctor_
+  commentId: Overload:Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenFilter.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenFilter.AuthAutoValidateAntiforgeryTokenFilter
+  fullName.vb: Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenFilter.New
+  nameWithType: AuthAutoValidateAntiforgeryTokenFilter.AuthAutoValidateAntiforgeryTokenFilter
+  nameWithType.vb: AuthAutoValidateAntiforgeryTokenFilter.New
+- uid: Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenFilter.OnAuthorizationAsync(Microsoft.AspNetCore.Mvc.Filters.AuthorizationFilterContext)
+  name: OnAuthorizationAsync(AuthorizationFilterContext)
+  href: documentation/Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenFilter.html#Mercadona_Backend_Security_AuthAutoValidateAntiforgeryTokenFilter_OnAuthorizationAsync_Microsoft_AspNetCore_Mvc_Filters_AuthorizationFilterContext_
+  commentId: M:Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenFilter.OnAuthorizationAsync(Microsoft.AspNetCore.Mvc.Filters.AuthorizationFilterContext)
+  fullName: Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenFilter.OnAuthorizationAsync(Microsoft.AspNetCore.Mvc.Filters.AuthorizationFilterContext)
+  nameWithType: AuthAutoValidateAntiforgeryTokenFilter.OnAuthorizationAsync(AuthorizationFilterContext)
+- uid: Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenFilter.OnAuthorizationAsync*
+  name: OnAuthorizationAsync
+  href: documentation/Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenFilter.html#Mercadona_Backend_Security_AuthAutoValidateAntiforgeryTokenFilter_OnAuthorizationAsync_
+  commentId: Overload:Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenFilter.OnAuthorizationAsync
+  isSpec: "True"
+  fullName: Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenFilter.OnAuthorizationAsync
+  nameWithType: AuthAutoValidateAntiforgeryTokenFilter.OnAuthorizationAsync
+- uid: Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenFilter.ShouldValidate(Microsoft.AspNetCore.Mvc.Filters.AuthorizationFilterContext)
+  name: ShouldValidate(AuthorizationFilterContext)
+  href: documentation/Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenFilter.html#Mercadona_Backend_Security_AuthAutoValidateAntiforgeryTokenFilter_ShouldValidate_Microsoft_AspNetCore_Mvc_Filters_AuthorizationFilterContext_
+  commentId: M:Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenFilter.ShouldValidate(Microsoft.AspNetCore.Mvc.Filters.AuthorizationFilterContext)
+  fullName: Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenFilter.ShouldValidate(Microsoft.AspNetCore.Mvc.Filters.AuthorizationFilterContext)
+  nameWithType: AuthAutoValidateAntiforgeryTokenFilter.ShouldValidate(AuthorizationFilterContext)
+- uid: Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenFilter.ShouldValidate*
+  name: ShouldValidate
+  href: documentation/Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenFilter.html#Mercadona_Backend_Security_AuthAutoValidateAntiforgeryTokenFilter_ShouldValidate_
+  commentId: Overload:Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenFilter.ShouldValidate
+  isSpec: "True"
+  fullName: Mercadona.Backend.Security.AuthAutoValidateAntiforgeryTokenFilter.ShouldValidate
+  nameWithType: AuthAutoValidateAntiforgeryTokenFilter.ShouldValidate
+- uid: Mercadona.Backend.Security.IWhiteList
+  name: IWhiteList
+  href: documentation/Mercadona.Backend.Security.IWhiteList.html
+  commentId: T:Mercadona.Backend.Security.IWhiteList
+  fullName: Mercadona.Backend.Security.IWhiteList
+  nameWithType: IWhiteList
+- uid: Mercadona.Backend.Security.IWhiteList.Clear
+  name: Clear()
+  href: documentation/Mercadona.Backend.Security.IWhiteList.html#Mercadona_Backend_Security_IWhiteList_Clear
+  commentId: M:Mercadona.Backend.Security.IWhiteList.Clear
+  fullName: Mercadona.Backend.Security.IWhiteList.Clear()
+  nameWithType: IWhiteList.Clear()
+- uid: Mercadona.Backend.Security.IWhiteList.Clear*
+  name: Clear
+  href: documentation/Mercadona.Backend.Security.IWhiteList.html#Mercadona_Backend_Security_IWhiteList_Clear_
+  commentId: Overload:Mercadona.Backend.Security.IWhiteList.Clear
+  isSpec: "True"
+  fullName: Mercadona.Backend.Security.IWhiteList.Clear
+  nameWithType: IWhiteList.Clear
+- uid: Mercadona.Backend.Security.JwtBlazorExt
+  name: JwtBlazorExt
+  href: documentation/Mercadona.Backend.Security.JwtBlazorExt.html
+  commentId: T:Mercadona.Backend.Security.JwtBlazorExt
+  fullName: Mercadona.Backend.Security.JwtBlazorExt
+  nameWithType: JwtBlazorExt
+- uid: Mercadona.Backend.Security.JwtBlazorExt.AddJwtBlazor(Microsoft.Extensions.DependencyInjection.IServiceCollection)
+  name: AddJwtBlazor(IServiceCollection)
+  href: documentation/Mercadona.Backend.Security.JwtBlazorExt.html#Mercadona_Backend_Security_JwtBlazorExt_AddJwtBlazor_Microsoft_Extensions_DependencyInjection_IServiceCollection_
+  commentId: M:Mercadona.Backend.Security.JwtBlazorExt.AddJwtBlazor(Microsoft.Extensions.DependencyInjection.IServiceCollection)
+  fullName: Mercadona.Backend.Security.JwtBlazorExt.AddJwtBlazor(Microsoft.Extensions.DependencyInjection.IServiceCollection)
+  nameWithType: JwtBlazorExt.AddJwtBlazor(IServiceCollection)
+- uid: Mercadona.Backend.Security.JwtBlazorExt.AddJwtBlazor*
+  name: AddJwtBlazor
+  href: documentation/Mercadona.Backend.Security.JwtBlazorExt.html#Mercadona_Backend_Security_JwtBlazorExt_AddJwtBlazor_
+  commentId: Overload:Mercadona.Backend.Security.JwtBlazorExt.AddJwtBlazor
+  isSpec: "True"
+  fullName: Mercadona.Backend.Security.JwtBlazorExt.AddJwtBlazor
+  nameWithType: JwtBlazorExt.AddJwtBlazor
+- uid: Mercadona.Backend.Security.JwtBlazorExt.UseJwtBlazor(Microsoft.AspNetCore.Builder.IApplicationBuilder)
+  name: UseJwtBlazor(IApplicationBuilder)
+  href: documentation/Mercadona.Backend.Security.JwtBlazorExt.html#Mercadona_Backend_Security_JwtBlazorExt_UseJwtBlazor_Microsoft_AspNetCore_Builder_IApplicationBuilder_
+  commentId: M:Mercadona.Backend.Security.JwtBlazorExt.UseJwtBlazor(Microsoft.AspNetCore.Builder.IApplicationBuilder)
+  fullName: Mercadona.Backend.Security.JwtBlazorExt.UseJwtBlazor(Microsoft.AspNetCore.Builder.IApplicationBuilder)
+  nameWithType: JwtBlazorExt.UseJwtBlazor(IApplicationBuilder)
+- uid: Mercadona.Backend.Security.JwtBlazorExt.UseJwtBlazor*
+  name: UseJwtBlazor
+  href: documentation/Mercadona.Backend.Security.JwtBlazorExt.html#Mercadona_Backend_Security_JwtBlazorExt_UseJwtBlazor_
+  commentId: Overload:Mercadona.Backend.Security.JwtBlazorExt.UseJwtBlazor
+  isSpec: "True"
+  fullName: Mercadona.Backend.Security.JwtBlazorExt.UseJwtBlazor
+  nameWithType: JwtBlazorExt.UseJwtBlazor
+- uid: Mercadona.Backend.Security.JwtBlazorMiddleware
+  name: JwtBlazorMiddleware
+  href: documentation/Mercadona.Backend.Security.JwtBlazorMiddleware.html
+  commentId: T:Mercadona.Backend.Security.JwtBlazorMiddleware
+  fullName: Mercadona.Backend.Security.JwtBlazorMiddleware
+  nameWithType: JwtBlazorMiddleware
+- uid: Mercadona.Backend.Security.JwtBlazorMiddleware.InvokeAsync(Microsoft.AspNetCore.Http.HttpContext,Microsoft.AspNetCore.Http.RequestDelegate)
   name: InvokeAsync(HttpContext, RequestDelegate)
-  href: documentation/Mercadona.Backend.Security.JwtInSessionMiddleware.html#Mercadona_Backend_Security_JwtInSessionMiddleware_InvokeAsync_Microsoft_AspNetCore_Http_HttpContext_Microsoft_AspNetCore_Http_RequestDelegate_
-  commentId: M:Mercadona.Backend.Security.JwtInSessionMiddleware.InvokeAsync(Microsoft.AspNetCore.Http.HttpContext,Microsoft.AspNetCore.Http.RequestDelegate)
-  fullName: Mercadona.Backend.Security.JwtInSessionMiddleware.InvokeAsync(Microsoft.AspNetCore.Http.HttpContext, Microsoft.AspNetCore.Http.RequestDelegate)
-  nameWithType: JwtInSessionMiddleware.InvokeAsync(HttpContext, RequestDelegate)
-- uid: Mercadona.Backend.Security.JwtInSessionMiddleware.InvokeAsync*
+  href: documentation/Mercadona.Backend.Security.JwtBlazorMiddleware.html#Mercadona_Backend_Security_JwtBlazorMiddleware_InvokeAsync_Microsoft_AspNetCore_Http_HttpContext_Microsoft_AspNetCore_Http_RequestDelegate_
+  commentId: M:Mercadona.Backend.Security.JwtBlazorMiddleware.InvokeAsync(Microsoft.AspNetCore.Http.HttpContext,Microsoft.AspNetCore.Http.RequestDelegate)
+  fullName: Mercadona.Backend.Security.JwtBlazorMiddleware.InvokeAsync(Microsoft.AspNetCore.Http.HttpContext, Microsoft.AspNetCore.Http.RequestDelegate)
+  nameWithType: JwtBlazorMiddleware.InvokeAsync(HttpContext, RequestDelegate)
+- uid: Mercadona.Backend.Security.JwtBlazorMiddleware.InvokeAsync*
   name: InvokeAsync
-  href: documentation/Mercadona.Backend.Security.JwtInSessionMiddleware.html#Mercadona_Backend_Security_JwtInSessionMiddleware_InvokeAsync_
-  commentId: Overload:Mercadona.Backend.Security.JwtInSessionMiddleware.InvokeAsync
+  href: documentation/Mercadona.Backend.Security.JwtBlazorMiddleware.html#Mercadona_Backend_Security_JwtBlazorMiddleware_InvokeAsync_
+  commentId: Overload:Mercadona.Backend.Security.JwtBlazorMiddleware.InvokeAsync
   isSpec: "True"
-  fullName: Mercadona.Backend.Security.JwtInSessionMiddleware.InvokeAsync
-  nameWithType: JwtInSessionMiddleware.InvokeAsync
+  fullName: Mercadona.Backend.Security.JwtBlazorMiddleware.InvokeAsync
+  nameWithType: JwtBlazorMiddleware.InvokeAsync
 - uid: Mercadona.Backend.Security.WhiteList
   name: WhiteList
   href: documentation/Mercadona.Backend.Security.WhiteList.html
@@ -2315,12 +2404,12 @@ references:
   isSpec: "True"
   fullName: Mercadona.Backend.Services.Interfaces.AuthenticationService.FindUserByNameAsync
   nameWithType: AuthenticationService.FindUserByNameAsync
-- uid: Mercadona.Backend.Services.Interfaces.AuthenticationService.LoginAsync(Microsoft.AspNetCore.Identity.IdentityUser)
-  name: LoginAsync(IdentityUser)
-  href: documentation/Mercadona.Backend.Services.Interfaces.AuthenticationService.html#Mercadona_Backend_Services_Interfaces_AuthenticationService_LoginAsync_Microsoft_AspNetCore_Identity_IdentityUser_
-  commentId: M:Mercadona.Backend.Services.Interfaces.AuthenticationService.LoginAsync(Microsoft.AspNetCore.Identity.IdentityUser)
-  fullName: Mercadona.Backend.Services.Interfaces.AuthenticationService.LoginAsync(Microsoft.AspNetCore.Identity.IdentityUser)
-  nameWithType: AuthenticationService.LoginAsync(IdentityUser)
+- uid: Mercadona.Backend.Services.Interfaces.AuthenticationService.LoginAsync(Mercadona.Backend.Models.UserModel)
+  name: LoginAsync(UserModel)
+  href: documentation/Mercadona.Backend.Services.Interfaces.AuthenticationService.html#Mercadona_Backend_Services_Interfaces_AuthenticationService_LoginAsync_Mercadona_Backend_Models_UserModel_
+  commentId: M:Mercadona.Backend.Services.Interfaces.AuthenticationService.LoginAsync(Mercadona.Backend.Models.UserModel)
+  fullName: Mercadona.Backend.Services.Interfaces.AuthenticationService.LoginAsync(Mercadona.Backend.Models.UserModel)
+  nameWithType: AuthenticationService.LoginAsync(UserModel)
 - uid: Mercadona.Backend.Services.Interfaces.AuthenticationService.LoginAsync*
   name: LoginAsync
   href: documentation/Mercadona.Backend.Services.Interfaces.AuthenticationService.html#Mercadona_Backend_Services_Interfaces_AuthenticationService_LoginAsync_
@@ -2376,6 +2465,25 @@ references:
   isSpec: "True"
   fullName: Mercadona.Backend.Services.Interfaces.AuthenticationService.RegisterAsync
   nameWithType: AuthenticationService.RegisterAsync
+- uid: Mercadona.Backend.Services.Interfaces.ConnectedUserProvider
+  name: ConnectedUserProvider
+  href: documentation/Mercadona.Backend.Services.Interfaces.ConnectedUserProvider.html
+  commentId: T:Mercadona.Backend.Services.Interfaces.ConnectedUserProvider
+  fullName: Mercadona.Backend.Services.Interfaces.ConnectedUserProvider
+  nameWithType: ConnectedUserProvider
+- uid: Mercadona.Backend.Services.Interfaces.ConnectedUserProvider.ConnectedUser
+  name: ConnectedUser
+  href: documentation/Mercadona.Backend.Services.Interfaces.ConnectedUserProvider.html#Mercadona_Backend_Services_Interfaces_ConnectedUserProvider_ConnectedUser
+  commentId: P:Mercadona.Backend.Services.Interfaces.ConnectedUserProvider.ConnectedUser
+  fullName: Mercadona.Backend.Services.Interfaces.ConnectedUserProvider.ConnectedUser
+  nameWithType: ConnectedUserProvider.ConnectedUser
+- uid: Mercadona.Backend.Services.Interfaces.ConnectedUserProvider.ConnectedUser*
+  name: ConnectedUser
+  href: documentation/Mercadona.Backend.Services.Interfaces.ConnectedUserProvider.html#Mercadona_Backend_Services_Interfaces_ConnectedUserProvider_ConnectedUser_
+  commentId: Overload:Mercadona.Backend.Services.Interfaces.ConnectedUserProvider.ConnectedUser
+  isSpec: "True"
+  fullName: Mercadona.Backend.Services.Interfaces.ConnectedUserProvider.ConnectedUser
+  nameWithType: ConnectedUserProvider.ConnectedUser
 - uid: Mercadona.Backend.Services.Interfaces.IAuthenticationService
   name: IAuthenticationService
   href: documentation/Mercadona.Backend.Services.Interfaces.IAuthenticationService.html
@@ -2414,12 +2522,12 @@ references:
   isSpec: "True"
   fullName: Mercadona.Backend.Services.Interfaces.IAuthenticationService.FindUserByNameAsync
   nameWithType: IAuthenticationService.FindUserByNameAsync
-- uid: Mercadona.Backend.Services.Interfaces.IAuthenticationService.LoginAsync(Microsoft.AspNetCore.Identity.IdentityUser)
-  name: LoginAsync(IdentityUser)
-  href: documentation/Mercadona.Backend.Services.Interfaces.IAuthenticationService.html#Mercadona_Backend_Services_Interfaces_IAuthenticationService_LoginAsync_Microsoft_AspNetCore_Identity_IdentityUser_
-  commentId: M:Mercadona.Backend.Services.Interfaces.IAuthenticationService.LoginAsync(Microsoft.AspNetCore.Identity.IdentityUser)
-  fullName: Mercadona.Backend.Services.Interfaces.IAuthenticationService.LoginAsync(Microsoft.AspNetCore.Identity.IdentityUser)
-  nameWithType: IAuthenticationService.LoginAsync(IdentityUser)
+- uid: Mercadona.Backend.Services.Interfaces.IAuthenticationService.LoginAsync(Mercadona.Backend.Models.UserModel)
+  name: LoginAsync(UserModel)
+  href: documentation/Mercadona.Backend.Services.Interfaces.IAuthenticationService.html#Mercadona_Backend_Services_Interfaces_IAuthenticationService_LoginAsync_Mercadona_Backend_Models_UserModel_
+  commentId: M:Mercadona.Backend.Services.Interfaces.IAuthenticationService.LoginAsync(Mercadona.Backend.Models.UserModel)
+  fullName: Mercadona.Backend.Services.Interfaces.IAuthenticationService.LoginAsync(Mercadona.Backend.Models.UserModel)
+  nameWithType: IAuthenticationService.LoginAsync(UserModel)
 - uid: Mercadona.Backend.Services.Interfaces.IAuthenticationService.LoginAsync*
   name: LoginAsync
   href: documentation/Mercadona.Backend.Services.Interfaces.IAuthenticationService.html#Mercadona_Backend_Services_Interfaces_IAuthenticationService_LoginAsync_
@@ -2475,6 +2583,25 @@ references:
   isSpec: "True"
   fullName: Mercadona.Backend.Services.Interfaces.IAuthenticationService.RegisterAsync
   nameWithType: IAuthenticationService.RegisterAsync
+- uid: Mercadona.Backend.Services.Interfaces.IConnectedUserProvider
+  name: IConnectedUserProvider
+  href: documentation/Mercadona.Backend.Services.Interfaces.IConnectedUserProvider.html
+  commentId: T:Mercadona.Backend.Services.Interfaces.IConnectedUserProvider
+  fullName: Mercadona.Backend.Services.Interfaces.IConnectedUserProvider
+  nameWithType: IConnectedUserProvider
+- uid: Mercadona.Backend.Services.Interfaces.IConnectedUserProvider.ConnectedUser
+  name: ConnectedUser
+  href: documentation/Mercadona.Backend.Services.Interfaces.IConnectedUserProvider.html#Mercadona_Backend_Services_Interfaces_IConnectedUserProvider_ConnectedUser
+  commentId: P:Mercadona.Backend.Services.Interfaces.IConnectedUserProvider.ConnectedUser
+  fullName: Mercadona.Backend.Services.Interfaces.IConnectedUserProvider.ConnectedUser
+  nameWithType: IConnectedUserProvider.ConnectedUser
+- uid: Mercadona.Backend.Services.Interfaces.IConnectedUserProvider.ConnectedUser*
+  name: ConnectedUser
+  href: documentation/Mercadona.Backend.Services.Interfaces.IConnectedUserProvider.html#Mercadona_Backend_Services_Interfaces_IConnectedUserProvider_ConnectedUser_
+  commentId: Overload:Mercadona.Backend.Services.Interfaces.IConnectedUserProvider.ConnectedUser
+  isSpec: "True"
+  fullName: Mercadona.Backend.Services.Interfaces.IConnectedUserProvider.ConnectedUser
+  nameWithType: IConnectedUserProvider.ConnectedUser
 - uid: Mercadona.Backend.Services.Interfaces.IDiscountedProductService
   name: IDiscountedProductService
   href: documentation/Mercadona.Backend.Services.Interfaces.IDiscountedProductService.html
@@ -2820,15 +2947,15 @@ references:
   commentId: T:Mercadona.Backend.Services.TokenService
   fullName: Mercadona.Backend.Services.TokenService
   nameWithType: TokenService
-- uid: Mercadona.Backend.Services.TokenService.#ctor(Mercadona.Backend.Security.WhiteList,Microsoft.Extensions.Options.IOptionsMonitor{Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerOptions})
-  name: TokenService(WhiteList, IOptionsMonitor<JwtBearerOptions>)
-  href: documentation/Mercadona.Backend.Services.TokenService.html#Mercadona_Backend_Services_TokenService__ctor_Mercadona_Backend_Security_WhiteList_Microsoft_Extensions_Options_IOptionsMonitor_Microsoft_AspNetCore_Authentication_JwtBearer_JwtBearerOptions__
-  commentId: M:Mercadona.Backend.Services.TokenService.#ctor(Mercadona.Backend.Security.WhiteList,Microsoft.Extensions.Options.IOptionsMonitor{Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerOptions})
-  name.vb: New(WhiteList, IOptionsMonitor(Of JwtBearerOptions))
-  fullName: Mercadona.Backend.Services.TokenService.TokenService(Mercadona.Backend.Security.WhiteList, Microsoft.Extensions.Options.IOptionsMonitor<Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerOptions>)
-  fullName.vb: Mercadona.Backend.Services.TokenService.New(Mercadona.Backend.Security.WhiteList, Microsoft.Extensions.Options.IOptionsMonitor(Of Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerOptions))
-  nameWithType: TokenService.TokenService(WhiteList, IOptionsMonitor<JwtBearerOptions>)
-  nameWithType.vb: TokenService.New(WhiteList, IOptionsMonitor(Of JwtBearerOptions))
+- uid: Mercadona.Backend.Services.TokenService.#ctor(Mercadona.Backend.Security.IWhiteList,Microsoft.Extensions.Options.IOptionsMonitor{Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerOptions})
+  name: TokenService(IWhiteList, IOptionsMonitor<JwtBearerOptions>)
+  href: documentation/Mercadona.Backend.Services.TokenService.html#Mercadona_Backend_Services_TokenService__ctor_Mercadona_Backend_Security_IWhiteList_Microsoft_Extensions_Options_IOptionsMonitor_Microsoft_AspNetCore_Authentication_JwtBearer_JwtBearerOptions__
+  commentId: M:Mercadona.Backend.Services.TokenService.#ctor(Mercadona.Backend.Security.IWhiteList,Microsoft.Extensions.Options.IOptionsMonitor{Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerOptions})
+  name.vb: New(IWhiteList, IOptionsMonitor(Of JwtBearerOptions))
+  fullName: Mercadona.Backend.Services.TokenService.TokenService(Mercadona.Backend.Security.IWhiteList, Microsoft.Extensions.Options.IOptionsMonitor<Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerOptions>)
+  fullName.vb: Mercadona.Backend.Services.TokenService.New(Mercadona.Backend.Security.IWhiteList, Microsoft.Extensions.Options.IOptionsMonitor(Of Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerOptions))
+  nameWithType: TokenService.TokenService(IWhiteList, IOptionsMonitor<JwtBearerOptions>)
+  nameWithType.vb: TokenService.New(IWhiteList, IOptionsMonitor(Of JwtBearerOptions))
 - uid: Mercadona.Backend.Services.TokenService.#ctor*
   name: TokenService
   href: documentation/Mercadona.Backend.Services.TokenService.html#Mercadona_Backend_Services_TokenService__ctor_

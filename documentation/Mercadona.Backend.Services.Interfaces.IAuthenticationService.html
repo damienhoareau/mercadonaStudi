@@ -193,8 +193,8 @@
 
   <a id="Mercadona_Backend_Services_Interfaces_IAuthenticationService_LoginAsync_" data-uid="Mercadona.Backend.Services.Interfaces.IAuthenticationService.LoginAsync*"></a>
 
-  <h3 id="Mercadona_Backend_Services_Interfaces_IAuthenticationService_LoginAsync_Microsoft_AspNetCore_Identity_IdentityUser_" data-uid="Mercadona.Backend.Services.Interfaces.IAuthenticationService.LoginAsync(Microsoft.AspNetCore.Identity.IdentityUser)">
-  LoginAsync(IdentityUser)
+  <h3 id="Mercadona_Backend_Services_Interfaces_IAuthenticationService_LoginAsync_Mercadona_Backend_Models_UserModel_" data-uid="Mercadona.Backend.Services.Interfaces.IAuthenticationService.LoginAsync(Mercadona.Backend.Models.UserModel)">
+  LoginAsync(UserModel)
   
   </h3>
 
@@ -203,13 +203,13 @@
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">Task&lt;(string refreshToken, string accessToken)&gt; LoginAsync(IdentityUser user)</code></pre>
+    <pre><code class="lang-csharp hljs">Task&lt;(string? refreshToken, string? accessToken)&gt; LoginAsync(UserModel model)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>user</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.identity.identityuser">IdentityUser</a></dt>
-    <dd><p>Utilisateur</p>
+    <dt><code>model</code> <a class="xref" href="Mercadona.Backend.Models.UserModel.html">UserModel</a></dt>
+    <dd><p>Modèle représentant l'utilisateur</p>
 </dd>
   </dl>
 

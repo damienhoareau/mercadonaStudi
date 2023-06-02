@@ -87,12 +87,12 @@
   <dl><dt>Assembly</dt><dd>Mercadona.Backend.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>Permet de stocker une liste de jetons de renouvellement autorisés.</p>
+  <div class="markdown summary"><p>Classe permettant de stocker une liste de jetons de renouvellement autorisés.</p>
 </div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class WhiteList : MemoryCache, IMemoryCache, IDisposable</code></pre>
+    <pre><code class="lang-csharp hljs">public class WhiteList : MemoryCache, IWhiteList, IMemoryCache, IDisposable</code></pre>
   </div>
 
 
@@ -110,6 +110,7 @@
   <dl class="typelist implements">
     <dt>Implements</dt>
     <dd>
+      <div><a class="xref" href="Mercadona.Backend.Security.IWhiteList.html">IWhiteList</a></div>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.extensions.caching.memory.imemorycache">IMemoryCache</a></div>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.idisposable">IDisposable</a></div>
     </dd>

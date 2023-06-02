@@ -795,41 +795,6 @@ public class AuthenticateController : ControllerBase</code></pre>
 </h2>
 
 
-  <a id="Mercadona_Backend_Controllers_AuthenticateController_ClearCookieAsync_" data-uid="Mercadona.Backend.Controllers.AuthenticateController.ClearCookieAsync*"></a>
-
-  <h3 id="Mercadona_Backend_Controllers_AuthenticateController_ClearCookieAsync" data-uid="Mercadona.Backend.Controllers.AuthenticateController.ClearCookieAsync">
-  ClearCookieAsync()
-  
-  </h3>
-
-  <div class="markdown level1 summary"><p>Permet de supprimer les jetons d'authentification Blazor des cookies</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[HttpPost]
-[Route(&quot;account/clearCookie&quot;)]
-[ProducesResponseType(200)]
-public Task&lt;IActionResult&gt; ClearCookieAsync()</code></pre>
-  </div>
-
-
-  <h4 class="section">Returns</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.mvc.iactionresult">IActionResult</a>&gt;</dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-
-
-
   <a id="Mercadona_Backend_Controllers_AuthenticateController_LoginAsync_" data-uid="Mercadona.Backend.Controllers.AuthenticateController.LoginAsync*"></a>
 
   <h3 id="Mercadona_Backend_Controllers_AuthenticateController_LoginAsync_Mercadona_Backend_Models_UserModel_" data-uid="Mercadona.Backend.Controllers.AuthenticateController.LoginAsync(Mercadona.Backend.Models.UserModel)">
@@ -843,6 +808,7 @@ public Task&lt;IActionResult&gt; ClearCookieAsync()</code></pre>
 
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[HttpPost]
+[IgnoreAntiforgeryToken]
 [Route(&quot;account/login&quot;)]
 [ProducesResponseType(typeof(ConnectedUser), 200)]
 [ProducesResponseType(typeof(TextResponse), 401)]
@@ -923,7 +889,7 @@ public Task&lt;IActionResult&gt; LogoutAsync()</code></pre>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[HttpPost]
 [Route(&quot;account/refreshToken&quot;)]
-[ProducesResponseType(200)]
+[ProducesResponseType(typeof(TextResponse), 200)]
 [ProducesResponseType(500)]
 public Task&lt;IActionResult&gt; RefreshTokenAsync()</code></pre>
   </div>
@@ -958,6 +924,7 @@ public Task&lt;IActionResult&gt; RefreshTokenAsync()</code></pre>
 
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[HttpPost]
+[IgnoreAntiforgeryToken]
 [Route(&quot;account/register&quot;)]
 [ProducesResponseType(200)]
 [ProducesResponseType(400)]
@@ -969,47 +936,6 @@ public Task&lt;IActionResult&gt; RegisterAsync(UserModel model)</code></pre>
   <dl class="parameters">
     <dt><code>model</code> <a class="xref" href="Mercadona.Backend.Models.UserModel.html">UserModel</a></dt>
     <dd><p>Modèle représentant l'utilisateur</p>
-</dd>
-  </dl>
-
-  <h4 class="section">Returns</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.threading.tasks.task-1">Task</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.mvc.iactionresult">IActionResult</a>&gt;</dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-
-
-
-  <a id="Mercadona_Backend_Controllers_AuthenticateController_StoreCookieAsync_" data-uid="Mercadona.Backend.Controllers.AuthenticateController.StoreCookieAsync*"></a>
-
-  <h3 id="Mercadona_Backend_Controllers_AuthenticateController_StoreCookieAsync_Mercadona_Backend_Models_ConnectedUser_" data-uid="Mercadona.Backend.Controllers.AuthenticateController.StoreCookieAsync(Mercadona.Backend.Models.ConnectedUser)">
-  StoreCookieAsync(ConnectedUser)
-  
-  </h3>
-
-  <div class="markdown level1 summary"><p>Permet de stocker les jetons d'authentification Blazor dans un cookie</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[HttpPost]
-[Route(&quot;account/storeCookie&quot;)]
-[ProducesResponseType(200)]
-public Task&lt;IActionResult&gt; StoreCookieAsync(ConnectedUser user)</code></pre>
-  </div>
-
-  <h4 class="section">Parameters</h4>
-  <dl class="parameters">
-    <dt><code>user</code> <a class="xref" href="Mercadona.Backend.Models.ConnectedUser.html">ConnectedUser</a></dt>
-    <dd><p>Modèle représentant l'utilisateur connecté</p>
 </dd>
   </dl>
 
